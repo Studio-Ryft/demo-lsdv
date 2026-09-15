@@ -12,6 +12,10 @@
   const pitto = (el, cls = "") => { el.setAttribute("viewBox", B.pitto.vb); el.innerHTML = `<defs><clipPath id="fill${cls}"><rect class="lvl" x="1200" y="47" width="800" height="760"/></clipPath></defs><path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><g clip-path="url(#fill${cls})"><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/></g>`; };
   pitto($("[data-pitto]"), "I"); pitto($("[data-okpitto]"), "O");
 
+  // video di sfondo: versione leggera sotto i 900 px
+  const hv = $(".hero-vid");
+  if (hv) { hv.src = innerWidth < 900 && hv.dataset.srcMobile ? hv.dataset.srcMobile : hv.dataset.src; hv.load(); const p = hv.play(); p && p.catch(() => {}); }
+
   $("[data-missione]").textContent = D.ente.missione;
   $("[data-herodata]").innerHTML = D.numeri.map((n) => `<li><b data-count="${n.n}">${n.n}</b>${esc(n.label)}</li>`).join("");
   $("[data-herocont]").innerHTML = mapSVG({ luoghi: false });
@@ -203,6 +207,10 @@
     addEventListener("wheel", skip, { once: true, passive: true }); addEventListener("touchmove", skip, { once: true, passive: true });
   } else { intro.remove(); heroIn(0.1); }
   gsap.to(".hero-vid", { yPercent: 12, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+  // appena inizia lo scorrimento il video si attenua sotto il velo di brand
+  gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.4 } })
+    .to(".hero-veil", { opacity: 0.88, ease: "power1.in" }, 0)
+    .to(".hero-vid", { opacity: 0.55, filter: "saturate(.8)", ease: "power1.in" }, 0);
   gsap.to(".hero-copy", { yPercent: -30, autoAlpha: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "30% top", end: "90% top", scrub: true } });
   if (fine) { const hc = $(".hero-cont"); addEventListener("pointermove", (e) => gsap.to(hc, { x: (e.clientX / innerWidth - 0.5) * -40, y: (e.clientY / innerHeight - 0.5) * -30, duration: 1.4, ease: "power3.out" })); }
 

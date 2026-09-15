@@ -89,6 +89,11 @@ html.menu-open .hd{transform:none!important;background:var(--earth)}
 .hero{height:100svh;min-height:620px;overflow:hidden;display:grid;grid-template-rows:1fr auto;padding:0 var(--gut) clamp(24px,4vh,44px)}
 .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08)}
 .hero-shade{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(23,11,6,.2),rgba(23,11,6,.78) 70%),linear-gradient(0deg,var(--earth) 0%,rgba(23,11,6,0) 40%);}
+/* velo che attenua il video quando parte lo scorrimento: solo colori del brand */
+.hero-veil{position:absolute;inset:0;opacity:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(68,36,19,.55) 0%,rgba(34,17,9,.82) 42%,var(--earth) 100%),
+             radial-gradient(70% 55% at 72% 32%,rgba(173,193,54,.16),transparent 70%),
+             radial-gradient(60% 50% at 20% 70%,rgba(75,93,35,.22),transparent 72%)}
 .hero-cont{position:absolute;inset:-5%;opacity:.55;pointer-events:none}
 .hero-cont svg{width:100%;height:100%}
 .hero-cont .ct{fill:none;stroke:var(--chart);stroke-width:.8;stroke-opacity:.35}
