@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Strada del Vino · Casavecchia di Pontelatone — Il Suolo Parla</title>
+<meta name="description" content="Demo B · Strada del Vino Casavecchia di Pontelatone ETS: il territorio raccontato attraverso suoli, quote e aromi.">
+<link rel="icon" href="../shared/pittogramma.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Vai al contenuto</a>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="in-top"><svg class="in-edge top" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 0H1440V30L1380 42 1300 26 1210 48 1120 30 1030 44 940 24 860 40 770 28 690 46 600 26 520 38 430 22 350 44 260 30 170 46 90 28 0 40Z"/></svg></div>
+  <div class="in-bot"><svg class="in-edge bot" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 60H1440V30L1380 42 1300 26 1210 48 1120 30 1030 44 940 24 860 40 770 28 690 46 600 26 520 38 430 22 350 44 260 30 170 46 90 28 0 40Z"/></svg></div>
+  <div class="in-core">
+    <div class="in-contours" data-incont></div>
+    <div class="in-center">
+      <svg class="in-pitto" data-pitto></svg>
+      <p class="in-depth"><span>Profondità</span><b data-depth>000</b><span>cm</span></p>
+      <p class="in-word">Il suolo parla</p>
+    </div>
+    <div class="in-ruler" aria-hidden="true"></div>
+  </div>
+  <button class="in-skip" type="button">Salta intro</button>
+</div>
+
+<div class="cursor" aria-hidden="true"><i></i><span></span></div>
+
+<header class="hd">
+  <a class="hd-logo" href="#main" aria-label="Strada del Vino Casavecchia di Pontelatone"><svg data-logo></svg></a>
+  <p class="hd-hud" aria-hidden="true"><span data-lat>41.1935</span> N · <span data-lon>14.2517</span> E · <span data-alt>121</span> m</p>
+  <nav class="hd-nav" aria-label="Principale">
+    <a href="#volo">Territorio</a><a href="#strati">Suoli</a><a href="#aromi">Aromi</a><a href="#storia">Storia</a><a href="#rete">Rete</a><a href="#eventi">Eventi</a><a href="#video">Video</a>
+  </nav>
+  <a class="hd-cta" href="#aderisci"><span>Aderisci</span></a>
+  <button class="hd-burger" type="button" aria-expanded="false" aria-controls="mnav"><i></i><i></i><span class="sr">Menu</span></button>
+</header>
+<div class="mnav" id="mnav" hidden><nav aria-label="Menu mobile"></nav></div>
+
+<main id="main">
+  <section class="hero" id="home">
+    <video class="hero-vid" autoplay muted loop playsinline preload="auto" poster="../shared/img/video-poster.webp"><source src="../shared/video/vigna.mp4" type="video/mp4"></video>
+    <div class="hero-shade"></div>
+    <div class="hero-cont" data-herocont></div>
+    <div class="hero-copy">
+      <p class="kick"><span class="dot"></span> Ente del Terzo Settore · DOC Casavecchia di Pontelatone</p>
+      <h1 class="hero-t"><span class="l1">Il suolo</span> <span class="l2"><em>parla.</em></span></h1>
+      <p class="hero-sub">Ascoltalo nel calice.</p>
+    </div>
+    <div class="hero-foot">
+      <p data-missione></p>
+      <a class="btn" href="#volo"><span>Inizia il volo</span><i>↓</i></a>
+    </div>
+    <ul class="hero-data" data-herodata></ul>
+  </section>
+
+  <section class="dark-quote" id="manifesto">
+    <div class="dq-inner">
+      <p class="kick">Alla cieca</p>
+      <p class="dq-text" data-quote></p>
+      <p class="dq-auth" data-quote-a></p>
+      <p class="dq-hint">Muovi la luce per leggere</p>
+    </div>
+    <div class="dq-lit" aria-hidden="true"><div class="dq-inner"><p class="kick">Alla cieca</p><p class="dq-text" data-quote2></p><p class="dq-auth" data-quote-a2></p><p class="dq-hint">&nbsp;</p></div></div>
+    <div class="mani" data-manifesto></div>
+  </section>
+
+  <section class="volo" id="volo">
+    <div class="volo-stage">
+      <div class="volo-map" data-volomap></div>
+      <div class="volo-hud tl"><p class="kick">Il territorio</p><h2>Otto comuni<br><em>in volo.</em></h2></div>
+      <div class="volo-card" data-volocard>
+        <p class="vc-n"><b data-vcn>01</b>/08</p>
+        <div class="vc-img"><img alt="" data-vcimg></div>
+        <h3 data-vct></h3>
+        <p class="vc-q"><span data-vcq>000</span> m s.l.m.</p>
+        <p class="vc-d" data-vcd></p>
+      </div>
+      <div class="volo-prog"><i></i></div>
+      <p class="volo-coord" aria-hidden="true" data-vcoord></p>
+    </div>
+  </section>
+
+  <section class="strati" id="strati">
+    <div class="strati-stage">
+      <div class="st-left">
+        <p class="kick">I suoli</p>
+        <h2>Scendi<br><em>sotto la vigna.</em></h2>
+        <p class="st-depth"><b data-sdepth>0</b><span>cm</span></p>
+        <p class="st-note">Tre macro aree individuate con le analisi chimico-fisiche di 50 vigneti.</p>
+      </div>
+      <div class="st-col" data-strati></div>
+      <div class="st-ruler" aria-hidden="true" data-ruler></div>
+    </div>
+  </section>
+
+  <section class="aromi" id="aromi">
+    <header class="sh"><p class="kick">Aromi</p><h2>Stesso vitigno,<br><em>tre terre diverse.</em></h2>
+      <p>Profili sensoriali misurati per la scelta dell'epoca di vendemmia. Scegli un vitigno: il radar sovrappone i tre suoli.</p></header>
+    <div class="radar-wrap">
+      <div class="radar-ctrl" data-rv role="group" aria-label="Vitigno"></div>
+      <svg class="radar" viewBox="-190 -170 380 350" data-radar role="img" aria-label="Radar aromatico"></svg>
+      <ul class="radar-leg" data-rleg></ul>
+    </div>
+    <div class="cieca" id="cieca">
+      <div class="cieca-h"><p class="kick">Gioca</p><h3>Alla cieca</h3><p>Un calice senza etichetta. Scegli i descrittori che senti: ti diremo da quale vitigno e da quale suolo potrebbe venire.</p></div>
+      <div class="cieca-glass" aria-hidden="true"><svg viewBox="0 0 120 190"><defs><clipPath id="bowlB"><path d="M31 18C25 58 29 90 60 99 91 90 95 58 89 18Z"/></clipPath></defs><path class="gl" d="M31 18C25 58 29 90 60 99 91 90 95 58 89 18"/><g clip-path="url(#bowlB)"><rect class="wine" x="0" y="40" width="120" height="70"/></g><path class="gl" d="M60 99V168M40 174C48 170 72 170 80 174"/></svg></div>
+      <div class="cieca-desc" data-cdesc role="group" aria-label="Descrittori"></div>
+      <div class="cieca-act"><button class="btn" type="button" data-creveal><span>Svela il calice</span><i>→</i></button><p class="cieca-res" data-cres aria-live="polite"></p></div>
+    </div>
+  </section>
+
+  <section class="storia" id="storia">
+    <header class="sh"><p class="kick">La storia</p><h2>Ogni strato<br><em>è un'epoca.</em></h2></header>
+    <div class="core-time" data-storia></div>
+  </section>
+
+  <section class="rete" id="rete">
+    <div class="marq" aria-hidden="true"><div data-marq></div></div>
+    <header class="sh"><p class="kick">La rete</p><h2>Chi tiene<br><em>viva la terra.</em></h2></header>
+    <ul class="rete-grid" data-aziende></ul>
+    <div class="percorsi" data-percorsi></div>
+  </section>
+
+  <section class="eventi" id="eventi">
+    <header class="sh"><p class="kick">Eventi</p><h2>Il calice<br><em>senza etichetta.</em></h2></header>
+    <article class="ev-hero" data-evmain></article>
+    <div class="ev-list" data-evnext></div>
+  </section>
+
+  <section class="video" id="video">
+    <header class="sh row"><div><p class="kick">Video e blog</p><h2>Voci<br><em>dal suolo.</em></h2></div><p class="drag-hint">Trascina →</p></header>
+    <div class="reel" data-vlog></div>
+    <div class="blog" data-blog></div>
+  </section>
+
+  <section class="ad" id="aderisci">
+    <div class="ad-l">
+      <p class="kick">Aderisci</p>
+      <h2>Metti radici<br><em>nella rete.</em></h2>
+      <p data-adintro></p>
+      <ul class="ad-v" data-vantaggi></ul>
+      <ol class="ad-steps" data-passi></ol>
+      <p class="ad-nota" data-adnota></p>
+    </div>
+    <form class="ad-form" novalidate data-form>
+      <div class="ad-prog" data-progress><i></i></div>
+      <fieldset data-step><legend><span>01</span> Che realtà sei?</legend><div class="cats" data-cats></div><button class="btn" data-next><span>Continua</span><i>→</i></button></fieldset>
+      <fieldset data-step hidden><legend><span>02</span> Contatti</legend>
+        <label class="fld"><input name="nome" required placeholder=" " autocomplete="name"><span>Nome e cognome</span></label>
+        <label class="fld"><input name="azienda" placeholder=" " autocomplete="organization"><span>Realtà o azienda</span></label>
+        <label class="fld"><input name="comune" required placeholder=" " list="lcomuni"><span>Comune</span></label>
+        <label class="fld"><input name="email" type="email" required placeholder=" " autocomplete="email"><span>Email</span></label>
+        <div class="row"><button class="btn ghost" data-prev><span>Indietro</span></button><button class="btn" data-next><span>Continua</span><i>→</i></button></div></fieldset>
+      <fieldset data-step hidden><legend><span>03</span> Messaggio</legend>
+        <label class="fld"><textarea name="messaggio" rows="4" placeholder=" "></textarea><span>Cosa porti alla rete?</span></label>
+        <label class="chk"><input type="checkbox" name="privacy" required><span>Acconsento al trattamento dei dati per la candidatura.</span></label>
+        <div class="row"><button class="btn ghost" data-prev><span>Indietro</span></button><button class="btn" type="submit"><span>Invia</span><i>→</i></button></div></fieldset>
+      <div class="ad-ok" hidden><svg class="ok-pitto" data-okpitto></svg><h3>Radici piantate.</h3><p data-okmsg></p><p class="small">Demo: nessun dato inviato.</p></div>
+      <datalist id="lcomuni"></datalist>
+    </form>
+  </section>
+</main>
+
+<footer class="ft">
+  <svg class="ft-logo" data-logo></svg>
+  <div class="ft-grid">
+    <div><h4>Contatti</h4><p data-contatti></p></div>
+    <div><h4>Partner</h4><p data-partner></p></div>
+    <div><h4>Newsletter</h4><form class="nl" onsubmit="event.preventDefault();this.classList.add('ok')"><input type="email" required placeholder="email" aria-label="Email"><button>→</button><span>Iscritto. (demo)</span></form></div>
+  </div>
+  <p class="ft-legal">© 2026 Strada del Vino Casavecchia di Pontelatone · ETS · Demo di progetto LDV MEDIAZIONE — Studio Ryft</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/DrawSVGPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/CustomEase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/Draggable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/InertiaPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script src="../shared/data.js"></script>
+<script src="../shared/territorio.js"></script>
+<script src="../shared/brand.js"></script>
+<script src="../shared/aromi.js"></script>
+<script src="../shared/core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

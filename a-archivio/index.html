@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Strada del Vino · Casavecchia di Pontelatone — L'Archivio Vivo</title>
+<meta name="description" content="Demo A · Strada del Vino Casavecchia di Pontelatone ETS: storia e cultura dell'Alta Campania attraverso il vino.">
+<link rel="icon" href="../shared/pittogramma.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+<a class="skip" href="#main">Vai al contenuto</a>
+
+<!-- INTRO: il pittogramma si incide e diventa la carta -->
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-frame">
+    <span class="ic tl">Alta Campania</span><span class="ic tr">41°11′ N · 14°19′ E</span>
+    <span class="ic bl">Quota <b data-q>016</b> m</span><span class="ic br">Archivio vivo</span>
+  </div>
+  <div class="intro-mark"><svg class="intro-pitto" data-pitto></svg>
+    <p class="intro-word">Strada del Vino</p><p class="intro-sub">Casavecchia di Pontelatone</p></div>
+  <button class="intro-skip" type="button">Salta intro</button>
+</div>
+
+<!-- transizione tra sezioni -->
+<div class="veil" aria-hidden="true"><div class="veil-ink"></div><p class="veil-lbl"></p></div>
+
+<header class="hd" id="top">
+  <a class="hd-logo" href="#main" aria-label="Strada del Vino Casavecchia di Pontelatone, inizio"><svg data-logo></svg></a>
+  <nav class="hd-nav" aria-label="Principale">
+    <a href="#territorio">Territorio</a><a href="#storia">Storia</a><a href="#vitigni">Vitigni</a><a href="#scienza">Suoli e aromi</a><a href="#rete">La rete</a><a href="#eventi">Eventi</a><a href="#racconti">Blog e video</a>
+  </nav>
+  <a class="hd-cta" href="#aderisci">Aderisci</a>
+  <button class="hd-burger" type="button" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span class="sr">Menu</span></button>
+</header>
+<div class="mnav" id="mnav" hidden><nav aria-label="Menu mobile"></nav></div>
+
+<main id="main">
+  <section class="hero" id="home">
+    <div class="hero-map" data-map></div>
+    <div class="hero-copy">
+      <p class="eyebrow">Ente del Terzo Settore · Alta Campania</p>
+      <h1 class="hero-t"><span class="ln">Una geografia</span><span class="ln"><em>che diventa</em></span><span class="ln">esperienza.</span></h1>
+      <p class="hero-lead" data-missione></p>
+      <div class="hero-act"><a class="btn" href="#storia">Entra nella storia</a><a class="btn ghost" href="#aderisci">Entra nella rete</a></div>
+    </div>
+    <aside class="pin-card" hidden aria-live="polite"><img alt=""><div><b></b><span></span></div></aside>
+    <p class="hero-scroll"><span>Scorri</span><i></i></p>
+  </section>
+
+  <section class="manifesto" id="manifesto">
+    <p class="eyebrow center">Perché esistiamo</p>
+    <blockquote class="mf-quote"><p data-quote></p><footer data-quote-a></footer></blockquote>
+    <div class="mf-grid" data-manifesto></div>
+    <div class="nums" data-nums></div>
+  </section>
+
+  <section class="terr" id="territorio">
+    <div class="terr-sticky"><div class="terr-map" data-map2></div><p class="terr-quota">Quota <b data-tq>—</b> m s.l.m.</p></div>
+    <div class="terr-list">
+      <header class="sec-h"><p class="eyebrow">Il territorio</p><h2>Otto comuni,<br><em>un solo racconto.</em></h2>
+        <p>Tra i Monti Trebulani, le Colline Caiatine e la valle del Volturno. La carta nasce dalle quote reali del terreno: scorri e sorvola i comuni della DOC.</p></header>
+      <div data-comuni></div>
+    </div>
+  </section>
+
+  <section class="storia" id="storia">
+    <div class="st-pin">
+      <header class="st-h"><p class="eyebrow">La storia</p><h2>Da Plinio a oggi,<br><em>in una vigna.</em></h2><p class="st-year" aria-hidden="true" data-year>I sec.</p></header>
+      <div class="st-track" data-storia></div>
+      <div class="st-bar"><i></i></div>
+    </div>
+  </section>
+
+  <section class="vit" id="vitigni">
+    <header class="sec-h center"><p class="eyebrow">I vitigni</p><h2>Tre nomi antichi,<br><em>una lingua di oggi.</em></h2></header>
+    <div class="vit-grid" data-vitigni></div>
+  </section>
+
+  <section class="sci" id="scienza">
+    <header class="sec-h"><p class="eyebrow">Suoli e aromi</p><h2>Il terreno<br><em>si sente nel calice.</em></h2>
+      <p>Analisi chimico-fisiche su 50 vigneti, tre macro aree di suolo, uno studio sull'aroma dell'Università Federico II. Scegli un vitigno e un suolo.</p></header>
+    <div class="sci-cores" data-suoli></div>
+    <div class="aroma">
+      <div class="aroma-ctrl">
+        <div class="seg" role="group" aria-label="Vitigno" data-av></div>
+        <div class="seg" role="group" aria-label="Suolo" data-as></div>
+        <p class="aroma-src">Fonte: Anteprima 2026, analisi sensoriali · Università Federico II</p>
+      </div>
+      <figure class="aroma-fig"><svg viewBox="-120 -120 240 240" data-donut aria-hidden="true"></svg><figcaption data-alegend></figcaption></figure>
+    </div>
+  </section>
+
+  <section class="rete" id="rete">
+    <header class="sec-h center"><p class="eyebrow">La rete</p><h2>Diciassette aziende<br><em>alla stessa tavola.</em></h2>
+      <p>Piccole e medie realtà che hanno scelto la strada più lenta: qualità, coerenza, pazienza.</p></header>
+    <ol class="rete-list" data-aziende></ol>
+    <div class="percorsi" data-percorsi></div>
+  </section>
+
+  <section class="ev" id="eventi">
+    <header class="sec-h"><p class="eyebrow">Eventi</p><h2>Alla cieca,<br><em>con la storia.</em></h2></header>
+    <article class="ev-main" data-evmain></article>
+    <div class="ev-next" data-evnext></div>
+  </section>
+
+  <section class="rac" id="racconti">
+    <header class="sec-h"><p class="eyebrow">Blog e video</p><h2>Racconti<br><em>dal territorio.</em></h2></header>
+    <div class="blog" data-blog></div>
+    <div class="vlog-h"><h3>Cineteca</h3><p>Brevi film girati nei luoghi della DOC.</p></div>
+    <div class="vlog" data-vlog></div>
+  </section>
+
+  <section class="ad" id="aderisci">
+    <div class="ad-intro">
+      <p class="eyebrow">Aderisci alla Strada</p>
+      <h2>Entra<br><em>nel registro.</em></h2>
+      <p data-adintro></p>
+      <ul class="ad-vant" data-vantaggi></ul>
+      <ol class="ad-passi" data-passi></ol>
+      <p class="ad-nota" data-adnota></p>
+    </div>
+    <form class="ad-form" novalidate data-form>
+      <div class="ad-prog" data-progress><i></i><span>Candidatura</span></div>
+      <fieldset data-step>
+        <legend>1 · Che realtà sei?</legend>
+        <div class="cats" data-cats></div>
+        <button class="btn" data-next>Continua</button>
+      </fieldset>
+      <fieldset data-step hidden>
+        <legend>2 · I tuoi dati</legend>
+        <label class="fld"><span>Nome e cognome</span><input name="nome" required autocomplete="name"></label>
+        <label class="fld"><span>Realtà o azienda</span><input name="azienda" autocomplete="organization"></label>
+        <label class="fld"><span>Comune</span><input name="comune" required list="lcomuni"></label>
+        <label class="fld"><span>Email</span><input name="email" type="email" required autocomplete="email"></label>
+        <label class="fld"><span>Telefono</span><input name="tel" type="tel" autocomplete="tel"></label>
+        <div class="row"><button class="btn ghost" data-prev>Indietro</button><button class="btn" data-next>Continua</button></div>
+      </fieldset>
+      <fieldset data-step hidden>
+        <legend>3 · Il tuo contributo</legend>
+        <label class="fld"><span>Cosa vorresti raccontare o proporre alla rete?</span><textarea name="messaggio" rows="5"></textarea></label>
+        <label class="chk fld"><input type="checkbox" name="privacy" required><span>Ho letto l'informativa privacy e acconsento al trattamento dei dati per la candidatura.</span></label>
+        <div class="row"><button class="btn ghost" data-prev>Indietro</button><button class="btn" type="submit">Invia la candidatura</button></div>
+      </fieldset>
+      <div class="ad-ok" hidden><div class="seal" aria-hidden="true"><svg data-seal></svg></div><h3>Candidatura registrata</h3><p data-okmsg></p><p class="small">Demo: nessun dato è stato inviato.</p></div>
+      <datalist id="lcomuni"></datalist>
+    </form>
+  </section>
+
+  <section class="partner" data-partner></section>
+</main>
+
+<footer class="ft">
+  <div class="ft-top"><svg data-logo class="ft-logo"></svg><p data-fcit></p></div>
+  <div class="ft-cols">
+    <div><h4>Contatti</h4><p data-contatti></p></div>
+    <div><h4>Esplora</h4><p><a href="#territorio">Territorio</a><a href="#storia">Storia</a><a href="#vitigni">Vitigni</a><a href="#eventi">Eventi</a></p></div>
+    <div><h4>Newsletter</h4><form class="nl" onsubmit="event.preventDefault();this.classList.add('ok')"><input type="email" required placeholder="La tua email" aria-label="Email"><button>Iscriviti</button><span>Grazie. (demo)</span></form></div>
+  </div>
+  <p class="ft-legal">© 2026 Strada del Vino Casavecchia di Pontelatone · Ente del Terzo Settore · Demo di progetto LDV MEDIAZIONE — Studio Ryft</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/DrawSVGPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script src="../shared/data.js"></script>
+<script src="../shared/territorio.js"></script>
+<script src="../shared/brand.js"></script>
+<script src="../shared/aromi.js"></script>
+<script src="../shared/core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

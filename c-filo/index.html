@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Strada del Vino · Casavecchia di Pontelatone — Il Filo</title>
+<meta name="description" content="Demo C · Strada del Vino Casavecchia di Pontelatone ETS: la rete di persone, borghi e cantine dell'Alta Campania.">
+<link rel="icon" href="../shared/pittogramma.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,50;1,9..144,300..600,50&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Vai al contenuto</a>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <svg class="in-svg" data-inthread></svg>
+  <p class="in-t"><span>Un filo</span> <em>cuce</em> <span>la terra.</span></p>
+  <button class="in-skip" type="button">Salta intro</button>
+</div>
+
+<svg class="thread" aria-hidden="true"><path class="thread-bg"/><path class="thread-fg"/><circle class="thread-dot" r="7"/></svg>
+
+<header class="hd">
+  <a class="hd-logo" href="#main" aria-label="Strada del Vino Casavecchia di Pontelatone"><svg data-logo></svg></a>
+  <nav class="hd-nav" aria-label="Principale">
+    <a href="#voci">Voci</a><a href="#rete">La rete</a><a href="#percorsi">Percorsi</a><a href="#storia">Storia</a><a href="#eventi">Eventi</a><a href="#magazine">Magazine</a>
+  </nav>
+  <a class="hd-cta" href="#aderisci">Aderisci <b data-siamo>17</b></a>
+  <button class="hd-burger" type="button" aria-expanded="false" aria-controls="mnav"><i></i><i></i><span class="sr">Menu</span></button>
+</header>
+<div class="mnav" id="mnav" hidden><nav aria-label="Menu mobile"></nav></div>
+
+<main id="main">
+  <section class="hero" id="home" data-knot>
+    <div class="hero-img"><img src="../shared/img/vigna-lmp02008.webp" alt="Vigneti sulle colline dell'Alta Campania"></div>
+    <div class="hero-in">
+      <svg class="hero-logo" data-logow></svg>
+      <h1 class="hero-t">Un viaggio tra borghi, natura e identità: <em>il racconto della nostra terra inizia qui.</em></h1>
+      <div class="hero-act"><a class="btn light" href="#rete">Scopri la rete</a><a class="btn line" href="#voci">Ascolta le voci</a></div>
+    </div>
+    <p class="hero-count"><b data-siamo>17</b> aziende · <b>8</b> comuni · <b>1</b> filo</p>
+  </section>
+
+  <section class="intro-sec" data-knot>
+    <p class="big" data-missione></p>
+    <div class="nums" data-nums></div>
+  </section>
+
+  <section class="voci" id="voci" data-knot>
+    <header class="sh"><p class="kick">Voci della Strada</p><h2>Persone vere,<br><em>storie vere.</em></h2><p>Brevi video girati nei luoghi della DOC. Partono da soli, senza audio: tocca per aprirli.</p></header>
+    <div class="voci-row" data-vlog></div>
+  </section>
+
+  <section class="rete" id="rete" data-knot>
+    <div class="rete-head">
+      <header class="sh"><p class="kick">La rete</p><h2>Non una vetrina,<br><em>una rete.</em></h2><p data-quote></p></header>
+      <div class="chips" role="group" aria-label="Filtra la rete" data-chips></div>
+    </div>
+    <div class="const" data-const><svg class="const-svg" role="img" aria-label="Costellazione della rete: aziende, comuni, vitigni e partner collegati alla Strada del Vino"></svg><div class="const-tip" hidden></div>
+      <button class="btn olive const-add" type="button" data-addme>+ Aggiungi la tua realtà</button></div>
+  </section>
+
+  <section class="perc" id="percorsi" data-knot>
+    <header class="sh"><p class="kick">Percorsi</p><h2>Tre modi<br><em>di attraversarla.</em></h2></header>
+    <div class="perc-grid">
+      <div class="perc-tabs" role="tablist" data-ptabs></div>
+      <div class="perc-map" data-pmap></div>
+    </div>
+  </section>
+
+  <section class="storia" id="storia" data-knot>
+    <header class="sh"><p class="kick">La storia</p><h2>Il filo<br><em>del tempo.</em></h2></header>
+    <div class="deck" data-storia></div>
+  </section>
+
+  <section class="eventi" id="eventi" data-knot>
+    <header class="sh"><p class="kick">Eventi</p><h2>Ci vediamo<br><em>tra i filari.</em></h2></header>
+    <ul class="ev-rows" data-eventi></ul>
+    <div class="ev-float" aria-hidden="true"><img alt=""></div>
+  </section>
+
+  <section class="mag" id="magazine" data-knot>
+    <header class="sh"><p class="kick">Magazine</p><h2>Da leggere<br><em>con calma.</em></h2></header>
+    <div class="mag-grid" data-blog></div>
+  </section>
+
+  <section class="ad" id="aderisci" data-knot>
+    <header class="sh center"><p class="kick">Aderisci e sostieni</p><h2>Entra<br><em>nel filo.</em></h2><p data-adintro></p></header>
+    <div class="tabs-ad" role="tablist"><button role="tab" aria-selected="true" data-aud="persone">Per le persone</button><button role="tab" aria-selected="false" data-aud="aziende">Per aziende ed enti</button></div>
+    <div class="tiers" data-tiers></div>
+    <p class="tiers-note">Quote indicative, ricavate dal confronto con altre Strade del Vino italiane: gli importi reali li stabilisce l'assemblea dei soci.</p>
+    <div class="ad-flow">
+      <div class="card3d" data-card><div class="card-in">
+        <div class="card-f"><svg class="card-logo" data-logow2></svg><p class="card-k" data-ck>Tessera sostenitore</p><p class="card-name" data-cname>Il tuo nome</p><p class="card-meta"><span data-ccat>Categoria</span><span>N. <b data-cnum>018</b></span></p><svg class="card-thread" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 40 C80 10 140 60 220 30 S340 10 400 34"/></svg></div>
+        <div class="card-b"><p>Benvenuto nella rete della<br><b>Strada del Vino</b><br>Casavecchia di Pontelatone</p><p class="card-small">Demo · tessera d'esempio</p></div>
+      </div></div>
+      <form class="ad-form" novalidate data-form>
+        <div class="ad-prog" data-progress><i></i></div>
+        <fieldset data-step><legend>Chi sei?</legend><div class="cats" data-cats></div><button class="btn olive" data-next>Continua</button></fieldset>
+        <fieldset data-step hidden><legend>Presentati</legend>
+          <label class="fld"><span>Nome e cognome</span><input name="nome" required autocomplete="name"></label>
+          <label class="fld"><span>Realtà (se c'è)</span><input name="azienda" autocomplete="organization"></label>
+          <label class="fld"><span>Comune</span><input name="comune" required list="lcomuni"></label>
+          <label class="fld"><span>Email</span><input name="email" type="email" required autocomplete="email"></label>
+          <div class="row"><button class="btn line" data-prev>Indietro</button><button class="btn olive" data-next>Continua</button></div></fieldset>
+        <fieldset data-step hidden><legend>Ultimo passo</legend>
+          <label class="fld"><span>Un messaggio per noi</span><textarea name="messaggio" rows="4"></textarea></label>
+          <label class="chk fld"><input type="checkbox" name="privacy" required><span>Acconsento al trattamento dei dati per la candidatura.</span></label>
+          <div class="row"><button class="btn line" data-prev>Indietro</button><button class="btn olive" type="submit">Invia</button></div></fieldset>
+        <div class="ad-ok" hidden><h3>Sei nel filo.</h3><p data-okmsg></p><p class="small">Demo: nessun dato inviato.</p></div>
+        <datalist id="lcomuni"></datalist>
+      </form>
+    </div>
+    <ol class="passi" data-passi></ol>
+  </section>
+</main>
+
+<footer class="ft" data-knot>
+  <div class="ft-top"><svg class="ft-logo" data-logo></svg><p class="ft-cit" data-fcit></p></div>
+  <div class="ft-grid">
+    <div><h4>Contatti</h4><p data-contatti></p></div>
+    <div><h4>Con</h4><p data-partner></p></div>
+    <div><h4>Newsletter</h4><form class="nl" onsubmit="event.preventDefault();this.classList.add('ok')"><input type="email" required placeholder="La tua email" aria-label="Email"><button>Iscriviti</button><span>Grazie! (demo)</span></form></div>
+  </div>
+  <p class="ft-legal">© 2026 Strada del Vino Casavecchia di Pontelatone · ETS · Demo di progetto LDV MEDIAZIONE — Studio Ryft</p>
+</footer>
+
+<div class="modal" hidden><div class="modal-in"><button class="modal-x" type="button" aria-label="Chiudi">×</button><video playsinline controls muted></video><div class="modal-t"></div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/DrawSVGPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/MotionPathPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/Flip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script src="../shared/data.js"></script>
+<script src="../shared/territorio.js"></script>
+<script src="../shared/brand.js"></script>
+<script src="../shared/core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

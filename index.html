@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Strada del Vino · Casavecchia di Pontelatone — Tre direzioni per il sito</title>
+<link rel="icon" href="shared/pittogramma.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--walnut:#442413;--ivory:#F2E8D5;--cream:#FCF6E1;--olive:#4B5D23;--chart:#ADC136;--earth:#170B06;--mute:#7A5F50}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:400 16px/1.6 Manrope,system-ui,sans-serif;background:var(--ivory);color:var(--walnut);min-height:100svh;padding:clamp(20px,4vw,56px)}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;border-bottom:1.5px solid var(--walnut);padding-bottom:1.6rem}
+header svg{height:clamp(70px,9vw,110px);width:auto}
+header div{max-width:560px}
+header h1{font:400 clamp(2rem,4vw,3.4rem)/1 "Fraunces",serif;letter-spacing:-.02em}
+header h1 em{color:var(--olive)}
+header p{margin-top:.7rem;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);margin-top:clamp(24px,3vw,44px)}
+.dir{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;text-decoration:none;min-height:560px;transition:transform .7s cubic-bezier(.16,1,.3,1),box-shadow .7s}
+.dir:hover{transform:translateY(-8px);box-shadow:0 40px 60px -30px rgba(40,20,10,.5)}
+.dir .top{position:relative;flex:1;overflow:hidden}
+.dir .top img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.16,1,.3,1)}
+.dir:hover .top img{transform:scale(1.07)}
+.dir .top::after{content:"";position:absolute;inset:0}
+.dir .lt{position:absolute;left:22px;top:22px;z-index:2;font:700 12px/1 Manrope;letter-spacing:.14em;text-transform:uppercase;padding:.5rem .7rem;border-radius:40px}
+.dir .ti{position:absolute;left:22px;right:22px;bottom:20px;z-index:2}
+.dir .ti h2{font-size:clamp(2.4rem,3.4vw,3.4rem);line-height:.95;font-weight:400}
+.dir .bot{padding:22px}
+.dir .bot p{font-size:14.5px}
+.dir .bot ul{list-style:none;margin-top:.9rem;font-size:13.5px}
+.dir .bot li{padding:.35rem 0;border-top:1px solid currentColor;border-color:rgba(128,100,80,.25)}
+.dir .go{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;font:700 14px Manrope}
+.dir .go b{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.dir:hover .go b{transform:rotate(-45deg)}
+.a{background:var(--cream);color:var(--walnut);border:1.5px solid var(--walnut)}
+.a .top img{filter:sepia(.35) contrast(.95)}
+.a .top::after{background:linear-gradient(0deg,var(--cream) 22%,rgba(252,246,225,.6) 50%,rgba(252,246,225,0) 75%)}
+.a .lt{background:var(--walnut);color:var(--cream)}
+.a h2{font-family:"Cormorant Garamond",serif}.a h2 em{color:#7A2A2E}
+.a .go b{background:var(--walnut);color:var(--cream)}
+.b{background:var(--earth);color:var(--ivory)}
+.b .top img{filter:brightness(.55) saturate(.9)}
+.b .top::after{background:linear-gradient(0deg,var(--earth) 8%,rgba(23,11,6,0) 60%)}
+.b .lt{background:var(--chart);color:var(--earth)}
+.b h2{font-family:"Instrument Serif",serif}.b h2 em{color:var(--chart)}
+.b .go b{background:var(--chart);color:var(--earth)}
+.c{background:var(--olive);color:var(--cream)}
+.c .top::after{background:linear-gradient(0deg,var(--olive) 8%,rgba(75,93,35,0) 60%)}
+.c .lt{background:var(--cream);color:var(--olive)}
+.c h2{font-family:"Fraunces",serif}.c h2 em{color:var(--chart)}
+.c .go b{background:var(--chart);color:var(--walnut)}
+.note{margin-top:clamp(24px,3vw,40px);display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;font-size:14px;color:var(--mute);border-top:1px solid rgba(68,36,19,.2);padding-top:1.4rem}
+.note b{color:var(--walnut)}
+footer{margin-top:2rem;font-size:12px;color:var(--mute)}
+@media (max-width:1000px){.grid{grid-template-columns:1fr}.dir{min-height:480px}.note{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <svg data-logo aria-label="Strada del Vino Casavecchia di Pontelatone"></svg>
+  <div><h1>Il sito della Strada: <em>tre direzioni.</em></h1><p>Stessi contenuti verificati, stesso marchio, tre modi diversi di raccontare l'Alta Campania. Le animazioni partono con lo scorrimento: aprite ogni demo a schermo intero.</p></div>
+</header>
+<main class="grid">
+  <a class="dir a" href="a-archivio/index.html?intro">
+    <div class="top"><img src="shared/img/comune-pontelatone.webp" alt=""><span class="lt">A · Istituzionale</span><div class="ti"><h2>L'Archivio<br><em>vivo.</em></h2></div></div>
+    <div class="bot"><p>Carta, inchiostro, documenti. Per stampa, istituzioni, bandi e Archivio di Stato.</p>
+      <ul><li>Carta del territorio che si incide dalle quote reali</li><li>Linea del tempo orizzontale con il Ventaglio borbonico</li><li>Carotaggi dei suoli e ruota degli aromi</li><li>Adesione con sigillo di ceralacca</li></ul>
+      <p class="go">Apri la demo <b>→</b></p></div>
+  </a>
+  <a class="dir b" href="b-suolo/index.html?intro">
+    <div class="top"><img src="shared/img/video-poster.webp" alt=""><span class="lt">B · Scientifica</span><div class="ti"><h2>Il suolo<br><em>parla.</em></h2></div></div>
+    <div class="bot"><p>Notte, strati, dati. La direzione più adatta a premi di design e stampa internazionale.</p>
+      <ul><li>Volo guidato dallo scorrimento sugli otto comuni</li><li>Discesa nei tre suoli con profondità in centimetri</li><li>Radar aromatico e gioco «Alla cieca»</li><li>Citazione leggibile solo con la luce del cursore</li></ul>
+      <p class="go">Apri la demo <b>→</b></p></div>
+  </a>
+  <a class="dir c" href="c-filo/index.html?intro">
+    <div class="top"><img src="shared/img/vigna-lmp02008.webp" alt=""><span class="lt">C · Comunità</span><div class="ti"><h2>Il<br><em>filo.</em></h2></div></div>
+    <div class="bot"><p>Luce di settembre, persone, rete. La direzione che converte meglio in adesioni.</p>
+      <ul><li>Un filo verde che cuce tutta la pagina</li><li>Costellazione della rete trascinabile, «aggiungi la tua realtà»</li><li>Percorsi animati su carta reale, video verticali</li><li>Tessera che si compila mentre scrivi</li></ul>
+      <p class="go">Apri la demo <b>→</b></p></div>
+  </a>
+</main>
+<section class="note">
+  <p><b>Cosa è reale e cosa è d'esempio.</b> Testi storici, vitigni, suoli, dati aromatici, aziende, panel e comuni vengono dai materiali della Strada (Anteprima 2026, testi dell'Archivio di Stato, disciplinare) e sono stati verificati. Curve di livello e posizioni dei comuni sono ricavate da dati altimetrici e cartografici reali. Articoli, video, eventi futuri, quote associative e moduli sono segnaposto: i moduli non inviano dati.</p>
+  <p><b>Prima della messa online.</b> Fotografie e video originali, testi dei vantaggi e quote approvati dall'assemblea, permessi dell'Archivio per le riproduzioni, perimetro di lavoro con Squeezy, dominio dell'associazione.</p>
+</section>
+<footer>Demo di progetto riservata · LDV MEDIAZIONE — Studio Ryft · settembre 2026</footer>
+<script src="shared/brand.js"></script>
+<script>var B=window.LSDV_BRAND,s=document.querySelector("[data-logo]");s.setAttribute("viewBox",B.logo.vb);s.innerHTML='<path fill="#442413" fill-rule="evenodd" d="'+B.logo.br+'"/><path fill="#4B5D23" fill-rule="evenodd" d="'+B.logo.gr+'"/>';</script>
+</body>
+</html>
