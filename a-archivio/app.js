@@ -26,10 +26,20 @@
   const frameHero = () => { if (innerWidth > 1100) { heroSvg.setAttribute("viewBox", "-760 -60 2420 1390"); heroSvg.setAttribute("preserveAspectRatio", "xMaxYMid slice"); } else { heroSvg.setAttribute("viewBox", `0 0 ${M.vw} ${M.vh}`); heroSvg.setAttribute("preserveAspectRatio", "xMidYMid slice"); } };
   frameHero(); addEventListener("resize", frameHero);
   $("[data-map2]").innerHTML = mapSVG({ cls: "fly", par: "xMidYMid slice" });
-  $("[data-comuni]").innerHTML = D.comuni.map((c) => {
+  $("[data-comuni]").innerHTML = D.comuni.map((c, i) => {
     const m = M.comuni.find((x) => x.id === c.id) || {};
-    return `<article class="comune" data-id="${c.id}"><img src="../shared/img/comune-${c.id}.webp" alt="${esc(c.nome)}" loading="lazy"><p class="k">${m.quota ? m.quota + " m · " : ""}DOC Casavecchia di Pontelatone</p><h3>${esc(c.nome)}</h3><p>${esc(c.testo)}</p></article>`;
+    return `<article class="comune" data-id="${c.id}" data-n="${String(i + 1).padStart(2, "0")}"><div class="cm-fig"><img src="../shared/img/comune-${c.id}.webp" alt="${esc(c.nome)}" loading="lazy"><span class="cm-quota" aria-hidden="true"><b data-cq="${m.quota || 0}">0</b> m</span></div><p class="k">${m.quota ? m.quota + " m · " : ""}DOC Casavecchia di Pontelatone</p><h3>${esc(c.nome)}</h3><p>${esc(c.testo)}</p></article>`;
   }).join("");
+  // la rotta che unisce i comuni nell'ordine del racconto, sotto i segnaposto della carta
+  {
+    const svg = $(".terr-map svg"), pts = D.comuni.map((c) => M.comuni.find((x) => x.id === c.id)).filter(Boolean);
+    const d = pts.map((q, k) => {
+      if (!k) return `M${q.x} ${q.y}`;
+      const a = pts[k - 1], mx = (a.x + q.x) / 2, my = (a.y + q.y) / 2 - Math.hypot(q.x - a.x, q.y - a.y) * 0.18;
+      return `Q${mx.toFixed(1)} ${my.toFixed(1)} ${q.x} ${q.y}`;
+    }).join(" ");
+    svg.querySelector(".pins-g").insertAdjacentHTML("beforebegin", `<g class="rotta-g"><path class="rotta-base" d="${d}"/><path class="rotta" d="${d}"/></g>`);
+  }
 
   const FAN = () => {
     const rays = Array.from({ length: 10 }, (_, i) => {
@@ -161,7 +171,7 @@
 
   // header che si compatta e si nasconde
   let lastY = 0; const hd = $(".hd");
-  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 40); hd.classList.toggle("hide", y > lastY && y > 400); lastY = y; } });
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 40); lastY = y; } });
   $$(".hd-nav a").forEach((a) => { const t = $(a.getAttribute("href")); if (t) ScrollTrigger.create({ trigger: t, start: "top 50%", end: "bottom 50%", onToggle: (s) => a.classList.toggle("on", s.isActive) }); });
 
   // velo d'inchiostro sulla navigazione
@@ -248,20 +258,85 @@
   const fly = $(".terr-map svg"), full = `0 0 ${M.vw} ${M.vh}`, tq = $("[data-tq]");
   fly.setAttribute("viewBox", full);
   gsap.from(".terr-map .ct", { drawSVG: "50% 50%", duration: 1.6, ease: "power2.inOut", stagger: 0.006, scrollTrigger: { trigger: ".terr", start: "top 70%" } });
-  const qv = { z: 0 };
+  // la carta come foglio sospeso: si inclina in prospettiva seguendo lo scorrimento dei comuni
+  const sticky = $(".terr-sticky"), carta = $(".terr-carta"), foglio = $(".terr-foglio"),
+        luce = $(".terr-luce"), bussola = $(".terr-bussola");
+  let inclina = null;
+  if (!RM && matchMedia("(min-width:1101px)").matches) {
+    gsap.set(carta, { rotationY: 9, rotationX: -5, z: -40 });
+    const rY = gsap.quickTo(carta, "rotationY", { duration: 0.9, ease: "power3" }),
+          rX = gsap.quickTo(carta, "rotationX", { duration: 0.9, ease: "power3" }),
+          zC = gsap.quickTo(carta, "z", { duration: 0.9, ease: "power3" }),
+          lx = gsap.quickTo(luce, "xPercent", { duration: 1.1, ease: "power2" }),
+          rot = gsap.quickTo(bussola, "rotation", { duration: 1.1, ease: "power3" });
+    let prog = 0, px = 0, py = 0;
+    inclina = () => {
+      // la prospettiva nasce dallo scorrimento, il mouse la corregge di poco
+      rY(gsap.utils.mapRange(0, 1, 11, -11, prog) + px * 5);
+      rX(gsap.utils.mapRange(0, 1, -6, 6, prog) - py * 4);
+      zC(gsap.utils.mapRange(0, 1, -40, 30, prog));
+      lx(gsap.utils.mapRange(0, 1, -26, 26, prog) + px * 8);
+      rot(gsap.utils.mapRange(0, 1, -7, 7, prog));
+    };
+    ScrollTrigger.create({
+      trigger: ".terr", start: "top bottom", end: "bottom top", scrub: true,
+      onUpdate: (s) => { prog = s.progress; inclina(); },
+      onToggle: (s) => sticky.classList.toggle("viva", s.isActive)
+    });
+    sticky.addEventListener("pointermove", (e) => {
+      const r = sticky.getBoundingClientRect();
+      px = (e.clientX - r.left) / r.width - 0.5; py = (e.clientY - r.top) / r.height - 0.5;
+      inclina();
+    });
+    sticky.addEventListener("pointerleave", () => { px = py = 0; inclina(); });
+  }
+
+  const qv = { z: 0 }, ordine = D.comuni.map((c) => c.id);
+  const tn = $("[data-tn]"), tnome = $("[data-tnome]");
+  $(".tt-tot").textContent = "/ " + String(ordine.length).padStart(2, "0"); tnome.textContent = D.comuni[0].nome;
+  let attivo = null;
   function flyTo(id) {
-    const m = M.comuni.find((x) => x.id === id); if (!m) return;
+    const m = M.comuni.find((x) => x.id === id); if (!m || id === attivo) return;
+    const verso = attivo && ordine.indexOf(id) < ordine.indexOf(attivo) ? -1 : 1;
+    attivo = id;
     const w = 560, h = 560 * (fly.clientHeight / fly.clientWidth || 1);
     gsap.to(fly, { attr: { viewBox: `${m.x - w / 2} ${m.y - h / 2} ${w} ${h}` }, duration: 1.6, ease: "expo.inOut", overwrite: true });
     $$(".terr-map .pin").forEach((p) => p.classList.toggle("on", p.dataset.id === id));
     gsap.to(qv, { z: m.quota, duration: 1.2, ease: "power2.out", overwrite: true, onUpdate: () => (tq.textContent = Math.round(qv.z)) });
+    // cartiglio: numero e nome escono e rientrano nel verso dello scorrimento
+    const n = String(ordine.indexOf(id) + 1).padStart(2, "0"), nome = (D.comuni.find((c) => c.id === id) || {}).nome || m.nome;
+    gsap.timeline({ overwrite: true })
+      .to([tn, tnome], { yPercent: -110 * verso, autoAlpha: 0, duration: 0.28, ease: "power2.in", stagger: 0.04 })
+      .add(() => { tn.textContent = n; tnome.textContent = nome; })
+      .fromTo([tn, tnome], { yPercent: 110 * verso, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.55, ease: "expo.out", stagger: 0.06 });
+    // il foglio si solleva di scatto a ogni comune nuovo
+    if (foglio && inclina) gsap.fromTo(foglio, { scale: 1 }, { scale: 1.035, duration: 0.5, ease: "power2.out", yoyo: true, repeat: 1, overwrite: true });
   }
+  // la rotta si disegna man mano che si scorrono i comuni; la barretta sotto la carta segna l'avanzamento
+  gsap.set(".terr-map .rotta", { drawSVG: "0%" });
+  ScrollTrigger.create({
+    trigger: "[data-comuni]", start: "top 55%", end: "bottom 55%", scrub: 0.6,
+    animation: gsap.timeline()
+      .to(".terr-map .rotta", { drawSVG: "100%", ease: "none" }, 0)
+      .to(".terr-prog i", { scaleX: 1, ease: "none" }, 0)
+  });
+  const largo = matchMedia("(min-width:1101px)").matches;
   $$(".comune").forEach((c) => {
     ScrollTrigger.create({ trigger: c, start: "top 55%", end: "bottom 55%", onEnter: () => flyTo(c.dataset.id), onEnterBack: () => flyTo(c.dataset.id) });
-    gsap.to($("img", c), { clipPath: "inset(0 0 0% 0)", duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: c, start: "top 80%" } });
-    gsap.from($$("h3,p", c), { y: 24, autoAlpha: 0, stagger: 0.08, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: c, start: "top 70%" } });
+    const fig = $(".cm-fig", c), img = $("img", c), h3 = $("h3", c), q = $("[data-cq]", c);
+    // la foto si apre dal basso e intanto scorre dentro la cornice
+    gsap.to(fig, { clipPath: "inset(0 0 0% 0)", duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: c, start: "top 80%" } });
+    if (largo) {
+      gsap.fromTo(img, { scale: 1.18, yPercent: -7 }, { scale: 1.04, yPercent: 7, ease: "none", scrollTrigger: { trigger: c, start: "top bottom", end: "bottom top", scrub: true } });
+      gsap.fromTo(c, { "--ny": "60px" }, { "--ny": "-60px", ease: "none", scrollTrigger: { trigger: c, start: "top bottom", end: "bottom top", scrub: true } });
+    }
+    // il nome del comune sale lettera per lettera da sotto la riga
+    const sp = SplitText.create(h3, { type: "chars", mask: "chars" });
+    gsap.from(sp.chars, { yPercent: 110, duration: 0.9, ease: "expo.out", stagger: 0.028, scrollTrigger: { trigger: c, start: "top 68%" } });
+    gsap.from($$("p", c), { y: 24, autoAlpha: 0, stagger: 0.08, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: c, start: "top 70%" } });
+    ScrollTrigger.create({ trigger: c, start: "top 72%", once: true, onEnter: () => counter(q, +q.dataset.cq, 1.6) });
   });
-  ScrollTrigger.create({ trigger: ".terr", start: "bottom 40%", onEnterBack: () => {}, onLeave: () => gsap.to(fly, { attr: { viewBox: full }, duration: 1.2, ease: "expo.inOut" }), onLeaveBack: () => gsap.to(fly, { attr: { viewBox: full }, duration: 1.2, ease: "expo.inOut" }) });
+  ScrollTrigger.create({ trigger: ".terr", start: "bottom 40%", onLeave: () => { attivo = null; gsap.to(fly, { attr: { viewBox: full }, duration: 1.2, ease: "expo.inOut" }); }, onLeaveBack: () => { attivo = null; gsap.to(fly, { attr: { viewBox: full }, duration: 1.2, ease: "expo.inOut" }); } });
   $$(".terr-map .pin").forEach((p) => p.addEventListener("click", () => { const t = $(`.comune[data-id="${p.dataset.id}"]`); lenis ? lenis.scrollTo(t, { offset: -90 }) : t.scrollIntoView(); }));
 
   // ---------- STORIA orizzontale ----------

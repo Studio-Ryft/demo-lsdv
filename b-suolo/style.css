@@ -70,7 +70,9 @@ html.intro-run body{overflow:hidden}
 /* ---------- HEADER ---------- */
 .hd{position:fixed;inset:0 0 auto;z-index:5000;display:flex;align-items:center;gap:1.6rem;padding:16px var(--gut);transition:transform .6s var(--ease),background .5s}
 /* niente backdrop-filter qui: sfocare sopra un video in scorrimento corrompe l'immagine su alcune GPU */
-.hd.solid{background:linear-gradient(rgba(23,11,6,.96),rgba(23,11,6,.86) 60%,rgba(23,11,6,.6))}
+/* barra fluttuante (niente backdrop-filter: sopra il video in scorrimento corrompe i fotogrammi) */
+.hd{transition:background .5s,padding .4s,inset .6s var(--ease),border-radius .6s var(--ease),box-shadow .6s}
+.hd.solid{inset:10px var(--gut) auto;padding:8px 10px 8px 22px;border:1px solid var(--faint);border-radius:100px;background:rgba(23,11,6,.92);box-shadow:0 20px 50px -24px rgba(0,0,0,.85)}
 .hd.hide{transform:translateY(-110%)}
 html.menu-open .hd{transform:none!important;background:var(--earth)}
 .hd-logo svg{display:block;height:44px;width:auto}

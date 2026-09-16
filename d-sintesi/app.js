@@ -191,7 +191,7 @@
   /* ================= MOTION ================= */
   const lenis = smooth({ lerp: 0.09 });
   let lastY = 0; const hd = $(".hd");
-  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 80); hd.classList.toggle("hide", y > lastY && y > 600); lastY = y; } });
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 80); lastY = y; } });
   $$(".hd-nav a").forEach((a) => {
     const t = $(a.getAttribute("href"));
     if (t) ScrollTrigger.create({ trigger: t, start: "top 50%", end: "bottom 50%", onToggle: (s) => a.classList.toggle("on", s.isActive) });
@@ -252,9 +252,20 @@
   // trasparenza in ingresso e in uscita dei blocchi
   $$("section").forEach((s) => {
     if (s.classList.contains("hero")) return;
-    gsap.fromTo(s, { autoAlpha: 0.2 }, { autoAlpha: 1, ease: "none", scrollTrigger: { trigger: s, start: "top 92%", end: "top 58%", scrub: 0.5 } });
-    gsap.to(s, { autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: s, start: "bottom 46%", end: "bottom 6%", scrub: 0.5 } });
+    s.classList.add("sfuma");
   });
+  // un solo calcolo per blocco, ricavato dalla posizione: salendo o scendendo il valore e sempre quello giusto
+  const sfuma = $$("section.sfuma");
+  const aggiornaVelo = () => {
+    const H = innerHeight;
+    sfuma.forEach((s) => {
+      const r = s.getBoundingClientRect();
+      const dentro = gsap.utils.clamp(0, 1, (0.92 * H - r.top) / (0.34 * H));
+      const fuori = gsap.utils.clamp(0, 1, (0.46 * H - r.bottom) / (0.40 * H));
+      s.style.opacity = (0.2 + 0.80 * Math.min(dentro, 1 - fuori)).toFixed(3);
+    });
+  };
+  gsap.ticker.add(aggiornaVelo);
 
   /* ---------- intro ---------- */
   const intro = $("#intro");

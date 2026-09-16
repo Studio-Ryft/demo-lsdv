@@ -207,7 +207,7 @@
 
   // header
   let lastY = 0; const hd = $(".hd");
-  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 60); hd.classList.toggle("hide", y > lastY && y > 500); lastY = y; } });
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: (st) => { const y = st.scroll(); hd.classList.toggle("solid", y > 60); lastY = y; } });
   $$(".hd-nav a").forEach((a) => { const t = $(a.getAttribute("href")); if (t) ScrollTrigger.create({ trigger: t, start: "top 50%", end: "bottom 50%", onToggle: (s) => a.classList.toggle("on", s.isActive) }); });
 
   // titoli
@@ -345,9 +345,20 @@
   /* ---------- trasparenza in ingresso e in uscita di ogni blocco ---------- */
   $$("section").forEach((s) => {
     if (s.classList.contains("hero")) return;
-    gsap.fromTo(s, { autoAlpha: 0.15 }, { autoAlpha: 1, ease: "none", scrollTrigger: { trigger: s, start: "top 92%", end: "top 55%", scrub: 0.5 } });
-    gsap.to(s, { autoAlpha: 0.15, ease: "none", scrollTrigger: { trigger: s, start: "bottom 45%", end: "bottom 8%", scrub: 0.5 } });
+    s.classList.add("sfuma");
   });
+  // un solo calcolo per blocco, ricavato dalla posizione: salendo o scendendo il valore e sempre quello giusto
+  const sfuma = $$("section.sfuma");
+  const aggiornaVelo = () => {
+    const H = innerHeight;
+    sfuma.forEach((s) => {
+      const r = s.getBoundingClientRect();
+      const dentro = gsap.utils.clamp(0, 1, (0.92 * H - r.top) / (0.37 * H));
+      const fuori = gsap.utils.clamp(0, 1, (0.45 * H - r.bottom) / (0.37 * H));
+      s.style.opacity = (0.15 + 0.85 * Math.min(dentro, 1 - fuori)).toFixed(3);
+    });
+  };
+  gsap.ticker.add(aggiornaVelo);
 
   /* ---------- il grappolo: zoom lento e acini che si accendono ---------- */
   gsap.fromTo(".gp-foto>img", { scale: 1.12 }, { scale: 1.02, ease: "none", scrollTrigger: { trigger: ".gp", start: "top bottom", end: "bottom top", scrub: true } });
