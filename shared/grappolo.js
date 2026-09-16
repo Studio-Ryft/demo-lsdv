@@ -1,27 +1,52 @@
-/* «Il grappolo della rete»: foto reale dei grappoli del territorio, un acino per ogni azienda.
-   Posizioni in percentuale sull'immagine 3:2. Usato dalle versioni B e D. */
+/* «Il grappolo della rete»: foto reale dei vigneti, un grappolo per ogni azienda.
+   Ogni punto è una bolla sferica con il logotipo adattato e luce al neon nei colori della vigna.
+   Posizioni e raggi rilevati dalla foto con sito/tools/acini.py. */
 (function () {
   "use strict";
   const ACINI = [
-    { x: 33.2, y: 15.9 }, { x: 13.8, y: 33.9 }, { x: 21.0, y: 34.9 }, { x: 42.3, y: 36.4 }, { x: 10.3, y: 40.5 }, { x: 34.2, y: 43.6 }, { x: 19.8, y: 44.7 }, { x: 8.6, y: 47.8 }, { x: 65.4, y: 54.9 }, { x: 41.9, y: 57.1 }, { x: 10.9, y: 60.5 }, { x: 57.8, y: 61.7 }, { x: 13.7, y: 71.3 }, { x: 31.3, y: 76.1 }, { x: 21.8, y: 78.9 }, { x: 13.0, y: 79.2 }, { x: 9.7, y: 89.4 }
+    { x: 39.1, y: 11.6, r: 3.0 }, { x: 42.2, y: 22.8, r: 3.3 }, { x: 18.2, y: 36.4, r: 3.4 },
+    { x: 10.1, y: 42.2, r: 1.9 }, { x: 62.4, y: 39.4, r: 2.8 }, { x: 49.8, y: 43.7, r: 3.4 },
+    { x: 65.3, y: 55.3, r: 1.7 }, { x: 13.8, y: 60.6, r: 3.4 }, { x: 24.4, y: 58.3, r: 3.4 },
+    { x: 57.8, y: 61.8, r: 1.6 }, { x: 48.1, y: 67.8, r: 2.6 }, { x: 44.4, y: 76.1, r: 3.3 },
+    { x: 13.0, y: 77.8, r: 2.9 }, { x: 23.2, y: 77.3, r: 2.7 }, { x: 11.9, y: 91.2, r: 2.2 },
+    { x: 23.6, y: 91.4, r: 1.8 }, { x: 66.2, y: 73.0, r: 2.6 }
   ];
   const LOGHI = { "Alois": "alois", "Canestrini": "canestrini", "I Vignai del Casavecchia": "vignai", "Masseria Piccirillo": "piccirillo", "Sagliocco": "sagliocco", "Scaramuzzo": "scaramuzzo", "Sclavia": "sclavia" };
+  const iniziali = (n) => n.replace(/[^A-Za-zÀ-ÿ ]/g, " ").split(/\s+/).filter((w) => w.length > 2).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+
+  /* filtro che gonfia il logotipo come su una sfera */
+  const FILTRO = `<svg class="gp-defs" aria-hidden="true" width="0" height="0"><defs>
+      <radialGradient id="gpMappa" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#808080"/><stop offset="62%" stop-color="#9b9b9b"/><stop offset="100%" stop-color="#4a4a4a"/>
+      </radialGradient>
+      <filter id="gpSfera" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feImage href="#gpSferaMappa" result="mappa"/>
+        <feDisplacementMap in="SourceGraphic" in2="mappa" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <circle id="gpSferaMappa" cx="50" cy="50" r="50" fill="url(#gpMappa)"/>
+    </defs></svg>`;
 
   function crea(root, opt) {
     const { D, esc } = window.LSDVCore, cartella = opt.loghi || "loghi-chiari";
     const az = D.aziende;
-    root.innerHTML = `<figure class="gp-foto">
+    root.innerHTML = FILTRO + `<figure class="gp-foto">
         <img src="../shared/img/grappolo.webp" srcset="../shared/img/grappolo-mobile.webp 1100w, ../shared/img/grappolo.webp 2000w" sizes="100vw" alt="Grappoli di uva nera nei vigneti dell'Alta Campania">
         <div class="gp-grana" aria-hidden="true"></div>
         <ul class="gp-acini">${az.map((a, i) => {
           const p = ACINI[i % ACINI.length], n = a.split(" (")[0].split(" · ")[0], l = LOGHI[n] || LOGHI[a];
-          return `<li class="gp-a" style="left:${p.x}%;top:${p.y}%" data-i="${i}">
-            <button type="button" aria-describedby="gp-card" data-snd="hover"><span class="gp-ring"></span><span class="sr">${esc(a)}</span></button>
-            <span class="gp-nome">${esc(n)}</span>
-            <span class="gp-logo">${l ? `<img src="../shared/img/${cartella}/${l}.png" alt="" loading="lazy">` : ""}</span>
+          return `<li class="gp-a" style="left:${p.x}%;top:${p.y}%;--d:${(p.r * 2).toFixed(2)}" data-i="${i}">
+            <button type="button" data-snd="hover">
+              <span class="gp-bolla">
+                <span class="gp-mark${l ? "" : " mono"}"${l ? ` style="--logo:url(../shared/img/${cartella}/${l}.png)"` : ""}>${l ? "" : iniziali(n)}</span>
+                <span class="gp-gloss"></span>
+              </span>
+              <span class="gp-ring"></span><span class="gp-ring due"></span>
+              <span class="gp-lab">scopri</span>
+              <span class="sr">${esc(a)}</span>
+            </button>
           </li>`;
         }).join("")}</ul>
-        <figcaption class="gp-cap">Diciassette acini, diciassette aziende · foto dai vigneti dell'Alta Campania</figcaption>
+        <figcaption class="gp-cap">Diciassette grappoli, diciassette aziende · foto dai vigneti dell'Alta Campania</figcaption>
       </figure>
       <aside class="gp-card" id="gp-card" hidden aria-live="polite"><div class="gp-card-in"><span class="gp-n"></span><span class="gp-l"></span><b></b><small>azienda aderente della Strada</small></div></aside>`;
 
@@ -32,15 +57,16 @@
       card.querySelector(".gp-n").textContent = String(i + 1).padStart(2, "0") + " / " + az.length;
       card.querySelector(".gp-l").innerHTML = l ? `<img src="../shared/img/${cartella}/${l}.png" alt="">` : "";
       const r = li.getBoundingClientRect(), fr = foto.getBoundingClientRect();
-      card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, 130), fr.width - 130) + "px";
+      card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, 140), fr.width - 140) + "px";
       card.style.top = r.top - fr.top + "px";
       card.hidden = false;
       root.querySelectorAll(".gp-a").forEach((x) => x.classList.toggle("on", x === li));
-      if (window.gsap && !window.LSDVCore.RM) window.gsap.fromTo(card, { autoAlpha: 0, y: 10, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.6)" });
+      if (window.gsap && !window.LSDVCore.RM) window.gsap.fromTo(card, { autoAlpha: 0, y: 12, scale: 0.95 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.7)" });
       window.LSDVSound && window.LSDVSound.play("hover");
     };
     const nascondi = () => { card.hidden = true; root.querySelectorAll(".gp-a").forEach((x) => x.classList.remove("on")); };
-    root.querySelectorAll(".gp-a").forEach((li) => {
+    root.querySelectorAll(".gp-a").forEach((li, k) => {
+      li.style.setProperty("--ritardo", (k % 6) * 0.45 + "s");
       li.addEventListener("pointerenter", () => mostra(li));
       li.addEventListener("focusin", () => mostra(li));
       li.addEventListener("click", () => mostra(li));

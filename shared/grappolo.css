@@ -1,33 +1,83 @@
-/* «Il grappolo della rete» — stile condiviso, i colori arrivano dalle variabili della versione */
+/* «Il grappolo della rete» — bolle sferiche con logotipo e neon nei colori della vigna.
+   Colori: foglia #ADC136, tralcio #4B5D23, uva #5B2A46, vinaccia #8E3942, tramonto #D9A24A. */
 .gp{position:relative}
+.gp-defs{position:absolute;width:0;height:0;overflow:hidden}
 .gp-foto{position:relative;border-radius:var(--gp-r,26px);overflow:hidden;background:#12160c}
-.gp-foto>img{width:100%;height:auto;display:block;transform:scale(1.06);will-change:transform}
-.gp-grana{position:absolute;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:soft-light;
+.gp-foto>img{width:100%;height:auto;display:block;transform:scale(1.04);will-change:transform}
+.gp-grana{position:absolute;inset:0;pointer-events:none;opacity:.3;mix-blend-mode:soft-light;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
-.gp-foto::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 70% at 35% 50%,transparent 40%,rgba(10,6,3,.45) 100%)}
+.gp-foto::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(75% 75% at 32% 50%,transparent 45%,rgba(10,6,3,.5) 100%)}
 .gp-acini{position:absolute;inset:0;list-style:none;margin:0;padding:0;z-index:2}
-.gp-a{position:absolute;transform:translate(-50%,-50%)}
-.gp-a button{width:clamp(34px,3.4vw,52px);height:clamp(34px,3.4vw,52px);border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;padding:0}
-.gp-ring{width:100%;height:100%;border-radius:50%;border:2px solid var(--gp-acc,#ADC136);opacity:.55;
-  box-shadow:0 0 0 0 rgba(173,193,54,.5),inset 0 0 18px rgba(173,193,54,.25);transition:opacity .35s,transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
-.gp-ring::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gp-acc,#ADC136);box-shadow:0 0 12px var(--gp-acc,#ADC136)}
-.gp-a button:hover .gp-ring,.gp-a.on .gp-ring,.gp-a button:focus-visible .gp-ring{opacity:1;transform:scale(1.25);box-shadow:0 0 30px 6px rgba(173,193,54,.35),inset 0 0 26px rgba(173,193,54,.45)}
-.gp-a::before{content:"";position:absolute;left:50%;top:50%;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(rgba(173,193,54,.3),transparent 62%);opacity:0;transition:opacity .5s}
+
+/* --- il punto: cerchio centrato sul grappolo, diametro = quello del grappolo --- */
+.gp-a{position:absolute;transform:translate(-50%,-50%);--dim:calc(var(--d,5) * 1%)}
+.gp-a button{position:relative;display:block;width:calc(var(--d,5) * 1vw);height:calc(var(--d,5) * 1vw);min-width:58px;min-height:58px;
+  padding:0;border:0;background:transparent;cursor:pointer;border-radius:50%;animation:gpRespiro 6s var(--ritardo,0s) ease-in-out infinite}
+@keyframes gpRespiro{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+/* sfera di vetro con il logotipo dentro */
+.gp-bolla{position:absolute;inset:0;border-radius:50%;overflow:hidden;filter:drop-shadow(0 0 10px rgba(173,193,54,.25));
+  background:radial-gradient(circle at 34% 26%,rgba(234,245,176,.30),rgba(63,30,48,.62) 44%,rgba(41,18,32,.78) 74%,rgba(16,8,11,.86) 100%);
+  box-shadow:inset 0 0 22px rgba(10,6,4,.7),inset 0 6px 14px rgba(242,232,213,.16);
+  border:1px solid rgba(242,232,213,.22);backdrop-filter:blur(2px) saturate(1.1);-webkit-backdrop-filter:blur(2px) saturate(1.1);
+  transition:box-shadow .5s,border-color .4s,transform .6s cubic-bezier(.16,1,.3,1)}
+.gp-mark{position:absolute;inset:19%;filter:url(#gpSfera) drop-shadow(0 0 6px rgba(234,245,176,.55));
+  -webkit-mask-image:var(--logo);mask-image:var(--logo);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;
+  background:linear-gradient(150deg,#FFFFF2,#EAF5B0 38%,#F2C87E 76%,#D98A93);opacity:1;
+  transition:opacity .4s,transform .6s cubic-bezier(.16,1,.3,1)}
+.gp-mark.mono{inset:26%;filter:none;-webkit-mask-image:none;mask-image:none;background:none;display:grid;place-items:center;
+  font:400 clamp(11px,1.1vw,17px)/1 var(--gp-fs,Georgia,serif);letter-spacing:.04em;color:#EAF5B0;text-shadow:0 0 10px rgba(173,193,54,.6)}
+.gp-gloss{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.5),rgba(255,255,255,.06) 34%,transparent 52%),
+             radial-gradient(circle at 72% 84%,rgba(217,162,74,.28),transparent 46%)}
+
+/* anelli al neon: foglia fuori, uva dentro */
+.gp-ring{position:absolute;inset:-8%;border-radius:50%;border:1.5px solid rgba(173,193,54,.6);pointer-events:none;
+  box-shadow:0 0 14px rgba(173,193,54,.28),inset 0 0 12px rgba(173,193,54,.16);transition:opacity .4s,transform .6s}
+.gp-ring.due{inset:-20%;border-color:rgba(142,57,66,.5);box-shadow:0 0 18px rgba(142,57,66,.3);
+  animation:gpOnda 4.5s var(--ritardo,0s) cubic-bezier(.16,1,.3,1) infinite}
+@keyframes gpOnda{0%{transform:scale(.72);opacity:0}35%{opacity:.85}100%{transform:scale(1.5);opacity:0}}
+.gp-lab{position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);white-space:nowrap;pointer-events:none;
+  font:600 9px/1 var(--fm,monospace);letter-spacing:.22em;text-transform:uppercase;color:#EAF5B0;opacity:0;transition:opacity .35s,transform .45s;
+  text-shadow:0 0 10px rgba(173,193,54,.8)}
+
+/* stato attivo: la sfera si accende */
+.gp-a button:hover,.gp-a button:focus-visible{animation-play-state:paused}
+.gp-a button:hover .gp-bolla,.gp-a button:focus-visible .gp-bolla,.gp-a.on .gp-bolla{
+  transform:scale(1.14);border-color:rgba(234,245,176,.8);
+  box-shadow:0 0 26px 6px rgba(173,193,54,.4),0 0 60px 14px rgba(91,42,70,.35),inset 0 0 26px rgba(234,245,176,.25)}
+.gp-a button:hover .gp-mark,.gp-a.on .gp-mark{opacity:1;transform:scale(1.06)}
+.gp-a button:hover .gp-ring,.gp-a.on .gp-ring{transform:scale(1.18);border-color:#ADC136;box-shadow:0 0 26px rgba(173,193,54,.6),inset 0 0 18px rgba(173,193,54,.3)}
+.gp-a button:hover .gp-lab,.gp-a button:focus-visible .gp-lab,.gp-a.on .gp-lab{opacity:1;transform:translateX(-50%) translateY(2px)}
+.gp-a button::after{content:"";position:absolute;inset:-14%;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:conic-gradient(from var(--giro,0deg),transparent 0 62%,rgba(234,245,176,.9) 76%,rgba(142,57,66,.8) 86%,transparent 96%);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0)}
+.gp-a button:hover::after,.gp-a button:focus-visible::after,.gp-a.on button::after{opacity:1;animation:gpGiro 2.4s linear infinite}
+@keyframes gpGiro{to{--giro:360deg}}
+@property --giro{syntax:"<angle>";inherits:false;initial-value:0deg}
+.gp-a::before{content:"";position:absolute;left:50%;top:50%;width:230px;height:230px;margin:-115px 0 0 -115px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(rgba(173,193,54,.26),rgba(91,42,70,.16) 45%,transparent 66%);opacity:0;transition:opacity .5s}
 .gp-a.on::before{opacity:1}
-.gp-nome,.gp-logo{display:none}
-.gp-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:1.4rem clamp(14px,2vw,24px);font:500 10.5px/1.4 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;color:rgba(242,232,213,.8);background:linear-gradient(0deg,rgba(10,6,3,.75),transparent)}
-.gp-card{position:absolute;z-index:4;transform:translate(-50%,calc(-100% - 26px));pointer-events:none;min-width:250px}
-.gp-card-in{background:var(--gp-card,rgba(23,11,6,.92));border:1px solid var(--gp-bord,rgba(242,232,213,.2));border-radius:16px;padding:1rem 1.1rem;text-align:center;box-shadow:0 24px 50px -22px rgba(0,0,0,.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.gp-card .gp-n{display:block;font:500 10px/1 var(--fm,monospace);letter-spacing:.2em;color:var(--gp-acc,#ADC136);margin-bottom:.6rem}
+
+.gp-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:1.4rem clamp(14px,2vw,24px);font:500 10.5px/1.4 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;color:rgba(242,232,213,.8);background:linear-gradient(0deg,rgba(10,6,3,.78),transparent)}
+.gp-card{position:absolute;z-index:4;transform:translate(-50%,calc(-100% - 30px));pointer-events:none;min-width:250px}
+.gp-card-in{background:var(--gp-card,rgba(20,10,8,.93));border:1px solid rgba(173,193,54,.4);border-radius:16px;padding:1rem 1.1rem;text-align:center;
+  box-shadow:0 24px 50px -22px rgba(0,0,0,.85),0 0 30px rgba(173,193,54,.14)}
+.gp-card .gp-n{display:block;font:500 10px/1 var(--fm,monospace);letter-spacing:.2em;color:#ADC136;margin-bottom:.6rem}
 .gp-card .gp-l img{max-width:130px;max-height:52px;margin:0 auto .6rem;object-fit:contain}
-.gp-card b{display:block;font:400 1.5rem/1.05 var(--gp-fs,Georgia,serif);color:var(--gp-txt,#F2E8D5)}
-.gp-card small{display:block;margin-top:.3rem;font:500 9.5px/1 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;opacity:.6;color:var(--gp-txt,#F2E8D5)}
+.gp-card b{display:block;font:400 1.5rem/1.05 var(--gp-fs,Georgia,serif);color:#F2E8D5}
+.gp-card small{display:block;margin-top:.3rem;font:500 9.5px/1 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;opacity:.6;color:#F2E8D5}
 .gp-hint{margin-top:1rem;font:500 10.5px/1 var(--fm,monospace);letter-spacing:.18em;text-transform:uppercase;color:var(--gp-acc,#ADC136)}
+
 @media (max-width:760px){
-  .gp-a button{width:40px;height:40px}
-  .gp-card{min-width:190px}
-  .gp-card b{font-size:1.2rem}
+  .gp-a button{min-width:44px;min-height:44px;width:calc(var(--d,5) * 1.6vw);height:calc(var(--d,5) * 1.6vw)}
+  .gp-card{min-width:180px}
+  .gp-card b{font-size:1.15rem}
   .gp-cap{font-size:9px;padding:1rem 12px}
+  .gp-lab{display:none}
 }
-@media (prefers-reduced-motion:reduce){.gp-foto>img{transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .gp-foto>img{transform:none}
+  .gp-a button,.gp-ring.due{animation:none}
+  .gp-mark{filter:none}
+}
