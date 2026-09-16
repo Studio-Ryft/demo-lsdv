@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Strada del Vino · Casavecchia di Pontelatone — Terra e persone</title>
+<meta name="description" content="Demo D · Strada del Vino Casavecchia di Pontelatone ETS: la sintesi fra il racconto scientifico del suolo e la rete di persone.">
+<link rel="icon" href="../shared/pittogramma.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,50;1,9..144,300..600,50&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Vai al contenuto</a>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="in-wrap"><svg class="in-pitto" data-pitto></svg><p class="in-w">Terra <em>e</em> persone</p></div>
+  <button class="in-skip" type="button">Salta intro</button>
+</div>
+
+<header class="hd">
+  <a class="hd-logo" href="#main" aria-label="Strada del Vino Casavecchia di Pontelatone"><svg data-logo></svg></a>
+  <nav class="hd-nav" aria-label="Principale">
+    <a href="#storia">Storia</a><a href="#territorio">Territorio</a><a href="#suolo">Il suolo</a><a href="#rete">La rete</a><a href="#eventi">Eventi</a><a href="#racconti">Racconti</a>
+  </nav>
+  <button class="hd-snd" type="button" data-sound-toggle aria-pressed="false" title="Effetti sonori"><i aria-hidden="true"></i><span class="sr" data-sound-label>Suono spento</span></button>
+  <a class="hd-cta" href="#aderisci" data-snd="tap">Aderisci</a>
+  <button class="hd-burger" type="button" aria-expanded="false" aria-controls="mnav"><i></i><i></i><span class="sr">Menu</span></button>
+</header>
+<div class="mnav" id="mnav" hidden><nav aria-label="Menu mobile"></nav></div>
+
+<main id="main">
+  <section class="hero" id="home">
+    <div class="hero-txt">
+      <p class="kick">Ente del Terzo Settore · Alta Campania</p>
+      <h1><span>La terra</span> <span>si racconta</span> <em>con le persone.</em></h1>
+      <p class="lead" data-missione></p>
+      <div class="acts"><a class="btn solid" href="#suolo" data-snd="tap">Scendi nel suolo</a><a class="btn line" href="#aderisci" data-snd="tap">Entra nella rete</a></div>
+      <ul class="hero-n" data-nums></ul>
+    </div>
+    <div class="hero-media">
+      <div class="hero-vidwrap">
+        <video class="hero-vid on" muted playsinline preload="auto" poster="../shared/img/vendemmia-poster.webp"></video>
+        <video class="hero-vid" muted playsinline preload="none"></video>
+        <div class="hero-veil" aria-hidden="true"></div>
+        <p class="hero-cap" data-vcap>Vendemmia tra i filari</p>
+      </div>
+      <div class="hero-map" data-map></div>
+    </div>
+  </section>
+
+  <section class="quote" id="manifesto">
+    <p class="big" data-quote></p>
+    <p class="who" data-quote-a></p>
+    <div class="pill3" data-manifesto></div>
+  </section>
+
+  <section class="storia" id="storia">
+    <div class="st-head"><p class="kick">La storia</p><h2>Dal vino di Plinio<br><em>all'Anteprima.</em></h2></div>
+    <div class="st-wrap">
+      <p class="st-big" aria-hidden="true" data-year></p>
+      <div class="st-list" data-storia></div>
+    </div>
+  </section>
+
+  <section class="terr" id="territorio">
+    <div class="terr-map"><div data-map2></div><p class="terr-q"><b data-tq>—</b> m s.l.m.</p></div>
+    <div class="terr-list">
+      <p class="kick">Il territorio</p><h2>Otto comuni,<br><em>una sola carta.</em></h2>
+      <p class="sub">Curve di livello dai dati altimetrici reali dell'area della DOC. Passa sui nomi: la carta ti segue.</p>
+      <ol data-comuni></ol>
+    </div>
+  </section>
+
+  <section class="suolo" id="suolo">
+    <div class="su-head"><p class="kick">Il momento scientifico</p><h2>Il suolo<br><em>parla.</em></h2>
+      <p>Analisi chimico-fisiche su 50 vigneti, tre macro aree, uno studio sull'aroma della Federico II. È la parte che la stampa specializzata chiede e che nessun'altra Strada racconta.</p></div>
+    <div class="su-strati" data-suoli></div>
+    <div class="su-radar">
+      <div class="rv" data-rv role="group" aria-label="Vitigno"></div>
+      <svg class="radar" viewBox="-185 -165 370 340" data-radar role="img" aria-label="Radar aromatico dei tre suoli"></svg>
+      <ul class="rleg" data-rleg></ul>
+    </div>
+  </section>
+
+  <section class="rete" id="rete">
+    <div class="re-head"><p class="kick">La rete</p><h2>Diciassette aziende,<br><em>un solo filo.</em></h2></div>
+    <div class="giostra">
+      <div class="giostra-stage"><div class="giostra-ring" data-ring></div></div>
+      <div class="giostra-ui">
+        <button class="gbtn" type="button" data-gprev aria-label="Azienda precedente" data-snd="slide">←</button>
+        <p class="glbl" aria-live="polite"><b data-gname></b><span><i data-gnum>01</i> / 17 · azienda aderente</span></p>
+        <button class="gbtn" type="button" data-gnext aria-label="Azienda successiva" data-snd="slide">→</button>
+      </div>
+      <ul class="sr" data-aziende></ul>
+    </div>
+    <div class="percorsi" data-percorsi></div>
+  </section>
+
+  <section class="eventi" id="eventi">
+    <div class="ev-head"><p class="kick">Eventi</p><h2>Alla cieca,<br><em>con la storia.</em></h2></div>
+    <article class="ev-main" data-evmain></article>
+    <div class="ev-next" data-evnext></div>
+  </section>
+
+  <section class="racconti" id="racconti">
+    <div class="ra-head"><p class="kick">Racconti</p><h2>Voci, immagini,<br><em>quaderni.</em></h2></div>
+    <div class="voci" data-vlog></div>
+    <div class="mag" data-blog></div>
+  </section>
+
+  <section class="ad" id="aderisci">
+    <div class="ad-head"><p class="kick">Aderisci e sostieni</p><h2>La Strada cresce<br><em>con chi la percorre.</em></h2><p data-adintro></p></div>
+    <div class="ad-tabs" role="tablist"><button role="tab" aria-selected="true" data-aud="persone" data-snd="select">Per le persone</button><button role="tab" aria-selected="false" data-aud="aziende" data-snd="select">Per aziende ed enti</button></div>
+    <div class="tiers" data-tiers></div>
+    <p class="tiers-note">Quote indicative, ricavate dal confronto con altre Strade del Vino italiane: gli importi reali li stabilisce l'assemblea dei soci.</p>
+    <div class="ad-flow">
+      <div class="card3d" data-card><div class="card-in">
+        <div class="card-f"><svg class="card-logo" data-logow></svg><p class="card-k" data-ck>Tessera sostenitore</p><p class="card-name" data-cname>Il tuo nome</p><p class="card-meta"><span data-ccat>Categoria</span><span>N. <b data-cnum>018</b></span></p></div>
+        <div class="card-b"><p>Benvenuto nella rete della<br><b>Strada del Vino</b><br>Casavecchia di Pontelatone</p><p class="small">Demo · tessera d'esempio</p></div>
+      </div></div>
+      <form class="ad-form" novalidate data-form>
+        <div class="ad-prog" data-progress><i></i></div>
+        <fieldset data-step><legend>Chi sei?</legend><div class="cats" data-cats></div><button class="btn solid" data-next data-snd="step">Continua</button></fieldset>
+        <fieldset data-step hidden><legend>Presentati</legend>
+          <label class="fld"><span>Nome e cognome</span><input name="nome" required autocomplete="name"></label>
+          <label class="fld"><span>Realtà (se c'è)</span><input name="azienda" autocomplete="organization"></label>
+          <label class="fld"><span>Comune</span><input name="comune" required list="lcomuni"></label>
+          <label class="fld"><span>Email</span><input name="email" type="email" required autocomplete="email"></label>
+          <div class="row"><button class="btn line" data-prev data-snd="close">Indietro</button><button class="btn solid" data-next data-snd="step">Continua</button></div></fieldset>
+        <fieldset data-step hidden><legend>Ultimo passo</legend>
+          <label class="fld"><span>Un messaggio per noi</span><textarea name="messaggio" rows="4"></textarea></label>
+          <label class="chk fld"><input type="checkbox" name="privacy" required><span>Acconsento al trattamento dei dati per la candidatura.</span></label>
+          <div class="row"><button class="btn line" data-prev data-snd="close">Indietro</button><button class="btn solid" type="submit" data-snd="open">Invia</button></div></fieldset>
+        <div class="ad-ok" hidden><h3>Benvenuto nella rete.</h3><p data-okmsg></p><p class="small">Demo: nessun dato inviato.</p></div>
+        <datalist id="lcomuni"></datalist>
+      </form>
+    </div>
+    <ol class="passi" data-passi></ol>
+  </section>
+</main>
+
+<footer class="ft">
+  <div class="ft-top"><svg class="ft-logo" data-logo></svg><p data-fcit></p></div>
+  <div class="ft-grid">
+    <div><h4>Contatti</h4><p data-contatti></p></div>
+    <div><h4>Con</h4><p data-partner></p></div>
+    <div><h4>Newsletter</h4><form class="nl" onsubmit="event.preventDefault();this.classList.add('ok')"><input type="email" required placeholder="La tua email" aria-label="Email"><button data-snd="tap">Iscriviti</button><span>Grazie. (demo)</span></form></div>
+  </div>
+  <p class="ft-legal">© 2026 Strada del Vino Casavecchia di Pontelatone · ETS · Demo di progetto LDV MEDIAZIONE — Studio Ryft</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/DrawSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script src="../shared/data.js"></script>
+<script src="../shared/territorio.js"></script>
+<script src="../shared/brand.js"></script>
+<script src="../shared/aromi.js"></script>
+<script src="../shared/sound.js"></script>
+<script src="../shared/core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Strada del Vino · Casavecchia di Pontelatone — Tre direzioni per il sito</title>
+<title>Strada del Vino · Casavecchia di Pontelatone — Quattro direzioni per il sito</title>
 <link rel="icon" href="shared/pittogramma.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,8 +18,8 @@ header div{max-width:560px}
 header h1{font:400 clamp(2rem,4vw,3.4rem)/1 "Fraunces",serif;letter-spacing:-.02em}
 header h1 em{color:var(--olive)}
 header p{margin-top:.7rem;color:var(--mute)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);margin-top:clamp(24px,3vw,44px)}
-.dir{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;text-decoration:none;min-height:560px;transition:transform .7s cubic-bezier(.16,1,.3,1),box-shadow .7s}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,26px);margin-top:clamp(24px,3vw,44px)}
+.dir{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;text-decoration:none;min-height:600px;transition:transform .7s cubic-bezier(.16,1,.3,1),box-shadow .7s}
 .dir:hover{transform:translateY(-8px);box-shadow:0 40px 60px -30px rgba(40,20,10,.5)}
 .dir .top{position:relative;flex:1;overflow:hidden}
 .dir .top img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.16,1,.3,1)}
@@ -52,16 +52,23 @@ header p{margin-top:.7rem;color:var(--mute)}
 .c .lt{background:var(--cream);color:var(--olive)}
 .c h2{font-family:"Fraunces",serif}.c h2 em{color:var(--chart)}
 .c .go b{background:var(--chart);color:var(--walnut)}
+.d{background:var(--ivory);color:var(--walnut);border:1.5px solid var(--walnut)}
+.d .top img{filter:saturate(1.05)}
+.d .top::after{background:linear-gradient(0deg,var(--ivory) 16%,rgba(242,232,213,.5) 46%,rgba(242,232,213,0) 74%)}
+.d .lt{background:var(--olive);color:var(--cream)}
+.d h2{font-family:"Fraunces",serif}.d h2 em{color:var(--olive)}
+.d .go b{background:var(--olive);color:var(--cream)}
 .note{margin-top:clamp(24px,3vw,40px);display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;font-size:14px;color:var(--mute);border-top:1px solid rgba(68,36,19,.2);padding-top:1.4rem}
 .note b{color:var(--walnut)}
 footer{margin-top:2rem;font-size:12px;color:var(--mute)}
-@media (max-width:1000px){.grid{grid-template-columns:1fr}.dir{min-height:480px}.note{grid-template-columns:1fr}}
+@media (max-width:1300px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:820px){.grid{grid-template-columns:1fr}.dir{min-height:480px}.note{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
   <svg data-logo aria-label="Strada del Vino Casavecchia di Pontelatone"></svg>
-  <div><h1>Il sito della Strada: <em>tre direzioni.</em></h1><p>Stessi contenuti verificati, stesso marchio, tre modi diversi di raccontare l'Alta Campania. Le animazioni partono con lo scorrimento: aprite ogni demo a schermo intero.</p></div>
+  <div><h1>Il sito della Strada: <em>quattro direzioni.</em></h1><p>Stessi contenuti verificati, stesso marchio, quattro modi diversi di raccontare l'Alta Campania. Le animazioni partono con lo scorrimento: aprite ogni demo a schermo intero.</p></div>
 </header>
 <main class="grid">
   <a class="dir a" href="a-archivio/index.html?intro">
@@ -80,6 +87,12 @@ footer{margin-top:2rem;font-size:12px;color:var(--mute)}
     <div class="top"><img src="shared/img/vigna-lmp02008.webp" alt=""><span class="lt">C · Comunità</span><div class="ti"><h2>Il<br><em>filo.</em></h2></div></div>
     <div class="bot"><p>Luce di settembre, persone, rete. La direzione che converte meglio in adesioni.</p>
       <ul><li>Un filo verde che cuce tutta la pagina</li><li>Costellazione della rete trascinabile, «aggiungi la tua realtà»</li><li>Percorsi animati su carta reale, video verticali</li><li>Tessera che si compila mentre scrivi</li></ul>
+      <p class="go">Apri la demo <b>→</b></p></div>
+  </a>
+  <a class="dir d" href="d-sintesi/index.html?intro">
+    <div class="top"><img src="shared/img/vendemmia-tramonto-poster.webp" alt=""><span class="lt">D · Sintesi</span><div class="ti"><h2>Terra<br><em>e persone.</em></h2></div></div>
+    <div class="bot"><p>La via di mezzo fra la B e la C: calore e adesioni, con un blocco scientifico al centro.</p>
+      <ul><li>Hero con carta reale e tre video in rotazione</li><li>Blocco scuro «Il suolo parla» con radar degli aromi</li><li>Carta che segue i comuni al passaggio del mouse</li><li>Giostra 3D dei logotipi, tessera e quote</li></ul>
       <p class="go">Apri la demo <b>→</b></p></div>
   </a>
 </main>
