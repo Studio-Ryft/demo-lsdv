@@ -206,11 +206,11 @@
     $(".in-skip").addEventListener("click", skip); addEventListener("keydown", (e) => e.key === "Escape" && skip(), { once: true });
     addEventListener("wheel", skip, { once: true, passive: true }); addEventListener("touchmove", skip, { once: true, passive: true });
   } else { intro.remove(); heroIn(0.1); }
-  gsap.to(".hero-vid", { yPercent: 12, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-  // appena inizia lo scorrimento il video si attenua sotto il velo di brand
+  // parallasse e attenuazione agiscono sul contenitore, mai sul video:
+  // animare filtri o opacità sull'elemento <video> rompe la decodifica hardware su alcune schede
+  gsap.to(".hero-vidwrap", { yPercent: 10, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.4 } })
-    .to(".hero-veil", { opacity: 0.88, ease: "power1.in" }, 0)
-    .to(".hero-vid", { opacity: 0.55, filter: "saturate(.8)", ease: "power1.in" }, 0);
+    .to(".hero-veil", { opacity: 0.92, ease: "power1.in" }, 0);
   gsap.to(".hero-copy", { yPercent: -30, autoAlpha: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "30% top", end: "90% top", scrub: true } });
   if (fine) { const hc = $(".hero-cont"); addEventListener("pointermove", (e) => gsap.to(hc, { x: (e.clientX / innerWidth - 0.5) * -40, y: (e.clientY / innerHeight - 0.5) * -30, duration: 1.4, ease: "power3.out" })); }
 
