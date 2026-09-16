@@ -59,7 +59,10 @@
   background:radial-gradient(rgba(173,193,54,.26),rgba(91,42,70,.16) 45%,transparent 66%);opacity:0;transition:opacity .5s}
 .gp-a.on::before{opacity:1}
 
-.gp-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:1.4rem clamp(14px,2vw,24px);font:500 10.5px/1.4 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;color:rgba(242,232,213,.8);background:linear-gradient(0deg,rgba(10,6,3,.78),transparent)}
+.gp-cap{position:absolute;right:clamp(12px,1.6vw,22px);bottom:clamp(12px,1.6vw,22px);z-index:2;max-width:46%;text-align:right;
+  padding:.55rem .85rem;border-radius:999px;font:500 9.5px/1.4 var(--fm,monospace);letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(242,232,213,.86);background:rgba(16,9,6,.5);border:1px solid rgba(242,232,213,.16);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .gp-card{position:absolute;z-index:4;transform:translate(-50%,calc(-100% - 30px));pointer-events:none;min-width:250px}
 .gp-card-in{background:var(--gp-card,rgba(20,10,8,.93));border:1px solid rgba(173,193,54,.4);border-radius:16px;padding:1rem 1.1rem;text-align:center;
   box-shadow:0 24px 50px -22px rgba(0,0,0,.85),0 0 30px rgba(173,193,54,.14)}
@@ -73,7 +76,7 @@
   .gp-a button{min-width:44px;min-height:44px;width:calc(var(--d,5) * 1.6vw);height:calc(var(--d,5) * 1.6vw)}
   .gp-card{min-width:180px}
   .gp-card b{font-size:1.15rem}
-  .gp-cap{font-size:9px;padding:1rem 12px}
+  .gp-cap{font-size:8.5px;max-width:64%;padding:.45rem .7rem}
   .gp-lab{display:none}
 }
 @media (prefers-reduced-motion:reduce){
