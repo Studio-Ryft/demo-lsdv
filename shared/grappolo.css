@@ -11,7 +11,7 @@
 
 /* --- il punto: cerchio centrato sul grappolo, diametro = quello del grappolo --- */
 .gp-a{position:absolute;transform:translate(-50%,-50%);--dim:calc(var(--d,5) * 1%)}
-.gp-a button{position:relative;display:block;width:calc(var(--d,5) * 1vw);height:calc(var(--d,5) * 1vw);min-width:58px;min-height:58px;
+.gp-a button{position:relative;display:block;width:calc(var(--d,5) * 1vw);height:calc(var(--d,5) * 1vw);min-width:46px;min-height:46px;
   padding:0;border:0;background:transparent;cursor:pointer;border-radius:50%;animation:gpRespiro 6s var(--ritardo,0s) ease-in-out infinite}
 @keyframes gpRespiro{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 
