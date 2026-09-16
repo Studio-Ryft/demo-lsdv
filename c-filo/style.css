@@ -329,3 +329,15 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
   .thread{display:none}
   .scard{position:relative;top:0}
 }
+
+/* ---------- rifiniture mobile ---------- */
+@media (max-width:640px){
+  .hero-t{font-size:clamp(2rem,8.4vw,2.9rem)}
+  .hero-logo{width:140px}
+  .hero-count{bottom:9vh;font-size:11px;padding:.6rem .9rem}
+  .const{height:62svh}
+  .scard{min-height:auto;padding:1.4rem}
+  .card-name{font-size:1.5rem}
+  .demo-badge{transform:scale(.86);transform-origin:left bottom}
+  .voce h3{font-size:1.5rem}
+}

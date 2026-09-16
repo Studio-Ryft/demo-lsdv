@@ -32,14 +32,6 @@
 
   $("[data-suoli]").innerHTML = D.suoli.map((s) => `<article class="su-s"><img src="../${s.img}" alt="" loading="lazy"><div><p class="area">${esc(s.area)}</p><h3>${esc(s.nome)}</h3><p class="wrb">${esc(s.wrb)}</p><p>${esc(s.testo)}</p></div></article>`).join("");
 
-  const LOGHI = { "Alois": "alois", "Canestrini": "canestrini", "I Vignai del Casavecchia": "vignai", "Masseria Piccirillo": "piccirillo", "Sagliocco": "sagliocco", "Scaramuzzo": "scaramuzzo", "Sclavia": "sclavia" };
-  const ring = $("[data-ring]"), NAZ = D.aziende.length, STEP = 360 / NAZ;
-  const RAD = () => (innerWidth < 700 ? 290 : innerWidth < 1200 ? 420 : 500);
-  ring.innerHTML = D.aziende.map((a, i) => {
-    const l = LOGHI[a.split(" (")[0].split(" · ")[0]] || LOGHI[a];
-    return `<article class="gcard" data-i="${i}"><span class="n">${String(i + 1).padStart(2, "0")}</span>${l ? `<img src="../shared/img/loghi/${l}.png" alt="" loading="lazy">` : ""}<b>${esc(a)}</b><small>azienda aderente</small></article>`;
-  }).join("");
-  $("[data-aziende]").innerHTML = D.aziende.map((a) => `<li>${esc(a)}</li>`).join("");
   const PERC = ["M10 120C40 70 60 100 90 60S130 20 145 8", "M8 20C40 50 30 92 82 92S140 122 146 104", "M12 130C22 90 72 110 92 70S112 12 146 30"];
   $("[data-percorsi]").innerHTML = D.percorsi.map((p, i) => `<article class="perc"><svg viewBox="0 0 150 140" aria-hidden="true"><path d="${PERC[i]}"/></svg><h3>${esc(p.nome)}</h3><p>${esc(p.testo)}</p></article>`).join("");
 
@@ -115,26 +107,9 @@
   $("[data-rleg]").addEventListener("click", (e) => { const li = e.target.closest("li"); if (!li) return; li.classList.toggle("off"); $(`.poly[data-s=${li.dataset.s}]`, radar).style.display = li.classList.contains("off") ? "none" : ""; snd("tap"); });
   setRadar(false);
 
-  /* ---------- giostra dei logotipi ---------- */
-  const gcards = $$(".gcard", ring);
-  let gi = 0, gRot = 0, gDrag = null;
-  const layout = () => { const r = RAD(); gcards.forEach((c, i) => (c.style.transform = `rotateY(${i * STEP}deg) translateZ(${r}px)`)); ring.style.transform = `translateZ(${-r}px) rotateY(${gRot}deg)`; };
-  function vaiA(i, s) {
-    gi = (i + NAZ) % NAZ; gRot = -gi * STEP;
-    gcards.forEach((c, k) => c.classList.toggle("on", k === gi));
-    $("[data-gname]").textContent = D.aziende[gi];
-    $("[data-gnum]").textContent = String(gi + 1).padStart(2, "0");
-    if (hasG && !RM) gsap.to(ring, { rotateY: gRot, duration: 1.05, ease: "power3.out", overwrite: true }); else layout();
-    if (s) snd("slide");
-  }
-  layout(); vaiA(0);
-  addEventListener("resize", layout);
-  $("[data-gnext]").addEventListener("click", () => vaiA(gi + 1));
-  $("[data-gprev]").addEventListener("click", () => vaiA(gi - 1));
-  gcards.forEach((c) => c.addEventListener("click", () => vaiA(+c.dataset.i, true)));
-  ring.addEventListener("pointerdown", (e) => { gDrag = { x: e.clientX, r: gRot }; ring.setPointerCapture(e.pointerId); });
-  ring.addEventListener("pointermove", (e) => { if (!gDrag || !hasG) return; gsap.set(ring, { rotateY: gDrag.r + (e.clientX - gDrag.x) * 0.25 }); });
-  ring.addEventListener("pointerup", (e) => { if (!gDrag) return; const d = (e.clientX - gDrag.x) * 0.25; gDrag = null; vaiA(Math.round(-(gRot + d) / STEP), true); });
+  /* ---------- «Il grappolo della rete» ---------- */
+  const gp = window.LSDVGrappolo.crea($("[data-grappolo]"), { loghi: "loghi-chiari" });
+  $("[data-aziende]").innerHTML = D.aziende.map((a) => `<li>${esc(a)}</li>`).join("");
 
   /* ---------- video verticali ---------- */
   $$(".voce").forEach((v) => {
@@ -260,8 +235,9 @@
   gsap.fromTo(".suolo", { borderRadius: "90px" }, { borderRadius: "44px", ease: "none", scrollTrigger: { trigger: ".suolo", start: "top bottom", end: "top 55%", scrub: true } });
   ScrollTrigger.create({ trigger: ".su-radar", start: "top 72%", once: true, onEnter: () => { SUOLI.forEach((s) => DESC.forEach((d) => (vals[s][d] = 0))); draw(); setRadar(true); snd("step"); } });
 
-  // rete
-  gsap.from(".gcard", { autoAlpha: 0, z: -380, rotateY: -55, duration: 1.1, ease: "expo.out", stagger: { each: 0.045, from: "center" }, scrollTrigger: { trigger: ".giostra", start: "top 82%" } });
+  // rete: il grappolo
+  gsap.fromTo(".gp-foto>img", { scale: 1.12 }, { scale: 1.02, ease: "none", scrollTrigger: { trigger: ".gp", start: "top bottom", end: "bottom top", scrub: true } });
+  gsap.from(".gp-a", { autoAlpha: 0, scale: 0.2, duration: 0.8, ease: "back.out(2.2)", stagger: { each: 0.06, from: "random" }, scrollTrigger: { trigger: ".gp", start: "top 78%" } });
   $$(".perc").forEach((p) => gsap.from($("path", p), { drawSVG: "0%", duration: 1.7, scrollTrigger: { trigger: p, start: "top 88%" } }));
 
   // eventi, racconti, adesione

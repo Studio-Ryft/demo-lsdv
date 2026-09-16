@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,50;1,9..144,300..600,50&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<link rel="stylesheet" href="../shared/grappolo.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -91,15 +92,9 @@
 
   <section class="rete" id="rete">
     <div class="re-head"><p class="kick">La rete</p><h2>Diciassette aziende,<br><em>un solo filo.</em></h2></div>
-    <div class="giostra">
-      <div class="giostra-stage"><div class="giostra-ring" data-ring></div></div>
-      <div class="giostra-ui">
-        <button class="gbtn" type="button" data-gprev aria-label="Azienda precedente" data-snd="slide">←</button>
-        <p class="glbl" aria-live="polite"><b data-gname></b><span><i data-gnum>01</i> / 17 · azienda aderente</span></p>
-        <button class="gbtn" type="button" data-gnext aria-label="Azienda successiva" data-snd="slide">→</button>
-      </div>
-      <ul class="sr" data-aziende></ul>
-    </div>
+    <div class="gp" data-grappolo></div>
+    <p class="gp-hint">Passa sugli acini: ogni acino è un'azienda della rete</p>
+    <ul class="sr" data-aziende></ul>
     <div class="percorsi" data-percorsi></div>
   </section>
 
@@ -165,6 +160,7 @@
 <script src="../shared/territorio.js"></script>
 <script src="../shared/brand.js"></script>
 <script src="../shared/aromi.js"></script>
+<script src="../shared/grappolo.js"></script>
 <script src="../shared/sound.js"></script>
 <script src="../shared/core.js"></script>
 <script src="app.js"></script>

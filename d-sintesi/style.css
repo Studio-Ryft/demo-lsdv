@@ -348,3 +348,17 @@ legend{font:400 2rem/1 var(--fs);margin-bottom:1.1rem}
   .giostra-ring{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;transform:none!important}
   .gcard{position:static;width:auto;height:auto;margin:0;transform:none!important}
 }
+
+/* ---------- rifiniture mobile ---------- */
+@media (max-width:640px){
+  .hero{padding-top:96px}
+  .hero h1{font-size:clamp(2.4rem,11vw,3.4rem)}
+  .hero-media{height:44svh}
+  .hero-n b{font-size:1.9rem}
+  .gp-a button{width:36px;height:36px}
+  .gp-hint{font-size:9.5px}
+  .su-radar{gap:1rem}
+  .card-name{font-size:1.5rem}
+  .demo-badge{transform:scale(.86);transform-origin:left bottom}
+  .terr-map{min-height:46svh}
+}

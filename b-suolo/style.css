@@ -59,7 +59,9 @@ html.intro-run body{overflow:hidden}
 .in-pitto .o{fill:none;stroke:var(--chart);stroke-width:2.5}
 .in-pitto .f{fill:var(--ivory)}
 .in-pitto .g{fill:var(--chart)}
-.in-depth{margin-top:2.4vh;display:flex;align-items:baseline;gap:.6rem;font:500 11px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.in-com{margin-top:2.6vh;font:500 11px/1 var(--fm);letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
+.in-depth{margin-top:.8vh;display:flex;align-items:baseline;justify-content:center;gap:.6rem;font:500 11px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.in-suolo{margin-top:.9vh;font:italic 400 clamp(1rem,1.6vw,1.35rem)/1 var(--fs);color:var(--chart)}
 .in-depth b{font:400 clamp(2.4rem,5vw,4rem)/1 var(--fm);letter-spacing:0;color:var(--ivory);font-variant-numeric:tabular-nums}
 .in-word{margin-top:1.2vh;font:italic 400 clamp(2rem,4.4vw,3.6rem)/1 var(--fs);color:var(--chart);visibility:hidden}
 .in-ruler{position:absolute;left:var(--gut);top:10vh;bottom:10vh;width:40px;background:repeating-linear-gradient(to bottom,var(--faint) 0 1px,transparent 1px 10px);-webkit-mask:linear-gradient(90deg,#000 40%,transparent);mask:linear-gradient(90deg,#000 40%,transparent)}
@@ -392,7 +394,7 @@ legend span{font:500 12px/1 var(--fm);color:var(--chart);vertical-align:middle;m
 /* --- video in rotazione con dissolvenza --- */
 .hero-vid{opacity:0;transition:none}
 .hero-vid.on{opacity:1}
-.hero-clips{display:none;position:absolute;right:var(--gut);bottom:clamp(120px,16vh,180px);z-index:3;list-style:none;flex-direction:column;gap:10px;align-items:flex-end}
+.hero-clips{position:absolute;right:var(--gut);bottom:clamp(120px,16vh,180px);z-index:3;list-style:none;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
 .hero-clips li{width:34px;height:3px;border-radius:3px;background:rgba(242,232,213,.25);overflow:hidden}
 .hero-clips li i{display:block;height:100%;width:100%;background:var(--chart);transform:scaleX(0);transform-origin:left}
 .hero-clips li.on i{transform:scaleX(1)}
@@ -465,4 +467,28 @@ legend span{font:500 12px/1 var(--fm);color:var(--chart);vertical-align:middle;m
   .giostra-ring{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;transform:none!important}
   .gcard{position:static;width:auto;height:auto;margin:0;transform:none!important}
   .btn.neon::before{display:none}
+}
+
+/* ---------- rifiniture mobile ---------- */
+@media (max-width:640px){
+  .hero{min-height:100svh}
+  .hero-copy{padding-top:96px}
+  .hero-t{font-size:clamp(3rem,13.5vw,4.4rem);line-height:.9}
+  .hero .kick{font-size:9.5px;letter-spacing:.12em;margin-bottom:.9rem}
+  .hero-sub{font-size:1.25rem;margin-top:1rem}
+  .hero-foot{gap:1rem;padding-top:1rem}
+  .hero-foot p{font-size:13.5px}
+  .btn{padding:.85rem 1rem .85rem 1.2rem;font-size:12.5px}
+  .gp-a button{width:36px;height:36px}
+  .gp-hint{margin-top:.8rem;font-size:9.5px}
+  .demo-badge{transform:scale(.86);transform-origin:left bottom}
+  .volo-hud.tl{top:96px}
+  .volo-hud h2{font-size:2.2rem}
+  .cieca{padding:1.2rem}
+  .radar{max-height:none}
+}
+@media (max-width:640px){
+  .hero-copy{padding-top:78px}
+  .hero-foot{flex-direction:row;align-items:center;justify-content:flex-end}
+  .hero-foot p{display:none}
 }

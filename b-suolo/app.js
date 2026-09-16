@@ -12,8 +12,11 @@
   const pitto = (el, cls = "") => { el.setAttribute("viewBox", B.pitto.vb); el.innerHTML = `<defs><clipPath id="fill${cls}"><rect class="lvl" x="1200" y="47" width="800" height="760"/></clipPath></defs><path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><g clip-path="url(#fill${cls})"><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/></g>`; };
   pitto($("[data-pitto]"), "I"); pitto($("[data-okpitto]"), "O");
 
-  /* ---------- video di sfondo: la vendemmia tra i filari ---------- */
-  const CLIPS = [{ f: "vendemmia", t: "Vendemmia tra i filari" }];
+  /* ---------- video di sfondo: vendemmia e time lapse in vigna ---------- */
+  const CLIPS = [
+    { f: "vendemmia", t: "Vendemmia tra i filari" },
+    { f: "sclavia-timelapse", t: "Time lapse in vigna · Sclavia" }
+  ];
   const vids = $$(".hero-vid"), leggero = innerWidth < 900 || (navigator.connection && navigator.connection.saveData);
   const srcOf = (i) => `../shared/video/${CLIPS[i].f}${leggero ? "-mobile" : ""}.mp4`;
   $(".hero-clips").innerHTML = CLIPS.map((c, i) => `<li class="${i ? "" : "on"}"><i></i></li>`).join("");
@@ -40,7 +43,7 @@
     if (RM || rolling) return; rolling = true;
     vids[0].loop = true; vids[1].loop = true;
     mostra(0, true);
-    if (CLIPS.length > 1) setInterval(() => { if (!document.hidden) mostra((cur + 1) % CLIPS.length); }, 9000);
+    if (CLIPS.length > 1) setInterval(() => { if (!document.hidden) mostra((cur + 1) % CLIPS.length); }, 10000);
   }
   avvia();
 
@@ -67,43 +70,12 @@
 
   const mq = D.aziende.map((a) => `<span>${esc(a.split(" (")[0].split(" · ")[0])}</span>`).join("");
   $("[data-marq]").innerHTML = mq + mq;
+
+  /* ---------- «Il grappolo della rete» ---------- */
+  const gp = window.LSDVGrappolo.crea($("[data-grappolo]"), { loghi: "loghi-chiari" });
   $("[data-aziende]").innerHTML = D.aziende.map((a) => `<li>${esc(a)}</li>`).join("");
 
-  /* ---------- giostra 3D di nomi e logotipi ---------- */
-  const LOGHI = { "Alois": "alois", "Canestrini": "canestrini", "I Vignai del Casavecchia": "vignai", "Masseria Piccirillo": "piccirillo", "Sagliocco": "sagliocco", "Scaramuzzo": "scaramuzzo", "Sclavia": "sclavia" };
-  const ring = $("[data-ring]"), NAZ = D.aziende.length, STEP = 360 / NAZ;
-  const RAD = () => (innerWidth < 700 ? 300 : innerWidth < 1200 ? 430 : 520);
-  ring.innerHTML = D.aziende.map((a, i) => {
-    const l = LOGHI[a.split(" (")[0].split(" · ")[0]] || LOGHI[a];
-    return `<article class="gcard" data-i="${i}"><span class="n">${String(i + 1).padStart(2, "0")}</span>${l ? `<img src="../shared/img/loghi-chiari/${l}.png" alt="" loading="lazy">` : ""}<b>${esc(a)}</b><small>azienda aderente</small></article>`;
-  }).join("");
-  const gcards = $$(".gcard", ring);
-  let gi = 0, gRot = 0, gDrag = null;
-  function layout() {
-    const r = RAD();
-    gcards.forEach((c, i) => (c.style.transform = `rotateY(${i * STEP}deg) translateZ(${r}px)`));
-    ring.style.transform = `translateZ(${-r}px) rotateY(${gRot}deg)`;
-  }
-  function vaiA(i, suono) {
-    gi = (i + NAZ) % NAZ;
-    gRot = -gi * STEP;
-    gcards.forEach((c, k) => c.classList.toggle("on", k === gi));
-    $("[data-gname]").textContent = D.aziende[gi];
-    $("[data-gnum]").textContent = String(gi + 1).padStart(2, "0");
-    if (window.gsap && !RM) gsap.to(ring, { rotateY: gRot, duration: 1.1, ease: "power3.out", overwrite: true });
-    else layout();
-    if (suono && window.LSDVSound) window.LSDVSound.play("slide");
-  }
-  layout(); vaiA(0);
-  addEventListener("resize", layout);
-  $("[data-gnext]").addEventListener("click", () => vaiA(gi + 1));
-  $("[data-gprev]").addEventListener("click", () => vaiA(gi - 1));
-  gcards.forEach((c) => c.addEventListener("click", () => vaiA(+c.dataset.i, true)));
-  ring.addEventListener("pointerdown", (e) => { gDrag = { x: e.clientX, r: gRot }; ring.setPointerCapture(e.pointerId); });
-  ring.addEventListener("pointermove", (e) => { if (!gDrag) return; const d = (e.clientX - gDrag.x) * 0.25; if (window.gsap) gsap.set(ring, { rotateY: gDrag.r + d }); });
-  ring.addEventListener("pointerup", (e) => { if (!gDrag) return; const d = (e.clientX - gDrag.x) * 0.25; gDrag = null; vaiA(Math.round((-(gRot + d)) / STEP), true); });
-  addEventListener("keydown", (e) => { if (!$(".giostra").matches(":hover")) return; if (e.key === "ArrowRight") vaiA(gi + 1, true); if (e.key === "ArrowLeft") vaiA(gi - 1, true); });
-  const PERC = ["M10 120C40 70 60 100 90 60S130 20 140 10", "M10 20C40 50 30 90 80 90S130 120 140 100", "M10 130C20 90 70 110 90 70S110 10 140 30"];
+  const PERC = ["M10 120C40 70 60 100 90 60S130 20 140 10", "M8 20C40 50 30 90 80 90S130 120 140 100", "M10 130C20 90 70 110 90 70S110 10 140 30"];
   $("[data-percorsi]").innerHTML = D.percorsi.map((p, i) => `<article class="perc"><svg viewBox="0 0 150 140" aria-hidden="true"><path d="${PERC[i]}"/></svg><b>0${i + 1}</b><h3>${esc(p.nome)}</h3><p>${esc(p.testo)}</p></article>`).join("");
 
   const ant = D.eventi.find((e) => e.stato === "archivio");
@@ -260,13 +232,28 @@
     const o = $(".in-pitto .o"), lvl = $(".in-pitto .lvl"), dEl = $("[data-depth]"), inC = $$(".in-contours .ct");
     const word = SplitText.create(".in-word", { type: "chars", mask: "chars" }); gsap.set(".in-word", { visibility: "visible" }); gsap.set(word.chars, { yPercent: 110 });
     gsap.set(o, { drawSVG: "0%" }); gsap.set(lvl, { attr: { y: 800 } }); gsap.set(inC, { drawSVG: "0%" });
-    const dep = { v: 0 };
+    // il caricamento sale lungo le quote reali degli otto comuni, dalla più bassa alla più alta,
+    // e alterna la dicitura delle tre macro aree di suolo
+    const SALITA = M.comuni.slice().sort((a, b) => a.quota - b.quota);
+    const comEl = $("[data-com]"), suoEl = $("[data-suolo]");
+    const dep = { v: SALITA[0].quota };
+    let ultimo = -1;
+    const aggiorna = () => {
+      dEl.textContent = String(Math.round(dep.v)).padStart(3, "0");
+      let i = 0; while (i < SALITA.length - 1 && dep.v >= SALITA[i + 1].quota - 1) i++;
+      if (i !== ultimo) {
+        ultimo = i;
+        comEl.textContent = SALITA[i].nome;
+        suoEl.textContent = D.suoli[i % D.suoli.length].nome;
+        if (!RM) { gsap.fromTo([comEl, suoEl], { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.05 }); }
+      }
+    };
     const tl = gsap.timeline();
     tl.to(inC, { drawSVG: "100%", duration: 2.8, ease: "power2.inOut", stagger: { each: 0.01, from: "random" } }, 0)
       .from(".in-ruler", { scaleY: 0, transformOrigin: "top", duration: 2.2, ease: "expo.out" }, 0.1)
       .to(o, { drawSVG: "100%", duration: 1.8, ease: "power2.inOut" }, 0.2)
       .to(lvl, { attr: { y: 47 }, duration: 2.2, ease: "power2.inOut" }, 0.9)
-      .to(dep, { v: 150, duration: 2.8, ease: "power1.inOut", onUpdate: () => (dEl.textContent = String(Math.round(dep.v)).padStart(3, "0")) }, 0.2)
+      .to(dep, { v: SALITA[SALITA.length - 1].quota, duration: 2.9, ease: "power1.inOut", onUpdate: aggiorna }, 0.2)
       .to(word.chars, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.035 }, 1.8)
       .addLabel("open", 3.4)
       .to([".in-center", ".in-ruler", ".in-skip"], { autoAlpha: 0, scale: 0.94, duration: 0.6, ease: "power2.in" }, "open")
@@ -362,9 +349,11 @@
     gsap.to(s, { autoAlpha: 0.15, ease: "none", scrollTrigger: { trigger: s, start: "bottom 45%", end: "bottom 8%", scrub: 0.5 } });
   });
 
-  /* ---------- schede della giostra: ingresso in 3D ---------- */
-  gsap.from(gcards, { autoAlpha: 0, z: -400, rotateY: -60, duration: 1.2, ease: "expo.out", stagger: { each: 0.05, from: "center" }, scrollTrigger: { trigger: ".giostra", start: "top 80%" } });
-  ScrollTrigger.create({ trigger: ".giostra", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("open") });
+  /* ---------- il grappolo: zoom lento e acini che si accendono ---------- */
+  gsap.fromTo(".gp-foto>img", { scale: 1.12 }, { scale: 1.02, ease: "none", scrollTrigger: { trigger: ".gp", start: "top bottom", end: "bottom top", scrub: true } });
+  gsap.from(".gp-a", { autoAlpha: 0, scale: 0.2, duration: 0.8, ease: "back.out(2.2)", stagger: { each: 0.06, from: "random" }, scrollTrigger: { trigger: ".gp", start: "top 75%" } });
+  gsap.from(".gp-cap, .gp-hint", { autoAlpha: 0, y: 14, duration: 0.8, stagger: 0.1, scrollTrigger: { trigger: ".gp", start: "top 70%" } });
+  ScrollTrigger.create({ trigger: ".gp", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("open") });
 
   /* ---------- voci di menu in 3D ---------- */
   $$(".hd-nav a").forEach((a) => {
