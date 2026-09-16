@@ -12,9 +12,40 @@
   const pitto = (el, cls = "") => { el.setAttribute("viewBox", B.pitto.vb); el.innerHTML = `<defs><clipPath id="fill${cls}"><rect class="lvl" x="1200" y="47" width="800" height="760"/></clipPath></defs><path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><g clip-path="url(#fill${cls})"><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/></g>`; };
   pitto($("[data-pitto]"), "I"); pitto($("[data-okpitto]"), "O");
 
-  // video di sfondo: versione leggera sotto i 900 px
-  const hv = $(".hero-vid");
-  if (hv) { hv.src = innerWidth < 900 && hv.dataset.srcMobile ? hv.dataset.srcMobile : hv.dataset.src; hv.load(); const p = hv.play(); p && p.catch(() => {}); }
+  /* ---------- tre video in rotazione con dissolvenza ---------- */
+  const CLIPS = [
+    { f: "vendemmia", t: "Vendemmia tra i filari" },
+    { f: "vendemmia-mani", t: "Il taglio del grappolo" },
+    { f: "vendemmia-tramonto", t: "I filari al tramonto" }
+  ];
+  const vids = $$(".hero-vid"), leggero = innerWidth < 900 || (navigator.connection && navigator.connection.saveData);
+  const srcOf = (i) => `../shared/video/${CLIPS[i].f}${leggero ? "-mobile" : ""}.mp4`;
+  $(".hero-clips").innerHTML = CLIPS.map((c, i) => `<li class="${i ? "" : "on"}"><i></i></li>`).join("");
+  let cur = 0, slot = 0, rolling = false;
+  function mostra(i, primo) {
+    const a = vids[slot], b = vids[1 - slot];
+    b.src = srcOf(i); b.load(); b.currentTime = 0;
+    const via = () => {
+      const p = b.play(); p && p.catch(() => {});
+      b.classList.add("on");
+      if (!primo) {
+        if (window.gsap && !RM) {
+          gsap.fromTo(b, { autoAlpha: 0, xPercent: 3, scale: 1.04 }, { autoAlpha: 1, xPercent: 0, scale: 1, duration: 1.6, ease: "power2.inOut" });
+          gsap.to(a, { autoAlpha: 0, xPercent: -3, duration: 1.6, ease: "power2.inOut", onComplete: () => { a.classList.remove("on"); a.pause(); a.removeAttribute("src"); a.load(); } });
+        } else { a.classList.remove("on"); a.pause(); }
+      }
+      slot = 1 - slot; cur = i;
+      $$(".hero-clips li").forEach((li, k) => li.classList.toggle("on", k === i));
+      window.LSDVSound && window.LSDVSound.play("slide");
+    };
+    b.readyState >= 2 ? via() : b.addEventListener("loadeddata", via, { once: true });
+  }
+  function avvia() {
+    if (RM || rolling) return; rolling = true;
+    mostra(0, true);
+    setInterval(() => { if (!document.hidden) mostra((cur + 1) % CLIPS.length); }, 9000);
+  }
+  avvia();
 
   $("[data-missione]").textContent = D.ente.missione;
   $("[data-herodata]").innerHTML = D.numeri.map((n) => `<li><b data-count="${n.n}">${n.n}</b>${esc(n.label)}</li>`).join("");
@@ -39,7 +70,42 @@
 
   const mq = D.aziende.map((a) => `<span>${esc(a.split(" (")[0].split(" · ")[0])}</span>`).join("");
   $("[data-marq]").innerHTML = mq + mq;
-  $("[data-aziende]").innerHTML = D.aziende.map((a, i) => `<li><small>${String(i + 1).padStart(2, "0")} · azienda aderente</small>${esc(a)}</li>`).join("");
+  $("[data-aziende]").innerHTML = D.aziende.map((a) => `<li>${esc(a)}</li>`).join("");
+
+  /* ---------- giostra 3D di nomi e logotipi ---------- */
+  const LOGHI = { "Alois": "alois", "Canestrini": "canestrini", "I Vignai del Casavecchia": "vignai", "Masseria Piccirillo": "piccirillo", "Sagliocco": "sagliocco", "Scaramuzzo": "scaramuzzo", "Sclavia": "sclavia" };
+  const ring = $("[data-ring]"), NAZ = D.aziende.length, STEP = 360 / NAZ;
+  const RAD = () => (innerWidth < 700 ? 300 : innerWidth < 1200 ? 430 : 520);
+  ring.innerHTML = D.aziende.map((a, i) => {
+    const l = LOGHI[a.split(" (")[0].split(" · ")[0]] || LOGHI[a];
+    return `<article class="gcard" data-i="${i}"><span class="n">${String(i + 1).padStart(2, "0")}</span>${l ? `<img src="../shared/img/loghi-chiari/${l}.png" alt="" loading="lazy">` : ""}<b>${esc(a)}</b><small>azienda aderente</small></article>`;
+  }).join("");
+  const gcards = $$(".gcard", ring);
+  let gi = 0, gRot = 0, gDrag = null;
+  function layout() {
+    const r = RAD();
+    gcards.forEach((c, i) => (c.style.transform = `rotateY(${i * STEP}deg) translateZ(${r}px)`));
+    ring.style.transform = `translateZ(${-r}px) rotateY(${gRot}deg)`;
+  }
+  function vaiA(i, suono) {
+    gi = (i + NAZ) % NAZ;
+    gRot = -gi * STEP;
+    gcards.forEach((c, k) => c.classList.toggle("on", k === gi));
+    $("[data-gname]").textContent = D.aziende[gi];
+    $("[data-gnum]").textContent = String(gi + 1).padStart(2, "0");
+    if (window.gsap && !RM) gsap.to(ring, { rotateY: gRot, duration: 1.1, ease: "power3.out", overwrite: true });
+    else layout();
+    if (suono && window.LSDVSound) window.LSDVSound.play("slide");
+  }
+  layout(); vaiA(0);
+  addEventListener("resize", layout);
+  $("[data-gnext]").addEventListener("click", () => vaiA(gi + 1));
+  $("[data-gprev]").addEventListener("click", () => vaiA(gi - 1));
+  gcards.forEach((c) => c.addEventListener("click", () => vaiA(+c.dataset.i, true)));
+  ring.addEventListener("pointerdown", (e) => { gDrag = { x: e.clientX, r: gRot }; ring.setPointerCapture(e.pointerId); });
+  ring.addEventListener("pointermove", (e) => { if (!gDrag) return; const d = (e.clientX - gDrag.x) * 0.25; if (window.gsap) gsap.set(ring, { rotateY: gDrag.r + d }); });
+  ring.addEventListener("pointerup", (e) => { if (!gDrag) return; const d = (e.clientX - gDrag.x) * 0.25; gDrag = null; vaiA(Math.round((-(gRot + d)) / STEP), true); });
+  addEventListener("keydown", (e) => { if (!$(".giostra").matches(":hover")) return; if (e.key === "ArrowRight") vaiA(gi + 1, true); if (e.key === "ArrowLeft") vaiA(gi - 1, true); });
   const PERC = ["M10 120C40 70 60 100 90 60S130 20 140 10", "M10 20C40 50 30 90 80 90S130 120 140 100", "M10 130C20 90 70 110 90 70S110 10 140 30"];
   $("[data-percorsi]").innerHTML = D.percorsi.map((p, i) => `<article class="perc"><svg viewBox="0 0 150 140" aria-hidden="true"><path d="${PERC[i]}"/></svg><b>0${i + 1}</b><h3>${esc(p.nome)}</h3><p>${esc(p.testo)}</p></article>`).join("");
 
@@ -82,13 +148,25 @@
       else { Object.assign(vals[s], to); drawRadar(); }
     });
   }
-  $("[data-rv]").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; $$("[data-rv] button").forEach((x) => x.setAttribute("aria-pressed", x === b)); setRadar(true); });
+  $("[data-rv]").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    $$("[data-rv] button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    setRadar(true);
+    if (hasG && !RM) gsap.fromTo(b, { rotateX: -78, z: -60 }, { rotateX: 0, z: 0, duration: 0.85, ease: "back.out(1.7)", transformOrigin: "50% 50% -30px" });
+    window.LSDVSound && window.LSDVSound.play("select");
+  });
   $("[data-rleg]").addEventListener("click", (e) => { const li = e.target.closest("li"); if (!li) return; li.classList.toggle("off"); $(`.poly[data-s=${li.dataset.s}]`, radar).style.display = li.classList.contains("off") ? "none" : ""; });
   setRadar(false);
 
   /* ================= ALLA CIECA ================= */
   $("[data-cdesc]").innerHTML = DESC.map((d) => `<button type="button" aria-pressed="false">${d}</button>`).join("");
-  $("[data-cdesc]").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"); });
+  $("[data-cdesc]").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", on);
+    if (hasG && !RM) gsap.fromTo(b, { rotateY: on ? -70 : 70 }, { rotateY: 0, duration: 0.7, ease: "back.out(1.8)" });
+    window.LSDVSound && window.LSDVSound.play(on ? "select" : "close");
+  });
   $("[data-creveal]").addEventListener("click", () => {
     const sel = $$("[data-cdesc] [aria-pressed=true]").map((b) => b.textContent), res = $("[data-cres]");
     if (!sel.length) { res.textContent = "Scegli almeno un descrittore."; return; }
@@ -127,8 +205,6 @@
   // luce "alla cieca"
   const dq = $(".dark-quote");
   dq.addEventListener("pointermove", (e) => { const r = dq.getBoundingClientRect(); dq.style.setProperty("--mx", e.clientX - r.left + "px"); dq.style.setProperty("--my", e.clientY - r.top + "px"); });
-  // bagliore sulle aziende
-  $$(".rete-grid li").forEach((li) => li.addEventListener("pointermove", (e) => { const r = li.getBoundingClientRect(); li.style.setProperty("--x", e.clientX - r.left + "px"); li.style.setProperty("--y", e.clientY - r.top + "px"); }));
   // video al passaggio
   $$(".clip").forEach((c) => {
     const v = $("video", c);
@@ -228,6 +304,7 @@
     $$(".volo-map .pin").forEach((p) => p.classList.toggle("on", p.dataset.id === c.id));
     gsap.timeline().to(card, { autoAlpha: 0.2, y: 10, duration: 0.18, ease: "power2.in" })
       .add(() => { $("[data-vcn]").textContent = String(i + 1).padStart(2, "0"); $("[data-vct]").textContent = c.nome; $("[data-vcd]").textContent = c.testo; $("[data-vcimg]").src = `../shared/img/comune-${c.id}.webp`; $("[data-vcq]").textContent = c.quota; $("[data-vcoord]").textContent = `${c.lat.toFixed(4)} N · ${c.lon.toFixed(4)} E`; })
+      .add(() => window.LSDVSound && window.LSDVSound.play("slide"))
       .to(card, { autoAlpha: 1, y: 0, duration: 0.5, ease: "expo.out" })
       .fromTo("[data-vcimg]", { scale: 1.25 }, { scale: 1, duration: 1, ease: "expo.out" }, "<");
   };
@@ -264,7 +341,6 @@
   const marq = $("[data-marq]");
   const loop = gsap.to(marq, { xPercent: -50, duration: 40, ease: "none", repeat: -1 });
   ScrollTrigger.create({ trigger: ".rete", start: "top bottom", end: "bottom top", onUpdate: (st) => { const v = st.getVelocity() / 300; gsap.to(loop, { timeScale: 1 + Math.abs(v), duration: 0.3, overwrite: true }); gsap.to(marq, { skewX: gsap.utils.clamp(-12, 12, -v * 2), duration: 0.4, overwrite: "auto" }); } });
-  gsap.from(".rete-grid li", { autoAlpha: 0, y: 30, stagger: { each: 0.04, from: "random" }, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: ".rete-grid", start: "top 85%" } });
   $$(".perc").forEach((p) => gsap.from($("path", p), { drawSVG: "0%", duration: 1.8, scrollTrigger: { trigger: p, start: "top 85%" } }));
 
   // ---------- EVENTI ----------
@@ -282,5 +358,27 @@
   // ---------- ADESIONE ----------
   gsap.from(".ad-v li", { scale: 0.9, autoAlpha: 0, stagger: 0.06, duration: 0.7, ease: "back.out(2)", scrollTrigger: { trigger: ".ad-v", start: "top 85%" } });
   gsap.from(".ad-form", { y: 80, autoAlpha: 0, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: ".ad", start: "top 70%" } });
+  /* ---------- trasparenza in ingresso e in uscita di ogni blocco ---------- */
+  $$("section").forEach((s) => {
+    if (s.classList.contains("hero")) return;
+    gsap.fromTo(s, { autoAlpha: 0.15 }, { autoAlpha: 1, ease: "none", scrollTrigger: { trigger: s, start: "top 92%", end: "top 55%", scrub: 0.5 } });
+    gsap.to(s, { autoAlpha: 0.15, ease: "none", scrollTrigger: { trigger: s, start: "bottom 45%", end: "bottom 8%", scrub: 0.5 } });
+  });
+
+  /* ---------- schede della giostra: ingresso in 3D ---------- */
+  gsap.from(gcards, { autoAlpha: 0, z: -400, rotateY: -60, duration: 1.2, ease: "expo.out", stagger: { each: 0.05, from: "center" }, scrollTrigger: { trigger: ".giostra", start: "top 80%" } });
+  ScrollTrigger.create({ trigger: ".giostra", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("open") });
+
+  /* ---------- voci di menu in 3D ---------- */
+  $$(".hd-nav a").forEach((a) => {
+    a.addEventListener("pointerenter", () => gsap.fromTo(a, { rotateX: -55 }, { rotateX: 0, duration: 0.6, ease: "back.out(2)", transformOrigin: "50% 100% -12px" }));
+    a.dataset.snd = "hover";
+  });
+
+  /* ---------- suoni discreti sui passaggi ---------- */
+  window.LSDVSound && window.LSDVSound.bind();
+  ScrollTrigger.create({ trigger: ".strati", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("step") });
+  ScrollTrigger.create({ trigger: ".dark-quote", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("open") });
+
   addEventListener("load", () => ScrollTrigger.refresh());
 })();

@@ -38,14 +38,19 @@
   <nav class="hd-nav" aria-label="Principale">
     <a href="#volo">Territorio</a><a href="#strati">Suoli</a><a href="#aromi">Aromi</a><a href="#storia">Storia</a><a href="#rete">Rete</a><a href="#eventi">Eventi</a><a href="#video">Video</a>
   </nav>
-  <a class="hd-cta" href="#aderisci"><span>Aderisci</span></a>
+  <button class="hd-snd" type="button" data-sound-toggle aria-pressed="false" title="Effetti sonori"><i aria-hidden="true"></i><span class="sr" data-sound-label>Suono spento</span></button>
+  <a class="hd-cta neon" href="#aderisci" data-snd="tap"><span>Aderisci</span></a>
   <button class="hd-burger" type="button" aria-expanded="false" aria-controls="mnav"><i></i><i></i><span class="sr">Menu</span></button>
 </header>
 <div class="mnav" id="mnav" hidden><nav aria-label="Menu mobile"></nav></div>
 
 <main id="main">
   <section class="hero" id="home">
-    <div class="hero-vidwrap"><video class="hero-vid" autoplay muted loop playsinline preload="auto" poster="../shared/img/vendemmia-poster.webp" data-src="../shared/video/vendemmia.mp4" data-src-mobile="../shared/video/vendemmia-mobile.mp4"></video></div>
+    <div class="hero-vidwrap">
+      <video class="hero-vid on" muted playsinline preload="auto" poster="../shared/img/vendemmia-poster.webp"></video>
+      <video class="hero-vid" muted playsinline preload="none"></video>
+    </div>
+    <ol class="hero-clips" aria-hidden="true"></ol>
     <div class="hero-shade"></div>
     <div class="hero-veil" aria-hidden="true"></div>
     <div class="hero-cont" data-herocont></div>
@@ -56,7 +61,7 @@
     </div>
     <div class="hero-foot">
       <p data-missione></p>
-      <a class="btn" href="#volo"><span>Inizia il volo</span><i>↓</i></a>
+      <a class="btn neon" href="#volo" data-snd="tap"><span>Inizia il volo</span><i>↓</i></a>
     </div>
     <ul class="hero-data" data-herodata></ul>
   </section>
@@ -113,7 +118,7 @@
       <div class="cieca-h"><p class="kick">Gioca</p><h3>Alla cieca</h3><p>Un calice senza etichetta. Scegli i descrittori che senti: ti diremo da quale vitigno e da quale suolo potrebbe venire.</p></div>
       <div class="cieca-glass" aria-hidden="true"><svg viewBox="0 0 120 190"><defs><clipPath id="bowlB"><path d="M31 18C25 58 29 90 60 99 91 90 95 58 89 18Z"/></clipPath></defs><path class="gl" d="M31 18C25 58 29 90 60 99 91 90 95 58 89 18"/><g clip-path="url(#bowlB)"><rect class="wine" x="0" y="40" width="120" height="70"/></g><path class="gl" d="M60 99V168M40 174C48 170 72 170 80 174"/></svg></div>
       <div class="cieca-desc" data-cdesc role="group" aria-label="Descrittori"></div>
-      <div class="cieca-act"><button class="btn" type="button" data-creveal><span>Svela il calice</span><i>→</i></button><p class="cieca-res" data-cres aria-live="polite"></p></div>
+      <div class="cieca-act"><button class="btn neon" type="button" data-creveal data-snd="pour"><span>Svela il calice</span><i>→</i></button><p class="cieca-res" data-cres aria-live="polite"></p></div>
     </div>
   </section>
 
@@ -125,7 +130,15 @@
   <section class="rete" id="rete">
     <div class="marq" aria-hidden="true"><div data-marq></div></div>
     <header class="sh"><p class="kick">La rete</p><h2>Chi tiene<br><em>viva la terra.</em></h2></header>
-    <ul class="rete-grid" data-aziende></ul>
+    <div class="giostra" data-giostra>
+      <div class="giostra-stage"><div class="giostra-ring" data-ring></div></div>
+      <div class="giostra-ui">
+        <button class="gbtn neon" type="button" data-gprev aria-label="Azienda precedente" data-snd="slide">←</button>
+        <p class="giostra-lbl" aria-live="polite"><b data-gname>Alois</b><span><i data-gnum>01</i> / 17 · azienda aderente</span></p>
+        <button class="gbtn neon" type="button" data-gnext aria-label="Azienda successiva" data-snd="slide">→</button>
+      </div>
+      <ul class="sr" data-aziende></ul>
+    </div>
     <div class="percorsi" data-percorsi></div>
   </section>
 
@@ -152,17 +165,17 @@
     </div>
     <form class="ad-form" novalidate data-form>
       <div class="ad-prog" data-progress><i></i></div>
-      <fieldset data-step><legend><span>01</span> Che realtà sei?</legend><div class="cats" data-cats></div><button class="btn" data-next><span>Continua</span><i>→</i></button></fieldset>
+      <fieldset data-step><legend><span>01</span> Che realtà sei?</legend><div class="cats" data-cats></div><button class="btn neon" data-next data-snd="step"><span>Continua</span><i>→</i></button></fieldset>
       <fieldset data-step hidden><legend><span>02</span> Contatti</legend>
         <label class="fld"><input name="nome" required placeholder=" " autocomplete="name"><span>Nome e cognome</span></label>
         <label class="fld"><input name="azienda" placeholder=" " autocomplete="organization"><span>Realtà o azienda</span></label>
         <label class="fld"><input name="comune" required placeholder=" " list="lcomuni"><span>Comune</span></label>
         <label class="fld"><input name="email" type="email" required placeholder=" " autocomplete="email"><span>Email</span></label>
-        <div class="row"><button class="btn ghost" data-prev><span>Indietro</span></button><button class="btn" data-next><span>Continua</span><i>→</i></button></div></fieldset>
+        <div class="row"><button class="btn ghost" data-prev data-snd="close"><span>Indietro</span></button><button class="btn neon" data-next data-snd="step"><span>Continua</span><i>→</i></button></div></fieldset>
       <fieldset data-step hidden><legend><span>03</span> Messaggio</legend>
         <label class="fld"><textarea name="messaggio" rows="4" placeholder=" "></textarea><span>Cosa porti alla rete?</span></label>
         <label class="chk"><input type="checkbox" name="privacy" required><span>Acconsento al trattamento dei dati per la candidatura.</span></label>
-        <div class="row"><button class="btn ghost" data-prev><span>Indietro</span></button><button class="btn" type="submit"><span>Invia</span><i>→</i></button></div></fieldset>
+        <div class="row"><button class="btn ghost" data-prev data-snd="close"><span>Indietro</span></button><button class="btn neon" type="submit" data-snd="open"><span>Invia</span><i>→</i></button></div></fieldset>
       <div class="ad-ok" hidden><svg class="ok-pitto" data-okpitto></svg><h3>Radici piantate.</h3><p data-okmsg></p><p class="small">Demo: nessun dato inviato.</p></div>
       <datalist id="lcomuni"></datalist>
     </form>
@@ -191,6 +204,7 @@
 <script src="../shared/territorio.js"></script>
 <script src="../shared/brand.js"></script>
 <script src="../shared/aromi.js"></script>
+<script src="../shared/sound.js"></script>
 <script src="../shared/core.js"></script>
 <script src="app.js"></script>
 </body>
