@@ -240,7 +240,7 @@
   $$("[data-count]").forEach((c) => { c.textContent = "0"; ScrollTrigger.create({ trigger: c, start: "top 95%", once: true, onEnter: () => counter(c, +c.dataset.count, 1.6) }); });
   // il video si attenua quando si scorre, e torna se si risale
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.4 } })
-    .to(".hero-veil", { opacity: 0.9, ease: "power1.in" }, 0)
+    .to(".sfondo-vid", { opacity: 0.45, ease: "power1.in" }, 0)
     .to(".hero-media", { y: -40, ease: "none" }, 0);
 
   // citazione parola per parola

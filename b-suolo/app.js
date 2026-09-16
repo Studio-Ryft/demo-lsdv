@@ -12,12 +12,8 @@
   const pitto = (el, cls = "") => { el.setAttribute("viewBox", B.pitto.vb); el.innerHTML = `<defs><clipPath id="fill${cls}"><rect class="lvl" x="1200" y="47" width="800" height="760"/></clipPath></defs><path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><g clip-path="url(#fill${cls})"><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/></g>`; };
   pitto($("[data-pitto]"), "I"); pitto($("[data-okpitto]"), "O");
 
-  /* ---------- tre video in rotazione con dissolvenza ---------- */
-  const CLIPS = [
-    { f: "vendemmia", t: "Vendemmia tra i filari" },
-    { f: "vendemmia-mani", t: "Il taglio del grappolo" },
-    { f: "vendemmia-tramonto", t: "I filari al tramonto" }
-  ];
+  /* ---------- video di sfondo: la vendemmia tra i filari ---------- */
+  const CLIPS = [{ f: "vendemmia", t: "Vendemmia tra i filari" }];
   const vids = $$(".hero-vid"), leggero = innerWidth < 900 || (navigator.connection && navigator.connection.saveData);
   const srcOf = (i) => `../shared/video/${CLIPS[i].f}${leggero ? "-mobile" : ""}.mp4`;
   $(".hero-clips").innerHTML = CLIPS.map((c, i) => `<li class="${i ? "" : "on"}"><i></i></li>`).join("");
@@ -42,8 +38,9 @@
   }
   function avvia() {
     if (RM || rolling) return; rolling = true;
+    vids[0].loop = true; vids[1].loop = true;
     mostra(0, true);
-    setInterval(() => { if (!document.hidden) mostra((cur + 1) % CLIPS.length); }, 9000);
+    if (CLIPS.length > 1) setInterval(() => { if (!document.hidden) mostra((cur + 1) % CLIPS.length); }, 9000);
   }
   avvia();
 
