@@ -341,3 +341,6 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
   .demo-badge{transform:scale(.86);transform-origin:left bottom}
   .voce h3{font-size:1.5rem}
 }
+
+.ft-legal a{color:inherit;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;opacity:.95;transition:opacity .25s}
+.ft-legal a:hover{opacity:1}

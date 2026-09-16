@@ -492,3 +492,6 @@ legend span{font:500 12px/1 var(--fm);color:var(--chart);vertical-align:middle;m
   .hero-foot{flex-direction:row;align-items:center;justify-content:flex-end}
   .hero-foot p{display:none}
 }
+
+.ft-legal a{color:inherit;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;opacity:.95;transition:opacity .25s}
+.ft-legal a:hover{opacity:1}

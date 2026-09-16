@@ -1,6 +1,6 @@
 # Strada del Vino Casavecchia di Pontelatone — demo del sito
 
-Pubblicazione temporanea e riservata di tre direzioni di design (A Archivio vivo, B Il suolo parla, C Il filo).
+Pubblicazione temporanea e riservata di quattro direzioni di design (A Archivio vivo, B Il suolo parla, C Il filo, D Terra e persone).
 Pagine statiche HTML/CSS/JS con GSAP e Lenis da CDN. Non indicizzate.
 
-LDV MEDIAZIONE — Studio Ryft · settembre 2026
+Progetto e sviluppo [Studio Ryft](https://www.ryft.it/) · settembre 2026
