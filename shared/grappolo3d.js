@@ -709,7 +709,8 @@ async function crea(host) {
     if (!card.hidden) {
       const i = +card.dataset.i, b = canvas.getBoundingClientRect(), hb = host.getBoundingClientRect();
       proiezione.copy(meshLogo[i].getWorldPosition(mondoP)).add(new THREE.Vector3(0, chicchi[i].r, 0)).project(camera);
-      card.style.left = Math.min(Math.max((proiezione.x + 1) / 2 * b.width + (b.left - hb.left), 130), hb.width - 130) + "px";
+      const mezza = (card.offsetWidth || 240) / 2 + 10;
+      card.style.left = Math.min(Math.max((proiezione.x + 1) / 2 * b.width + (b.left - hb.left), mezza), Math.max(hb.width - mezza, mezza)) + "px";
       card.style.top = ((1 - proiezione.y) / 2 * b.height + (b.top - hb.top)) + "px";
     }
     renderer.render(scene, camera);

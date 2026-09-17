@@ -1,6 +1,6 @@
 /* «Il tralcio della rete» — colori: corteccia, oliva #4B5D23, chartreuse #ADC136, uva #7C2F4B, crema #FCF6E1 */
 .tc{position:relative;perspective:1600px}
-.tc-scena{transform-style:preserve-3d;will-change:transform}
+.tc-scena{transform-style:preserve-3d;will-change:transform;overflow:hidden}  /* il disegno non deve mai allargare la pagina */
 .tc-svg{display:block;width:100%;height:auto;overflow:visible}
 
 /* ramo con il nome inciso */

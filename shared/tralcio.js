@@ -116,7 +116,8 @@
         card.querySelector(".tc-card-l").innerHTML = logo ? `<img src="../shared/img/loghi/${logo}.png" alt="">` : `<i>${esc(iniziali(nomeBreve(nome)))}</i>`;
         card.querySelector(".tc-card-m").innerHTML = window.LSDVCore.schedaAzienda(nome);
         const r = el.getBoundingClientRect(), fr = root.getBoundingClientRect();
-        card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, 130), fr.width - 130) + "px";
+        const mezza = (card.offsetWidth || 260) / 2 + 10;
+        card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, mezza), Math.max(fr.width - mezza, mezza)) + "px";
         card.style.top = r.top - fr.top + "px";
         card.hidden = false;
         acini.forEach((a) => a.classList.toggle("on", a === el));

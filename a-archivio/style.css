@@ -245,6 +245,12 @@ html.menu-open .hd{transform:none!important;background:var(--paper2)}
 
 /* ---------- RETE ---------- */
 .rete{padding:clamp(90px,12vw,170px) var(--gut)}
+/* il tralcio della rete, nello stile carta e inchiostro */
+.tralcio{--tc-font:var(--fs);margin:0 auto clamp(18px,2.4vw,34px);max-width:1280px;padding:clamp(14px,2vw,30px) clamp(8px,1.6vw,26px) clamp(10px,1.4vw,18px);
+  background:var(--paper2);border:1px solid var(--ink);border-radius:8px;color:var(--ink)}
+.tralcio .tc-nome{fill:var(--paper2)}
+.tralcio .tc-conta{font-family:var(--fj)}
+.rete-nota{max-width:1280px;margin:0 auto clamp(30px,4vw,60px);font:500 11px/1 var(--fj);letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);text-align:center}
 .rete-list{list-style:none;columns:3;column-gap:clamp(20px,3vw,50px);max-width:1280px;margin:0 auto;counter-reset:az}
 .rete-list li{break-inside:avoid;display:flex;align-items:baseline;gap:1rem;border-top:1px solid var(--rule);padding:.9rem 0;font:400 clamp(1.4rem,2vw,1.9rem)/1.1 var(--fs);counter-increment:az;transition:padding .45s var(--ease),color .3s;cursor:default}
 .rete-list li::before{content:counter(az,decimal-leading-zero);font:500 11px/1 var(--fj);letter-spacing:.12em;color:var(--olive)}
@@ -380,7 +386,13 @@ legend{font:400 clamp(1.8rem,2.6vw,2.4rem)/1.05 var(--fs);margin-bottom:1.4rem}
   .comune{min-height:auto;padding-block:5vh}
   .vit-grid,.sci-cores,.percorsi,.ev-next{grid-template-columns:1fr}
   .aroma{grid-template-columns:1fr}.aroma-fig{grid-template-columns:1fr}
-  .rete-list{columns:2}
+  /* il tralcio della rete, nello stile carta e inchiostro */
+.tralcio{--tc-font:var(--fs);margin:0 auto clamp(18px,2.4vw,34px);max-width:1280px;padding:clamp(14px,2vw,30px) clamp(8px,1.6vw,26px) clamp(10px,1.4vw,18px);
+  background:var(--paper2);border:1px solid var(--ink);border-radius:8px;color:var(--ink)}
+.tralcio .tc-nome{fill:var(--paper2)}
+.tralcio .tc-conta{font-family:var(--fj)}
+.rete-nota{max-width:1280px;margin:0 auto clamp(30px,4vw,60px);font:500 11px/1 var(--fj);letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);text-align:center}
+.rete-list{columns:2}
   .ev-main{grid-template-columns:1fr}.ev-main figure{min-height:260px}
   .blog{grid-template-columns:1fr 1fr}.post:first-child{grid-column:span 2;grid-row:auto}.post:first-child .im{height:auto;min-height:0;aspect-ratio:16/9}
   .vlog{grid-template-columns:1fr 1fr}
@@ -391,7 +403,13 @@ legend{font:400 clamp(1.8rem,2.6vw,2.4rem)/1.05 var(--fs);margin-bottom:1.4rem}
 }
 @media (max-width:640px){
   body{font-size:16px}
-  .rete-list{columns:1}.blog,.vlog{grid-template-columns:1fr}.post:first-child{grid-column:auto}
+  /* il tralcio della rete, nello stile carta e inchiostro */
+.tralcio{--tc-font:var(--fs);margin:0 auto clamp(18px,2.4vw,34px);max-width:1280px;padding:clamp(14px,2vw,30px) clamp(8px,1.6vw,26px) clamp(10px,1.4vw,18px);
+  background:var(--paper2);border:1px solid var(--ink);border-radius:8px;color:var(--ink)}
+.tralcio .tc-nome{fill:var(--paper2)}
+.tralcio .tc-conta{font-family:var(--fj)}
+.rete-nota{max-width:1280px;margin:0 auto clamp(30px,4vw,60px);font:500 11px/1 var(--fj);letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);text-align:center}
+.rete-list{columns:1}.blog,.vlog{grid-template-columns:1fr}.post:first-child{grid-column:auto}
   .cats{grid-template-columns:1fr}.ad-passi{grid-template-columns:1fr 1fr}
   .panel{grid-template-columns:1fr}
   .hero-scroll{display:none}

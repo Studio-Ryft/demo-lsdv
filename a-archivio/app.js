@@ -68,6 +68,7 @@
   $("[data-suoli]").innerHTML = D.suoli.map((s) => `<article class="core"><div class="core-img"><img src="../${s.img}" alt="Vigneto su ${esc(s.nome.toLowerCase())}" loading="lazy"><div class="core-strata"><i></i><i></i><i></i><i></i></div></div><p class="area">${esc(s.area)}</p><h3>${esc(s.nome)}</h3><p class="wrb">${esc(s.wrb)}</p><p>${esc(s.testo)}</p></article>`).join("");
 
   $("[data-aziende]").innerHTML = D.aziende.map((a) => `<li>${esc(a)}</li>`).join("");
+  const tralcio = window.LSDVTralcio.crea($("[data-tralcio]"), { loghi: "loghi" });
   const PERC = ["M10 150 C40 100 60 130 90 90 S140 60 160 20", "M10 40 C50 60 40 110 90 110 S150 150 170 120", "M20 160 C30 120 80 140 100 100 S120 30 170 50"];
   $("[data-percorsi]").innerHTML = D.percorsi.map((p, i) => `<article class="perc"><svg viewBox="0 0 180 180" aria-hidden="true"><path d="${PERC[i]}"/></svg><h3>${esc(p.nome)}</h3><p>${esc(p.testo)}</p></article>`).join("");
 
