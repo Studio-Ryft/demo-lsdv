@@ -123,6 +123,7 @@ html.menu-open .hd{transform:none!important;background:var(--cream)}
 .chip[aria-pressed=false]{opacity:.45}
 .chip b{font-weight:600;color:var(--mute)}
 /* il tralcio della rete */
+.grappolo3d{margin-top:clamp(30px,4vw,60px)}
 .tralcio{--tc-font:var(--fs);margin-top:clamp(30px,4vw,60px);padding:clamp(18px,3vw,44px) clamp(10px,2vw,30px) clamp(14px,2vw,24px);border-radius:32px;background:radial-gradient(90% 80% at 50% 45%,var(--ivory),var(--cream) 75%);border:1.5px solid var(--line);color:var(--walnut)}
 .tralcio-cta{text-align:center;margin-top:1.6rem}
 .const{position:relative;height:min(78svh,760px);border-radius:32px;background:radial-gradient(circle at 50% 50%,var(--ivory),var(--cream) 70%);overflow:hidden;border:1.5px solid var(--line);touch-action:pan-y}

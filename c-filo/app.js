@@ -109,7 +109,7 @@
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
   /* ================= IL TRALCIO DELLA RETE ================= */
-  const tralcio = window.LSDVTralcio.crea($("[data-tralcio]"), { loghi: "loghi-chiari" });
+  // il grappolo 3D si monta da shared/grappolo3d.js (modulo); il tralcio 2D parte solo se WebGL non c'è
   $("[data-addme]").addEventListener("click", (e) => { e.preventDefault(); window.__lenis ? window.__lenis.scrollTo("#aderisci", { offset: -40 }) : $("#aderisci").scrollIntoView({ behavior: "smooth" }); });
 
   /* ================= PERCORSI ================= */
