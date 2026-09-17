@@ -48,13 +48,13 @@ function etichetta(img, testo, accesa) {
 }
 
 // il nome inciso sul tralcio: striscia curva appoggiata sulla faccia anteriore del ramo
-function striscia(curva, raggio, alto) {
+function striscia(curva, raggioFn, alto) {
   const N = 220, righe = [-1, 0, 1], pos = [], uv = [], idx = [];
   for (let i = 0; i <= N; i++) {
     const u = i / N, p = curva.getPointAt(u), t = curva.getTangentAt(u);
     const n = new THREE.Vector3(-t.y, t.x, 0).normalize();
     righe.forEach((k) => {
-      const off = k * alto / 2, z = Math.sqrt(Math.max(raggio * raggio - off * off, 0)) + 0.012;
+      const raggio = raggioFn(u), off = k * alto / 2, z = Math.sqrt(Math.max(raggio * raggio - off * off, 0)) + 0.012;
       pos.push(p.x + n.x * off, p.y + n.y * off, p.z + z);
       uv.push(u, (k + 1) / 2);
     });
@@ -82,17 +82,145 @@ async function testoTralcio(lung, alto) {
   g.font = `600 ${size}px Fraunces, Georgia, serif`; g.textBaseline = "middle"; g.fillStyle = COL.crema;
   g.shadowColor = "rgba(30,14,6,.55)"; g.shadowBlur = 6; g.shadowOffsetY = 3;
   let x = (W - larghezza(size)) / 2;
-  for (const ch of TESTO) { g.fillText(ch, x, H / 2 + 4); x += g.measureText(ch).width + spazio(size); }
+  g.lineJoin = "round"; g.lineWidth = Math.max(5, size * 0.11); g.strokeStyle = "rgba(34,17,8,.78)";
+  for (const ch of TESTO) { g.shadowBlur = 8; g.strokeText(ch, x, H / 2 + 4); g.shadowBlur = 0; g.fillText(ch, x, H / 2 + 4); x += g.measureText(ch).width + spazio(size); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
   return t;
 }
 
-function foglia() {
-  const s = new THREE.Shape();
-  s.moveTo(0, 0); s.bezierCurveTo(-18, 10, -40, 8, -52, 26); s.bezierCurveTo(-40, 30, -44, 46, -30, 58); s.bezierCurveTo(-22, 48, -10, 56, -6, 72);
-  s.bezierCurveTo(4, 58, 16, 60, 22, 70); s.bezierCurveTo(26, 52, 44, 52, 50, 40); s.bezierCurveTo(36, 30, 46, 16, 36, 6); s.bezierCurveTo(22, 12, 12, 2, 0, 0);
-  const geo = new THREE.ShapeGeometry(s, 12); geo.scale(0.03, 0.03, 0.03);
+// tubo vivo: il raggio cambia lungo la curva (rami che si assottigliano, nodi), con UV per la corteccia
+function tuboVivo(curva, seg, rad, raggio, ripeti = 1) {
+  const fr = curva.computeFrenetFrames(seg, false), P = new THREE.Vector3(), N = new THREE.Vector3();
+  const pos = [], nor = [], uv = [], idx = [];
+  for (let i = 0; i <= seg; i++) {
+    const u = i / seg, r = raggio(u); curva.getPointAt(u, P);
+    for (let j = 0; j <= rad; j++) {
+      const v = (j / rad) * Math.PI * 2, s = Math.sin(v), c = -Math.cos(v);
+      N.set(c * fr.normals[i].x + s * fr.binormals[i].x, c * fr.normals[i].y + s * fr.binormals[i].y, c * fr.normals[i].z + s * fr.binormals[i].z).normalize();
+      pos.push(P.x + r * N.x, P.y + r * N.y, P.z + r * N.z); nor.push(N.x, N.y, N.z); uv.push(u * ripeti, j / rad);
+    }
+  }
+  for (let i = 1; i <= seg; i++) for (let j = 1; j <= rad; j++) {
+    const a = (rad + 1) * (i - 1) + (j - 1), b = (rad + 1) * i + (j - 1), c = (rad + 1) * i + j, d = (rad + 1) * (i - 1) + j;
+    idx.push(a, b, d, b, c, d);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
   return geo;
+}
+
+// corteccia procedurale: fibre lungo il ramo, crepe scure, strisce che si sfaldano; colore e rilievo dallo stesso disegno
+function corteccia(tinte, seme, W = 1024, H = 256) {
+  const cc = document.createElement("canvas"), cb = document.createElement("canvas");
+  cc.width = cb.width = W; cc.height = cb.height = H;
+  const gc = cc.getContext("2d"), gb = cb.getContext("2d"), r = rnd(seme);
+  gc.fillStyle = tinte.base; gc.fillRect(0, 0, W, H);
+  gb.fillStyle = "#808080"; gb.fillRect(0, 0, W, H);
+  const linea = (g, x, y, l, w, col, curva) => { g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y + curva, x + l, y + curva * 0.3); g.stroke(); };
+  for (let k = 0; k < 1400; k++) {
+    const x = r() * W - 80, y = r() * H, l = 40 + r() * 320, w = 0.6 + r() * 3.2, cur = (r() - 0.5) * 10, t = r();
+    const col = t < 0.45 ? tinte.scuro : t < 0.85 ? tinte.medio : tinte.chiaro;
+    gc.globalAlpha = 0.18 + r() * 0.4; linea(gc, x, y, l, w, col, cur);
+    gb.globalAlpha = gc.globalAlpha; linea(gb, x, y, l, w, t < 0.45 ? "#3a3a3a" : t < 0.85 ? "#8a8a8a" : "#c8c8c8", cur);
+  }
+  for (let k = 0; k < 150; k++) { // crepe
+    const x = r() * W, y = r() * H, l = 60 + r() * 260, cur = (r() - 0.5) * 6;
+    gc.globalAlpha = 0.55; linea(gc, x, y, l, 1.2 + r() * 1.6, tinte.crepa, cur);
+    gb.globalAlpha = 0.9; linea(gb, x, y, l, 1.6 + r() * 2, "#101010", cur);
+  }
+  for (let k = 0; k < 70; k++) { // lembi che si staccano
+    const x = r() * W, y = r() * H, lw = 50 + r() * 180, lh = 3 + r() * 9;
+    gc.globalAlpha = 0.28; gc.fillStyle = tinte.chiaro; gc.beginPath(); gc.ellipse(x, y, lw / 2, lh / 2, 0, 0, Math.PI * 2); gc.fill();
+    gb.globalAlpha = 0.6; gb.fillStyle = "#e0e0e0"; gb.beginPath(); gb.ellipse(x, y, lw / 2, lh / 2, 0, 0, Math.PI * 2); gb.fill();
+  }
+  gc.globalAlpha = gb.globalAlpha = 1;
+  const map = new THREE.CanvasTexture(cc), bump = new THREE.CanvasTexture(cb);
+  map.colorSpace = THREE.SRGBColorSpace;
+  [map, bump].forEach((t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; });
+  return { map, bump };
+}
+
+// foglia di vite: cinque lobi dentellati, nervature palmate, macchie e bordo; trasparente fuori dalla sagoma
+function fogliaVite(seme) {
+  const S = 1024, cc = document.createElement("canvas"), cb = document.createElement("canvas");
+  cc.width = cc.height = cb.width = cb.height = S;
+  const gc = cc.getContext("2d"), gb = cb.getContext("2d"), r = rnd(seme);
+  const C = { x: S / 2, y: S * 0.52 }, R = S * 0.4;
+  // raggio del contorno per angolo (0 = in alto, positivo in senso orario)
+  const punti = [[-180, 0.26], [-150, 0.62], [-118, 0.8], [-92, 0.6], [-62, 0.97], [-32, 0.72], [0, 1.02], [32, 0.72], [62, 0.97], [92, 0.6], [118, 0.8], [150, 0.62], [180, 0.26]]
+    .map(([a, v]) => [a, v * (0.94 + r() * 0.1)]);
+  const raggio = (deg) => {
+    for (let k = 0; k < punti.length - 1; k++) {
+      const [a0, v0] = punti[k], [a1, v1] = punti[k + 1];
+      if (deg >= a0 && deg <= a1) { const t = (deg - a0) / (a1 - a0), s = (1 - Math.cos(t * Math.PI)) / 2; return v0 + (v1 - v0) * s; }
+    }
+    return 0.26;
+  };
+  const sagoma = new Path2D();
+  for (let d = -179; d <= 179; d += 0.5) {
+    const dente = 1 + 0.045 * Math.abs(((d * 0.22) % 2 + 2) % 2 - 1) - 0.022;
+    const rr = R * raggio(d) * dente, a = (d * Math.PI) / 180;
+    const x = C.x + Math.sin(a) * rr, y = C.y - Math.cos(a) * rr;
+    d === -179 ? sagoma.moveTo(x, y) : sagoma.lineTo(x, y);
+  }
+  sagoma.closePath();
+  const base = { x: C.x, y: C.y + R * 0.2 };
+  gc.save(); gc.clip(sagoma);
+  const grad = gc.createLinearGradient(0, C.y - R, 0, C.y + R);
+  grad.addColorStop(0, "#6E8A34"); grad.addColorStop(0.5, "#557128"); grad.addColorStop(1, "#46601F");
+  gc.fillStyle = grad; gc.fillRect(0, 0, S, S);
+  for (let k = 0; k < 900; k++) { // macchie della lamina
+    gc.globalAlpha = 0.05 + r() * 0.08; gc.fillStyle = r() < 0.5 ? "#2F4214" : "#9DB25A";
+    gc.beginPath(); gc.arc(r() * S, r() * S, 4 + r() * 26, 0, Math.PI * 2); gc.fill();
+  }
+  gc.globalAlpha = 1;
+  gb.fillStyle = "#000"; gb.fillRect(0, 0, S, S); gb.save(); gb.clip(sagoma); gb.fillStyle = "#6c6c6c"; gb.fillRect(0, 0, S, S);
+  const nervatura = (x0, y0, x1, y1, w, curva) => {
+    const mx = (x0 + x1) / 2 + curva, my = (y0 + y1) / 2;
+    [[gc, "rgba(214,226,150,.62)"], [gb, "#e6e6e6"]].forEach(([g, col]) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = "round"; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(mx, my, x1, y1); g.stroke(); });
+  };
+  [-118, -62, 0, 62, 118].forEach((d) => { // nervature principali verso le punte dei lobi e secondarie verso il bordo
+    const a = (d * Math.PI) / 180, L = R * raggio(d) * 0.97;
+    const tx = C.x + Math.sin(a) * L, ty = C.y - Math.cos(a) * L;
+    nervatura(base.x, base.y, tx, ty, 9, (r() - 0.5) * 30);
+    for (let s = 1; s <= 6; s++) {
+      const t = s / 7.2, px = base.x + (tx - base.x) * t, py = base.y + (ty - base.y) * t;
+      [-1, 1].forEach((lato) => {
+        const b = a + lato * (0.75 + r() * 0.2), l = R * (0.34 - t * 0.2);
+        nervatura(px, py, px + Math.sin(b) * l, py - Math.cos(b) * l, 3.6 - t * 1.8, (r() - 0.5) * 16);
+      });
+    }
+  });
+  gc.restore(); gb.restore();
+  gc.lineWidth = 5; gc.strokeStyle = "rgba(122,112,40,.55)"; gc.stroke(sagoma); // bordo leggermente ingiallito
+  const map = new THREE.CanvasTexture(cc), bump = new THREE.CanvasTexture(cb);
+  map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = bump.anisotropy = 8;
+  // punto d'attacco del picciolo nelle coordinate del piano (lato 1)
+  return { map, bump, attacco: { u: base.x / S, v: 1 - base.y / S } };
+}
+
+function geometriaFoglia(att, lato, curva) {
+  const geo = new THREE.PlaneGeometry(lato, lato, 44, 44);
+  geo.translate(-(att.u - 0.5) * lato, -(att.v - 0.5) * lato, 0);
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) { // la lamina si incurva a coppa e si piega verso il basso in punta
+    const x = p.getX(i), y = p.getY(i);
+    p.setZ(i, curva * (0.11 * x * x + 0.05 * y * y - 0.035 * y) + 0.03 * Math.sin(x * 3.1) * y);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function pruina(seme) {
+  const S = 256, c = document.createElement("canvas"); c.width = c.height = S;
+  const g = c.getContext("2d"), r = rnd(seme);
+  g.fillStyle = "#5c5c5c"; g.fillRect(0, 0, S, S);
+  for (let k = 0; k < 2200; k++) { g.globalAlpha = 0.15 + r() * 0.35; g.fillStyle = r() < 0.7 ? "#d8d8d8" : "#2a2a2a"; g.beginPath(); g.arc(r() * S, r() * S, 0.6 + r() * 2.2, 0, Math.PI * 2); g.fill(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
 }
 
 function ombraTerra() {
@@ -134,12 +262,19 @@ async function crea(host) {
   const scene = new THREE.Scene();
   const pm = new THREE.PMREMGenerator(renderer);
   scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.add(new THREE.HemisphereLight(0xfff2dc, 0x3a2414, 0.55));
-  const key = new THREE.DirectionalLight(0xffe7c4, 1.7); key.position.set(5, 8, 7); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xc8d8ff, 0.7); rim.position.set(-6, 2, -7); scene.add(rim);
+  scene.environmentIntensity = 0.55;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  scene.add(new THREE.HemisphereLight(0xfff2dc, 0x3a2414, 0.5));
+  const key = new THREE.DirectionalLight(0xffe4bd, 2.4); key.position.set(2.2, 15, 6);
+  key.target.position.set(0, -2, 0); scene.add(key, key.target);
+  key.castShadow = true; key.shadow.mapSize.set(touch ? 1024 : 2048, touch ? 1024 : 2048);
+  Object.assign(key.shadow.camera, { left: -7.5, right: 7.5, top: 6, bottom: -9, near: 1, far: 40 });
+  key.shadow.bias = -0.0005; key.shadow.normalBias = 0.025; key.shadow.radius = 4;
+  const rim = new THREE.DirectionalLight(0xc8d8ff, 0.9); rim.position.set(-7, 3, -8); scene.add(rim);
+  const riempi = new THREE.DirectionalLight(0xffd9b0, 0.35); riempi.position.set(-5, -3, 6); scene.add(riempi);
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-  const CENTRO = new THREE.Vector3(0, -1.9, 0);
+  const CENTRO = new THREE.Vector3(0, -1.75, 0);
   const controls = new OrbitControls(camera, canvas);
   controls.target.copy(CENTRO); controls.enablePan = false; controls.enableZoom = false; controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.rotateSpeed = 0.75; controls.minPolarAngle = 1.0; controls.maxPolarAngle = 2.05;
@@ -147,37 +282,62 @@ async function crea(host) {
   if (touch) { controls.enabled = false; canvas.style.touchAction = "pan-y"; }
 
   const mondo = new THREE.Group(); scene.add(mondo);
+  const ombre = (m, riceve = true) => { m.castShadow = true; m.receiveShadow = riceve; return m; };
 
-  // --- tralcio con il nome ---
-  const cane = new THREE.CatmullRomCurve3([new THREE.Vector3(-4.7, 1.45, 0), new THREE.Vector3(-2.4, 2.05, 0.08), new THREE.Vector3(0, 1.72, 0), new THREE.Vector3(2.35, 1.98, -0.08), new THREE.Vector3(4.7, 1.42, 0)]);
-  const R_CANE = 0.27;
-  const caneGeo = new THREE.TubeGeometry(cane, 220, R_CANE, 24, false);
-  const matLegno = new THREE.MeshStandardMaterial({ color: COL.corteccia, roughness: 0.82, metalness: 0 });
-  mondo.add(new THREE.Mesh(caneGeo, matLegno));
-  const strisciaGeo = striscia(cane, R_CANE, 0.36);
-  const matTesto = new THREE.MeshStandardMaterial({ transparent: true, roughness: 0.6, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  // --- materiali: corteccia del tralcio, raspo legnoso-verde, buccia con pruina ---
+  const legno = corteccia({ base: "#5A3B26", scuro: "#2E1D12", medio: "#6E4B32", chiaro: "#9C7B5C", crepa: "#1A0F09" }, 71);
+  const raspo = corteccia({ base: "#76673A", scuro: "#4A4020", medio: "#8A7A48", chiaro: "#B3A56E", crepa: "#2E2812" }, 113, 512, 128);
+  const matLegno = new THREE.MeshStandardMaterial({ map: legno.map, bumpMap: legno.bump, bumpScale: 4, roughness: 0.92, metalness: 0 });
+  const matRaspo = new THREE.MeshStandardMaterial({ map: raspo.map, bumpMap: raspo.bump, bumpScale: 1.5, roughness: 0.78, metalness: 0 });
+  const matViticcio = new THREE.MeshStandardMaterial({ color: 0x8a9a3a, roughness: 0.6 });
+
+  // --- tralcio con il nome: si assottiglia verso la punta, con due nodi fuori dalla scritta ---
+  const cane = new THREE.CatmullRomCurve3([new THREE.Vector3(-4.8, 1.4, 0), new THREE.Vector3(-2.4, 2.05, 0.08), new THREE.Vector3(0, 1.72, 0), new THREE.Vector3(2.35, 1.98, -0.08), new THREE.Vector3(4.8, 1.38, 0)]);
+  const nodo = (u, c, w, h) => h * Math.exp(-(((u - c) / w) ** 2));
+  const rCane = (u) => 0.31 - 0.09 * u + nodo(u, 0.08, 0.018, 0.06) + nodo(u, 0.93, 0.016, 0.05) + 0.004 * Math.sin(u * 90);
+  const caneGeo = tuboVivo(cane, 260, 28, rCane, 7);
+  mondo.add(ombre(new THREE.Mesh(caneGeo, matLegno)));
+  const strisciaGeo = striscia(cane, rCane, 0.4);
+  const matTesto = new THREE.MeshStandardMaterial({ transparent: true, roughness: 0.7, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, emissive: 0xfff3dc, emissiveIntensity: 0.75 });
   mondo.add(new THREE.Mesh(strisciaGeo, matTesto));
-  testoTralcio(cane.getLength(), 0.36).then((t) => { matTesto.map = t; matTesto.needsUpdate = true; });
-  // capi del tralcio arrotondati
-  [0, 1].forEach((u) => { const m = new THREE.Mesh(new THREE.SphereGeometry(R_CANE, 20, 14), matLegno); m.position.copy(cane.getPointAt(u)); m.userData.capo = u; mondo.add(m); });
+  testoTralcio(cane.getLength(), 0.4).then((t) => { matTesto.map = t; matTesto.emissiveMap = t; matTesto.needsUpdate = true; });
+  [0, 1].forEach((u) => { const m = ombre(new THREE.Mesh(new THREE.SphereGeometry(rCane(u), 24, 16), matLegno)); m.position.copy(cane.getPointAt(u)); m.userData.capo = u; mondo.add(m); });
 
-  // foglie e viticcio
-  const matFoglia = new THREE.MeshStandardMaterial({ color: COL.foglia, roughness: 0.7, side: THREE.DoubleSide });
+  // --- foglie di vite con picciolo, ognuna con il suo movimento ---
+  const fogliaTex = [fogliaVite(9173), fogliaVite(4421)];
   const foglie = [
-    { p: [-3.3, 1.95, 0.25], r: [0.2, 0.5, 2.6] }, { p: [3.2, 1.9, -0.2], r: [-0.3, -0.6, -0.4] }, { p: [1.1, 1.95, 0.3], r: [0.5, 0.2, 0.3] }
-  ].map((f) => { const m = new THREE.Mesh(foglia(), matFoglia); m.position.set(...f.p); m.rotation.set(...f.r); mondo.add(m); return m; });
-  const elica = new THREE.CatmullRomCurve3(Array.from({ length: 40 }, (_, k) => { const a = k * 0.42, rr = 0.34 - k * 0.006; return new THREE.Vector3(-1.5 + Math.cos(a) * rr + k * 0.012, 1.95 + k * 0.03, Math.sin(a) * rr); }));
-  const viticcioGeo = new THREE.TubeGeometry(elica, 120, 0.028, 8, false);
-  const matRaspo = new THREE.MeshStandardMaterial({ color: COL.raspo, roughness: 0.75 });
-  mondo.add(new THREE.Mesh(viticcioGeo, matRaspo));
+    { u: 0.13, lato: 3.0, tex: 0, rot: [0.3, 0.35, Math.PI - 0.3], stelo: [-0.2, -0.32, 0.36], curva: 1 },
+    { u: 0.38, lato: 2.3, tex: 1, rot: [-0.75, 0.2, 0.25], stelo: [0.1, 0.42, -0.42], curva: 1.2 },
+    { u: 0.8, lato: 2.8, tex: 1, rot: [0.4, -0.4, Math.PI + 0.4], stelo: [0.22, -0.3, 0.38], curva: 0.9 },
+    { u: 0.95, lato: 2.2, tex: 0, rot: [-0.5, 0.45, -0.75], stelo: [0.3, 0.28, -0.3], curva: 1.1 }
+  ].map((f, k) => {
+    const T = fogliaTex[f.tex], p0 = cane.getPointAt(f.u);
+    const fine = p0.clone().add(new THREE.Vector3(...f.stelo));
+    const steloGeo = tuboVivo(new THREE.CatmullRomCurve3([p0, p0.clone().lerp(fine, 0.5).add(new THREE.Vector3(0, 0.12, 0.05)), fine]), 16, 8, (u) => 0.05 - 0.025 * u, 1);
+    const stelo = ombre(new THREE.Mesh(steloGeo, matRaspo)); mondo.add(stelo);
+    const mat = new THREE.MeshStandardMaterial({ map: T.map, bumpMap: T.bump, bumpScale: 2.5, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.58, metalness: 0 });
+    const lamina = new THREE.Mesh(geometriaFoglia(T.attacco, f.lato, f.curva), mat);
+    lamina.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: T.map, alphaTest: 0.5 });
+    ombre(lamina);
+    const g = new THREE.Group(); g.position.copy(fine); g.rotation.set(...f.rot); g.add(lamina); mondo.add(g);
+    g.userData = { base: g.rotation.clone(), stelo, fase: k * 1.7 };
+    return g;
+  });
+  const elica = new THREE.CatmullRomCurve3(Array.from({ length: 44 }, (_, k) => { const a = k * 0.45, rr = 0.36 - k * 0.0065; return new THREE.Vector3(-1.45 + Math.cos(a) * rr + k * 0.012, 1.95 + k * 0.03, Math.sin(a) * rr); }));
+  const viticcioGeo = tuboVivo(elica, 140, 8, (u) => 0.034 - 0.024 * u, 1);
+  mondo.add(ombre(new THREE.Mesh(viticcioGeo, matViticcio)));
 
-  // --- peduncolo e raspo ---
+  // --- il grappolo pende da un perno sul tralcio: il vento lo fa oscillare attorno a questo punto ---
+  const PERNO = new THREE.Vector3(0, 1.62, 0);
+  const grappolo = new THREE.Group(); grappolo.position.copy(PERNO); mondo.add(grappolo);
+  const interno = new THREE.Group(); interno.position.copy(PERNO).negate(); grappolo.add(interno);
+
   const pedCurva = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 1.62, 0), new THREE.Vector3(0.18, 1.0, 0.05), new THREE.Vector3(0, 0.35, 0)]);
-  const pedGeo = new THREE.TubeGeometry(pedCurva, 40, 0.1, 12, false);
-  mondo.add(new THREE.Mesh(pedGeo, matLegno));
+  const pedGeo = tuboVivo(pedCurva, 40, 14, (u) => 0.13 - 0.05 * u + nodo(u, 0.02, 0.05, 0.03), 1.2);
+  interno.add(ombre(new THREE.Mesh(pedGeo, matLegno)));
   const rachide = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0.08, -1.4, 0.04), new THREE.Vector3(-0.06, -3.4, 0), new THREE.Vector3(0.04, -5.4, 0)]);
-  const rachGeo = new THREE.TubeGeometry(rachide, 80, 0.07, 10, false);
-  mondo.add(new THREE.Mesh(rachGeo, matRaspo));
+  const rachGeo = tuboVivo(rachide, 90, 10, (u) => 0.085 - 0.055 * u, 3);
+  interno.add(ombre(new THREE.Mesh(rachGeo, matRaspo)));
 
   // --- chicchi: prima i 17 col logotipo, sul guscio esterno; poi i chicchi pieni ---
   const Y0 = 0.1, ALT = 5.7, Rb = (t) => 2.3 * Math.pow(Math.max(1 - t, 0), 0.72) + 0.32;
@@ -186,7 +346,7 @@ async function crea(host) {
     const t = 0.07 + (k / (n - 1)) * 0.82, y = Y0 - t * ALT, a = k * 2.39996 + 0.6, rad = Rb(t) * 0.93;
     chicchi.push({ p: new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad), r: R_LOGO, i: k });
   }
-  for (let it = 0; it < 60; it++) { // piccole spinte finché nessun chicco col logotipo ne tocca un altro
+  for (let it = 0; it < 60; it++) {
     let mosso = false;
     for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) {
       const A = chicchi[a].p, B = chicchi[b].p, d = A.distanceTo(B), min = R_LOGO * 2 + 0.05;
@@ -201,40 +361,79 @@ async function crea(host) {
     if ([...chicchi, ...pieni].every((o) => o.p.distanceTo(p) > o.r + r + 0.015)) pieni.push({ p, r });
   }
 
-  const sfera = new THREE.SphereGeometry(1, 40, 28);
-  const matBuccia = new THREE.MeshPhysicalMaterial({ color: COL.buccia, roughness: 0.36, metalness: 0, clearcoat: 0.55, clearcoatRoughness: 0.32, sheen: 1, sheenRoughness: 0.65, sheenColor: new THREE.Color(0xb99ac8) });
+  const sfera = new THREE.SphereGeometry(1, 48, 32); sfera.scale(1, 1.05, 1);
+  const bloom = pruina(3307);
+  const matBuccia = new THREE.MeshPhysicalMaterial({ color: COL.buccia, roughness: 0.42, roughnessMap: bloom, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.45, sheen: 1, sheenRoughness: 0.55, sheenColor: new THREE.Color(0xc3a9d2) });
   const matBucciaAccesa = matBuccia.clone(); matBucciaAccesa.emissive = new THREE.Color(0x3d4a10); matBucciaAccesa.emissiveIntensity = 0.9;
 
-  // piccioli: dal raspo a ogni chicco
+  // piccioli: dal raspo a ogni chicco, sottili e con il ricettacolo ingrossato
   const piccioli = [];
   const picciolo = (c) => {
     const ys = Math.min(c.p.y + 0.55, 0.3), u = THREE.MathUtils.clamp((0.35 - ys) / 5.75, 0, 1);
-    const s = rachide.getPointAt(u), dir = c.p.clone().sub(s), fine = c.p.clone().sub(dir.clone().normalize().multiplyScalar(c.r * 0.85));
+    const s = rachide.getPointAt(u), dir = c.p.clone().sub(s), fine = c.p.clone().sub(dir.clone().normalize().multiplyScalar(c.r * 0.9));
     const mid = s.clone().lerp(fine, 0.5).add(new THREE.Vector3(0, 0.22, 0));
-    const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([s, mid, fine]), 14, c.r > 0.4 ? 0.035 : 0.026, 6, false);
-    const m = new THREE.Mesh(geo, matRaspo); mondo.add(m); piccioli.push({ geo, c });
+    const r0 = c.r > 0.4 ? 0.036 : 0.028;
+    const geo = tuboVivo(new THREE.CatmullRomCurve3([s, mid, fine]), 14, 7, (q) => r0 * (1 - 0.35 * q) + 0.03 * Math.max(0, (q - 0.82) / 0.18) ** 2, 1);
+    const m = ombre(new THREE.Mesh(geo, matRaspo), false); interno.add(m); piccioli.push({ geo, c });
   };
   pieni.forEach(picciolo); chicchi.forEach(picciolo);
 
-  const inst = new THREE.InstancedMesh(sfera, matBuccia, pieni.length);
-  // ogni chicco ha una sfumatura sua, come nell'uva vera
+  const inst = ombre(new THREE.InstancedMesh(sfera, matBuccia, pieni.length));
   const tinta = new THREE.Color();
   pieni.forEach((c, k) => { const v = casuale(); inst.setColorAt(k, tinta.setHSL(0.93 + v * 0.04, 0.35 + v * 0.2, 0.62 + casuale() * 0.22)); });
-  mondo.add(inst);
+  interno.add(inst);
   const tmp = new THREE.Object3D();
   const setPieno = (k, s) => { const c = pieni[k]; tmp.position.copy(c.p); tmp.scale.setScalar(Math.max(c.r * s, 0.0001)); tmp.updateMatrix(); inst.setMatrixAt(k, tmp.matrix); };
 
   const imgs = await Promise.all(aziende.map((a) => loghi[a] ? caricaImg(`../shared/img/loghi/${loghi[a]}.png`) : Promise.resolve(null)));
   const meshLogo = [], sprite = [];
   chicchi.forEach((c, k) => {
-    const m = new THREE.Mesh(sfera, matBuccia); m.position.copy(c.p); m.scale.setScalar(c.r); m.userData.i = k; mondo.add(m); meshLogo.push(m);
+    const m = ombre(new THREE.Mesh(sfera, matBuccia)); m.position.copy(c.p); m.scale.setScalar(c.r); m.userData.i = k; interno.add(m); meshLogo.push(m);
     const tex = [etichetta(imgs[k], iniziali(aziende[k]), false), etichetta(imgs[k], iniziali(aziende[k]), true)];
     const sm = new THREE.SpriteMaterial({ map: tex[0], transparent: true, depthWrite: false });
     const sp = new THREE.Sprite(sm); sp.userData = { i: k, tex }; sp.scale.setScalar(c.r * 1.42); mondo.add(sp); sprite.push(sp);
   });
 
-  const terra = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.MeshBasicMaterial({ map: ombraTerra(), transparent: true, depthWrite: false }));
-  terra.rotation.x = -Math.PI / 2; terra.position.set(0, -6.25, 0); mondo.add(terra);
+  // terreno: ombra vera proiettata dalla luce, più un alone morbido
+  const suolo = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), new THREE.ShadowMaterial({ opacity: 0.11 }));
+  suolo.rotation.x = -Math.PI / 2; suolo.position.set(0, -6.45, 0); suolo.receiveShadow = true; mondo.add(suolo);
+  const terra = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.MeshBasicMaterial({ map: ombraTerra(), transparent: true, depthWrite: false, opacity: 0.6 }));
+  terra.rotation.x = -Math.PI / 2; terra.position.set(0, -6.44, 0); mondo.add(terra);
+
+  // --- vento: il passaggio del puntatore spinge il grappolo, che oscilla e torna; le foglie fremono ---
+  const vento = { ax: 0, az: 0, vx: 0, vz: 0, energia: 0 };
+  const destra = new THREE.Vector3(), avanti = new THREE.Vector3();
+  let ultimo = null;
+  const soffia = (e) => {
+    if (RM) return;
+    if (ultimo) {
+      const dx = THREE.MathUtils.clamp(e.clientX - ultimo.x, -60, 60), dy = THREE.MathUtils.clamp(e.clientY - ultimo.y, -60, 60);
+      destra.setFromMatrixColumn(camera.matrixWorld, 0); avanti.setFromMatrixColumn(camera.matrixWorld, 2);
+      const px = destra.x * dx + avanti.x * dy * 0.4, pz = destra.z * dx + avanti.z * dy * 0.4;
+      vento.vz += px * 0.00016; vento.vx -= pz * 0.00016;
+      vento.energia = Math.min(1, vento.energia + (Math.abs(dx) + Math.abs(dy)) * 0.006);
+    }
+    ultimo = { x: e.clientX, y: e.clientY };
+  };
+  const passoVento = (t) => {
+    for (const asse of ["x", "z"]) {
+      const a = "a" + asse, v = "v" + asse;
+      vento[v] += -0.014 * vento[a]; vento[v] *= 0.962; vento[a] = THREE.MathUtils.clamp(vento[a] + vento[v], -0.3, 0.3);
+    }
+    const brezza = RM ? 0 : Math.sin(t * 0.0007) * 0.012 + Math.sin(t * 0.0017 + 1) * 0.005;
+    grappolo.rotation.z = vento.az + brezza;
+    grappolo.rotation.x = vento.ax + brezza * 0.6;
+    foglie.forEach((f, k) => {
+      const b = f.userData.base, ph = f.userData.fase, e = vento.energia;
+      f.rotation.x = b.x + vento.ax * 1.5 + brezza * 1.4 + Math.sin(t * 0.011 + ph) * 0.09 * e;
+      f.rotation.z = b.z + vento.az * 1.3 + Math.cos(t * 0.014 + ph) * 0.07 * e;
+      f.rotation.y = b.y + Math.sin(t * 0.009 + ph * 2) * 0.05 * e;
+    });
+    if (vento.energia > 0.002) {
+      meshLogo.forEach((m, k) => { const c = chicchi[k]; m.position.set(c.p.x + Math.sin(t * 0.021 + k * 1.7) * 0.025 * vento.energia, c.p.y, c.p.z + Math.cos(t * 0.019 + k) * 0.025 * vento.energia); });
+    }
+    vento.energia *= 0.982;
+  };
 
   // --- crescita ---
   const S = { cane: 0, ped: 0, fo: 0, ramo: [], acino: [], pieno: [], lab: [] };
@@ -244,7 +443,7 @@ async function crea(host) {
     strisciaGeo.setDrawRange(0, Math.floor(strisciaGeo.index.count * S.cane / 12) * 12);
     mondo.children.forEach((o) => { if (o.userData.capo !== undefined) o.visible = (o.userData.capo === 0 ? S.cane > 0.01 : S.cane > 0.99); });
     viticcioGeo.setDrawRange(0, Math.floor(viticcioGeo.index.count * S.fo / 6) * 6);
-    foglie.forEach((f) => f.scale.setScalar(Math.max(S.fo, 0.0001)));
+    foglie.forEach((f) => { f.scale.setScalar(Math.max(S.fo, 0.0001)); f.userData.stelo.visible = S.fo > 0.02; });
     pedGeo.setDrawRange(0, Math.floor(pedGeo.index.count * Math.min(S.ped * 2, 1) / 6) * 6);
     rachGeo.setDrawRange(0, Math.floor(rachGeo.index.count * Math.max(S.ped * 2 - 1, 0) / 6) * 6);
     piccioli.forEach((q, k) => q.geo.setDrawRange(0, Math.floor(q.geo.index.count * S.ramo[k].v / 6) * 6));
@@ -286,7 +485,7 @@ async function crea(host) {
   const adatta = () => {
     const w = host.querySelector(".g3-scena").clientWidth, h = canvas.clientHeight || w * 0.8;
     renderer.setSize(w, h, false); camera.aspect = w / h;
-    const f = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), hh = 10.6, ww = camera.aspect < 0.8 ? 6.6 : 11.2; // sul telefono conta il grappolo, i capi del tralcio possono uscire
+    const f = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), hh = 11.2, ww = camera.aspect < 0.8 ? 7 : 11.6; // sul telefono conta il grappolo, i capi del tralcio possono uscire
     distanzaIntera = Math.max(hh / 2 / f, ww / 2 / (f * camera.aspect)) * 1.02;
     camera.updateProjectionMatrix();
   };
@@ -326,9 +525,9 @@ async function crea(host) {
   const riprendiGiro = (ms = 5000) => { clearTimeout(riprendi); riprendi = setTimeout(() => { if (scelto < 0 && giroAttivo() && !RM) controls.autoRotate = true; }, ms); };
   const esplora = (i) => {
     scelto = i; fermaGiro(); accendi(i); scheda(i);
-    const p = chicchi[i].p.clone(), fuori = new THREE.Vector3(p.x, 0, p.z).normalize();
+    const p = meshLogo[i].getWorldPosition(new THREE.Vector3()), fuori = new THREE.Vector3(p.x, 0, p.z).normalize();
     if (fuori.lengthSq() < 0.01) fuori.set(0, 0, 1);
-    const pos = p.clone().add(fuori.multiplyScalar(6.2)).add(new THREE.Vector3(0, 0.7, 0));
+    const pos = p.clone().add(fuori.multiplyScalar(7.6)).add(new THREE.Vector3(0, 0.8, 0));
     if (gsap && !RM) { gsap.to(controls.target, { x: p.x, y: p.y, z: p.z, duration: 1.1, ease: "power3.inOut" }); gsap.to(camera.position, { x: pos.x, y: pos.y, z: pos.z, duration: 1.1, ease: "power3.inOut" }); }
     else { controls.target.copy(p); camera.position.copy(pos); }
     host.classList.add("esplora-uno");
@@ -336,11 +535,12 @@ async function crea(host) {
   const chiudi = () => { scelto = -1; accendi(-1); card.hidden = true; host.classList.remove("esplora-uno"); vistaIntera(); riprendiGiro(1400); };
 
   canvas.addEventListener("pointermove", (e) => {
+    soffia(e);
     if (e.pointerType === "touch") return;
     const i = colpo(e); canvas.style.cursor = i >= 0 ? "pointer" : (controls.enabled ? "grab" : "default");
     if (i !== sopra) { sopra = i; if (scelto < 0) { accendi(i); scheda(i); } }
   });
-  canvas.addEventListener("pointerleave", () => { sopra = -1; if (scelto < 0) { accendi(-1); card.hidden = true; } });
+  canvas.addEventListener("pointerleave", () => { ultimo = null; sopra = -1; if (scelto < 0) { accendi(-1); card.hidden = true; } });
   let giu = null;
   canvas.addEventListener("pointerdown", (e) => { giu = { x: e.clientX, y: e.clientY }; });
   canvas.addEventListener("pointerup", (e) => {
@@ -374,19 +574,22 @@ async function crea(host) {
 
   // --- ciclo di disegno solo quando il grappolo è visibile ---
   let visibile = false, avviato = false, raf = 0;
-  const proiezione = new THREE.Vector3();
+  const proiezione = new THREE.Vector3(), mondoP = new THREE.Vector3();
   const giro = () => {
     raf = requestAnimationFrame(giro);
     controls.update();
+    passoVento(performance.now());
+    mondo.updateMatrixWorld();
     // le etichette stanno sulla faccia del chicco rivolta verso chi guarda
     chicchi.forEach((c, k) => {
       const m = meshLogo[k], s = m.scale.x;
-      sprite[k].position.copy(c.p).add(camera.position.clone().sub(c.p).setLength(s * 1.03));
+      m.getWorldPosition(mondoP);
+      sprite[k].position.copy(mondoP).add(camera.position.clone().sub(mondoP).setLength(s * 1.05));
       sprite[k].scale.setScalar(s * 1.42);
     });
     if (!card.hidden) {
       const i = +card.dataset.i, b = canvas.getBoundingClientRect(), hb = host.getBoundingClientRect();
-      proiezione.copy(chicchi[i].p).add(new THREE.Vector3(0, chicchi[i].r, 0)).project(camera);
+      proiezione.copy(meshLogo[i].getWorldPosition(mondoP)).add(new THREE.Vector3(0, chicchi[i].r, 0)).project(camera);
       card.style.left = Math.min(Math.max((proiezione.x + 1) / 2 * b.width + (b.left - hb.left), 130), hb.width - 130) + "px";
       card.style.top = ((1 - proiezione.y) / 2 * b.height + (b.top - hb.top)) + "px";
     }
@@ -398,7 +601,7 @@ async function crea(host) {
     if (!visibile && raf) { cancelAnimationFrame(raf); raf = 0; }
     if (visibile && !avviato && en.intersectionRatio > 0.25) { avviato = true; cresci(); }
   }, { threshold: [0, 0.25, 0.5] }).observe(host);
-  host.__g3 = { cresci, esplora, chiudi };
+  host.__g3 = { cresci, esplora, chiudi, soffia: (dx, dy = 0) => { soffia({ clientX: 0, clientY: 0 }); soffia({ clientX: dx, clientY: dy }); ultimo = null; } };
 }
 
 const host = document.querySelector("[data-grappolo3d]");
