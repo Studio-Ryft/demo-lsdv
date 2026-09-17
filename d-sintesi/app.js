@@ -46,8 +46,7 @@
   $("[data-passi]").innerHTML = D.adesione.passi.map((p) => `<li><b>${esc(p.t)}</b>${esc(p.d)}</li>`).join("");
   $("[data-cats]").innerHTML = D.adesione.categorie.map((c) => `<button type="button" class="cat" data-cat="${c.id}" aria-pressed="false">${icon(c.icona)}<span>${esc(c.nome)}</span></button>`).join("");
   $("#lcomuni").innerHTML = D.comuni.map((c) => `<option value="${esc(c.nome)}">`).join("");
-  $("[data-contatti]").innerHTML = `${esc(D.ente.sede)}<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
-  $("[data-partner]").innerHTML = D.partner.map((p) => esc(p.nome)).join(" · ");
+  $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
   demoBadge("D · Terra e persone");

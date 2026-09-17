@@ -123,5 +123,21 @@
     return true;
   }
 
-  window.LSDVCore = { D, M, RM, $, $$, esc, slug, html, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce };
+  /* ---------- sezione «Chi siamo»: stesso testo, grafica di ciascuna versione ---------- */
+  function chiSiamo(el) {
+    const c = D.chisiamo; if (!el || !c) return;
+    el.innerHTML = `<div class="cs-in"><header class="cs-h"><p class="cs-kick">${esc(c.occhiello)}</p><h2 class="cs-t">${esc(c.titolo)}</h2></header>
+      <div class="cs-grid">${c.blocchi.map((b, i) => `<article class="cs-b"><span class="cs-n">${String(i + 1).padStart(2, "0")}</span><h3>${esc(b.t)}</h3><p>${esc(b.d)}</p></article>`).join("")}</div></div>`;
+  }
+  $$("[data-chisiamo]").forEach(chiSiamo);
+  // entrata dei tre blocchi, quando GSAP e ScrollTrigger sono pronti
+  addEventListener("load", () => {
+    if (RM || !window.gsap || !window.ScrollTrigger) return;
+    $$("[data-chisiamo]").forEach((s) => {
+      gsap.from($$(".cs-kick, .cs-t", s), { y: 30, autoAlpha: 0, duration: 1, stagger: 0.12, ease: "expo.out", scrollTrigger: { trigger: s, start: "top 78%" } });
+      gsap.from($$(".cs-b", s), { y: 50, autoAlpha: 0, duration: 1.1, stagger: 0.14, ease: "expo.out", scrollTrigger: { trigger: $(".cs-grid", s), start: "top 85%" } });
+    });
+  });
+
+  window.LSDVCore = { D, M, RM, $, $$, esc, slug, html, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce, chiSiamo };
 })();

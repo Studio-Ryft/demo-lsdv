@@ -51,8 +51,8 @@
   $("[data-herodata]").innerHTML = D.numeri.map((n) => `<li><b data-count="${n.n}">${n.n}</b>${esc(n.label)}</li>`).join("");
   $("[data-herocont]").innerHTML = mapSVG({ luoghi: false });
   $("[data-incont]").innerHTML = mapSVG({ luoghi: false });
-  ["[data-quote]", "[data-quote2]"].forEach((s) => ($(s).textContent = "«" + D.ente.citazione.testo + "»"));
-  ["[data-quote-a]", "[data-quote-a2]"].forEach((s) => ($(s).textContent = `${D.ente.citazione.autore} · ${D.ente.citazione.ruolo}`));
+  $("[data-quote]").textContent = "«" + D.ente.citazione.testo + "»";
+  ["[data-quote-a]"].forEach((s) => ($(s).textContent = `${D.ente.citazione.autore} · ${D.ente.citazione.ruolo}`));
   $("[data-manifesto]").innerHTML = D.manifesto.map((m, i) => `<div><b>0${i + 1}</b><h3>${esc(m.t)}</h3><p>${esc(m.d)}</p></div>`).join("");
 
   // volo: comuni da ovest a est
@@ -79,7 +79,10 @@
   $("[data-percorsi]").innerHTML = D.percorsi.map((p, i) => `<article class="perc"><svg viewBox="0 0 150 140" aria-hidden="true"><path d="${PERC[i]}"/></svg><b>0${i + 1}</b><h3>${esc(p.nome)}</h3><p>${esc(p.testo)}</p></article>`).join("");
 
   const ant = D.eventi.find((e) => e.stato === "archivio");
-  $("[data-evmain]").innerHTML = `<img src="../${ant.img}" alt="Vigneti al tramonto"><div class="ev-body"><div><p class="d">${esc(ant.data)}</p><h3>${esc(ant.titolo)}</h3><p class="l">${esc(ant.luogo)}</p><p class="t">${esc(ant.testo)}</p></div><div class="ev-panel"><h4>Panel degustatori</h4><ul>${D.panel.degustatori.map((p) => `<li>${esc(p)}</li>`).join("")}</ul><h4 style="margin-top:1.2rem">Panel enologi</h4><ul>${D.panel.enologi.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div></div>`;
+  $("[data-evmain]").innerHTML = `<img src="../${ant.img}" alt="Vigneti al tramonto"><div class="ev-body"><div><p class="d">${esc(ant.data)}</p><h3>${esc(ant.titolo)}</h3><p class="l">${esc(ant.luogo)}</p><p class="t">${esc(ant.testo)}</p></div></div>`;
+  const COORD = / \(coordinatore\)$/;
+  const persona = (p) => { const co = COORD.test(p), [n, r] = p.replace(COORD, "").split(" · "); return `<li${co ? ' class="co"' : ""}><b>${esc(n)}</b>${r ? `<span>${esc(r)}</span>` : ""}${co ? "<em>coordinatore</em>" : ""}</li>`; };
+  $("[data-evpanel]").innerHTML = `<div class="evp-g"><h4><span>${D.panel.degustatori.length}</span> degustatori</h4><ul class="evp-deg">${D.panel.degustatori.map(persona).join("")}</ul></div><div class="evp-g"><h4><span>${D.panel.enologi.length}</span> enologi</h4><ul class="evp-eno">${D.panel.enologi.map(persona).join("")}</ul></div>`;
   $("[data-evnext]").innerHTML = D.eventi.filter((e) => e.stato !== "archivio").map((e) => `<article class="ev-i"><p class="d">${esc(e.data)}</p><h3>${esc(e.titolo)}</h3><p>${esc(e.testo)}</p>${e.demo ? '<span class="tag-demo">Esempio</span>' : ""}</article>`).join("");
 
   $("[data-vlog]").innerHTML = D.vlog.concat(D.vlog.map((v, i) => Object.assign({}, v, { ep: String(5 + i).padStart(2, "0") }))).slice(0, 6).map((v, i) => `<div class="clip" data-cursor="Guarda"><img src="../${v.img}" alt="" draggable="false"><video muted loop playsinline preload="none" data-t="${i * 7}"><source src="../shared/video/vigna.mp4" type="video/mp4"></video><span class="rec">Episodio ${v.ep}</span><div class="meta"><p class="ep"><span>Voci dal suolo</span><span>${v.durata}</span></p><h4>${esc(v.titolo)}</h4><p>${esc(v.testo)}</p></div></div>`).join("");
@@ -91,8 +94,7 @@
   $("[data-adnota]").textContent = D.adesione.nota;
   $("[data-cats]").innerHTML = D.adesione.categorie.map((c) => `<button type="button" class="cat" data-cat="${c.id}" aria-pressed="false">${icon(c.icona)}<span><b>${esc(c.nome)}</b><small>${esc(c.desc)}</small></span></button>`).join("");
   $("#lcomuni").innerHTML = D.comuni.map((c) => `<option value="${esc(c.nome)}">`).join("");
-  $("[data-contatti]").innerHTML = `${esc(D.ente.sede)}<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
-  $("[data-partner]").innerHTML = D.partner.map((p) => esc(p.nome)).join(" · ");
+  $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
   demoBadge("B · Il Suolo Parla");
 
@@ -171,9 +173,6 @@
   burger.addEventListener("click", () => setMenu(burger.getAttribute("aria-expanded") !== "true"));
   mnav.addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
 
-  // luce "alla cieca"
-  const dq = $(".dark-quote");
-  dq.addEventListener("pointermove", (e) => { const r = dq.getBoundingClientRect(); dq.style.setProperty("--mx", e.clientX - r.left + "px"); dq.style.setProperty("--my", e.clientY - r.top + "px"); });
   // video al passaggio
   $$(".clip").forEach((c) => {
     const v = $("video", c);
@@ -275,7 +274,6 @@
   if (fine) { const hc = $(".hero-cont"); addEventListener("pointermove", (e) => gsap.to(hc, { x: (e.clientX / innerWidth - 0.5) * -40, y: (e.clientY / innerHeight - 0.5) * -30, duration: 1.4, ease: "power3.out" })); }
 
   // ---------- LUCE ALLA CIECA ----------
-  if (!fine) gsap.fromTo(dq, { "--mx": "15%", "--my": "35%" }, { "--mx": "85%", "--my": "55%", ease: "none", scrollTrigger: { trigger: dq, start: "top 70%", end: "bottom 30%", scrub: true } });
   gsap.from(".mani div", { y: 50, autoAlpha: 0, stagger: 0.12, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".mani", start: "top 85%" } });
 
   // ---------- VOLO ----------
@@ -376,6 +374,15 @@
   window.LSDVSound && window.LSDVSound.bind();
   ScrollTrigger.create({ trigger: ".strati", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("step") });
   ScrollTrigger.create({ trigger: ".dark-quote", start: "top 60%", once: true, onEnter: () => window.LSDVSound && window.LSDVSound.play("open") });
+  // la citazione emerge dal buio parola per parola, poi resta accesa da una luce calda
+  {
+    const q = $(".dq-text"), parole = SplitText.create(q, { type: "words", wordsClass: "w" }).words;
+    gsap.timeline({ scrollTrigger: { trigger: ".dark-quote", start: "top 72%", end: "top 8%", scrub: 0.8,
+        onUpdate: (s) => q.classList.toggle("lume", s.progress > 0.97) } })
+      .fromTo(parole, { autoAlpha: 0.06, yPercent: 38, filter: "blur(10px)" }, { autoAlpha: 1, yPercent: 0, filter: "blur(0px)", ease: "power2.out", stagger: 0.12, duration: 1 })
+      .fromTo(".dq-auth", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.8 }, ">-0.3")
+      .fromTo(".dq-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.8 }, "<");
+  }
 
   addEventListener("load", () => ScrollTrigger.refresh());
 })();

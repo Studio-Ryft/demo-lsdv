@@ -69,6 +69,44 @@ window.LSDV = {
     { id: "ruviano", nome: "Ruviano", testo: "Il paese sta su una collina nella grande ansa del Volturno, al margine orientale della provincia. Il castello, passato fra Normanni, Svevi e Angioini, ha una torre dell'orologio, e in via Castello resta una torre difensiva del Quattrocento." }
   ],
 
+  // logotipi disponibili in shared/img/loghi (scuri) e loghi-chiari (avorio); chi manca usa il monogramma
+  loghi: {
+    "Alois": "alois",
+    "Canestrini": "canestrini",
+    "I Vignai del Casavecchia": "vignai",
+    "Masseria Piccirillo": "piccirillo",
+    "Sagliocco": "sagliocco",
+    "Scaramuzzo": "scaramuzzo",
+    "Sclavia": "sclavia",
+    "Civittolo": "civittolo",
+    "Domus Vinaria · Palmieri": "domus-vinaria",
+    "Il Verro": "il-verro",
+    "Laboris Catrame": "laboris-catrame",
+    "Le Fontanelle": "le-fontanelle",
+    "Le Ghiandaie": "le-ghiandaie",
+    "Tenuta Pezzapane": "pezzapane",
+    "Teresa Mincione": "mincione",
+    "Vestini Campagnano · Poderi Foglia": "vestini"
+  },
+  // sezione «Chi siamo» (testo SCRIBA, 17/09/2026)
+  chisiamo: {
+    "occhiello": "Chi siamo",
+    "titolo": "Facciamo conoscere l'Alta Campania a partire dai suoi vini",
+    "blocchi": [
+      {
+        "t": "Una rete",
+        "d": "Siamo un'associazione che lavora negli otto comuni della DOC Casavecchia di Pontelatone, in provincia di Caserta. Ne fanno parte diciassette aziende vitivinicole e, con loro, chi accoglie i visitatori nei wine bar e nei B&B, chi produce formaggi, miele e olio, e gli enti locali. Lavoriamo in rete perché chi visita una cantina conosca anche il paese intorno e chi ci vive."
+      },
+      {
+        "t": "Percorsi ed eventi",
+        "d": "Nei percorsi del Vino, dei Borghi e dei Sapori mettiamo sulla stessa mappa cantine, centri storici e aziende agricole. A gennaio 2026 abbiamo organizzato l'Anteprima Casavecchia e Pallagrello all'Archivio di Stato di Caserta, nella Reggia: critici ed enologi hanno assaggiato i vini alla cieca, senza sapere di quale cantina fossero. Collaboriamo al Casavecchia & Pallagrello Wine Festival, promosso dalla Pro Loco di Pontelatone."
+      },
+      {
+        "t": "Divulgare la cultura",
+        "d": "Per noi il vino serve a raccontare la cultura di questa zona. Parliamo dei documenti d'archivio, dei suoli che le analisi di 50 vigneti hanno distinto, delle comunità dei paesi e di tre vitigni antichi: il Casavecchia, il Pallagrello nero e il Pallagrello bianco. Il decreto legislativo 117/2017 riconosce la qualifica di Ente del Terzo Settore a chi è iscritto al Registro unico nazionale e persegue, senza scopo di lucro, finalità civiche e solidaristiche con attività di interesse generale, fra cui quelle culturali e turistiche di interesse sociale. Le nostre sono attività di divulgazione."
+      }
+    ]
+  },
   aziende: [
     "Alois", "Canestrini", "Civittolo", "Domus Vinaria · Palmieri", "Elysium (già Cantine Rao)", "I Vignai del Casavecchia",
     "Il Verro", "Laboris Catrame", "Le Fontanelle", "Le Ghiandaie", "Masseria Piccirillo", "Sagliocco",

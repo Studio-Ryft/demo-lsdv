@@ -33,7 +33,7 @@
         <img src="../shared/img/grappolo.webp" srcset="../shared/img/grappolo-mobile.webp 1100w, ../shared/img/grappolo.webp 2000w" sizes="100vw" alt="Grappoli di uva nera nei vigneti dell'Alta Campania">
         <div class="gp-grana" aria-hidden="true"></div>
         <ul class="gp-acini">${az.map((a, i) => {
-          const p = ACINI[i % ACINI.length], n = a.split(" (")[0].split(" · ")[0], l = LOGHI[n] || LOGHI[a];
+          const p = ACINI[i % ACINI.length], n = a.split(" (")[0].split(" · ")[0], l = (D.loghi || {})[a] || LOGHI[n] || LOGHI[a];
           return `<li class="gp-a" style="left:${p.x}%;top:${p.y}%;--d:${(p.r * 2).toFixed(2)}" data-i="${i}">
             <button type="button" data-snd="hover">
               <span class="gp-bolla">
@@ -52,7 +52,7 @@
 
     const card = root.querySelector(".gp-card"), foto = root.querySelector(".gp-foto");
     const mostra = (li) => {
-      const i = +li.dataset.i, a = az[i], n = a.split(" (")[0].split(" · ")[0], l = LOGHI[n] || LOGHI[a];
+      const i = +li.dataset.i, a = az[i], n = a.split(" (")[0].split(" · ")[0], l = (D.loghi || {})[a] || LOGHI[n] || LOGHI[a];
       card.querySelector("b").textContent = a;
       card.querySelector(".gp-n").textContent = String(i + 1).padStart(2, "0") + " / " + az.length;
       card.querySelector(".gp-l").innerHTML = l ? `<img src="../shared/img/${cartella}/${l}.png" alt="">` : "";

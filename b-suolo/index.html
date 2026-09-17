@@ -39,7 +39,7 @@
   <a class="hd-logo" href="#main" aria-label="Strada del Vino Casavecchia di Pontelatone"><svg data-logo></svg></a>
   <p class="hd-hud" aria-hidden="true"><span data-lat>41.1935</span> N · <span data-lon>14.2517</span> E · <span data-alt>121</span> m</p>
   <nav class="hd-nav" aria-label="Principale">
-    <a href="#volo">Territorio</a><a href="#strati">Suoli</a><a href="#aromi">Aromi</a><a href="#storia">Storia</a><a href="#rete">Rete</a><a href="#eventi">Eventi</a><a href="#video">Video</a>
+    <a href="#chi-siamo">Chi siamo</a><a href="#volo">Territorio</a><a href="#strati">Suoli</a><a href="#aromi">Aromi</a><a href="#storia">Storia</a><a href="#rete">Rete</a><a href="#eventi">Eventi</a><a href="#video">Video</a>
   </nav>
   <button class="hd-snd" type="button" data-sound-toggle aria-pressed="false" title="Effetti sonori"><i aria-hidden="true"></i><span class="sr" data-sound-label>Suono spento</span></button>
   <a class="hd-cta neon" href="#aderisci" data-snd="tap"><span>Aderisci</span></a>
@@ -69,14 +69,15 @@
     <ul class="hero-data" data-herodata></ul>
   </section>
 
+  <section class="chisiamo" id="chi-siamo" data-chisiamo></section>
+
   <section class="dark-quote" id="manifesto">
     <div class="dq-inner">
       <p class="kick">Alla cieca</p>
       <p class="dq-text" data-quote></p>
       <p class="dq-auth" data-quote-a></p>
-      <p class="dq-hint">Muovi la luce per leggere</p>
+      <span class="dq-rule" aria-hidden="true"></span>
     </div>
-    <div class="dq-lit" aria-hidden="true"><div class="dq-inner"><p class="kick">Alla cieca</p><p class="dq-text" data-quote2></p><p class="dq-auth" data-quote-a2></p><p class="dq-hint">&nbsp;</p></div></div>
     <div class="mani" data-manifesto></div>
   </section>
 
@@ -142,6 +143,7 @@
   <section class="eventi" id="eventi">
     <header class="sh"><p class="kick">Eventi</p><h2>Il calice<br><em>senza etichetta.</em></h2></header>
     <article class="ev-hero" data-evmain></article>
+    <div class="ev-panel" data-evpanel></div>
     <div class="ev-list" data-evnext></div>
   </section>
 
@@ -183,7 +185,6 @@
   <svg class="ft-logo" data-logo></svg>
   <div class="ft-grid">
     <div><h4>Contatti</h4><p data-contatti></p></div>
-    <div><h4>Partner</h4><p data-partner></p></div>
     <div><h4>Newsletter</h4><form class="nl" onsubmit="event.preventDefault();this.classList.add('ok')"><input type="email" required placeholder="email" aria-label="Email"><button>→</button><span>Iscritto. (demo)</span></form></div>
   </div>
   <p class="ft-legal">© 2026 Strada del Vino Casavecchia di Pontelatone · ETS · Progetto e sviluppo <a href="https://www.ryft.it/intro/" target="_blank" rel="noopener">Studio Ryft</a></p>

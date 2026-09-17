@@ -37,8 +37,7 @@
   $("[data-passi]").innerHTML = D.adesione.passi.map((p) => `<li><b>${esc(p.t)}</b>${esc(p.d)}</li>`).join("");
   $("[data-cats]").innerHTML = D.adesione.categorie.map((c) => `<button type="button" class="cat" data-cat="${c.id}" aria-pressed="false">${icon(c.icona)}<span>${esc(c.nome)}</span></button>`).join("");
   $("#lcomuni").innerHTML = D.comuni.map((c) => `<option value="${esc(c.nome)}">`).join("");
-  $("[data-contatti]").innerHTML = `${esc(D.ente.sede)}<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
-  $("[data-partner]").innerHTML = D.partner.map((p) => esc(p.nome)).join(" · ");
+  $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
   demoBadge("C · Il Filo");
@@ -109,77 +108,9 @@
   $(".modal-x").addEventListener("click", closeModal); modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
-  /* ================= COSTELLAZIONE ================= */
-  const cst = $("[data-const]"), svg = $(".const-svg", cst), tip = $(".const-tip", cst);
-  const GR = { center: { c: "#442413", r: 34, l: "Strada del Vino" }, az: { c: "#4B5D23", r: 11, l: "Aziende" }, co: { c: "#8A5A3C", r: 13, l: "Comuni" }, vi: { c: "#8E3942", r: 16, l: "Vitigni" }, pa: { c: "#ADC136", r: 10, l: "Partner" } };
-  const nodes = [{ id: "c", g: "center", label: "Strada del Vino" }];
-  D.aziende.forEach((a, i) => nodes.push({ id: "a" + i, g: "az", label: a }));
-  D.comuni.forEach((c) => nodes.push({ id: "co-" + c.id, g: "co", label: c.nome, ref: c.id }));
-  D.vitigni.forEach((v) => nodes.push({ id: "v-" + v.id, g: "vi", label: v.nome }));
-  D.partner.forEach((p, i) => nodes.push({ id: "p" + i, g: "pa", label: p.nome }));
-  const links = [];
-  nodes.forEach((n) => { if (n.g !== "center") links.push([n.id, "c"]); });
-  D.comuni.forEach((c) => { const m = M.comuni.find((x) => x.id === c.id); M.comuni.filter((x) => x.id !== c.id).sort((a, b) => Math.hypot(a.x - m.x, a.y - m.y) - Math.hypot(b.x - m.x, b.y - m.y)).slice(0, 2).forEach((nb) => { if (!links.find((l) => (l[0] === "co-" + nb.id && l[1] === "co-" + c.id))) links.push(["co-" + c.id, "co-" + nb.id]); }); });
-  const RING = { az: 0.36, co: 0.2, vi: 0.12, pa: 0.46 };
-  let W = 0, Hh = 0, running = false, drag = null, energy = 1;
-  const byId = {};
-  function build() {
-    svg.innerHTML = ""; const gl = document.createElementNS(NS, "g"), gn = document.createElementNS(NS, "g"); svg.append(gl, gn);
-    links.forEach((l) => { const e = document.createElementNS(NS, "line"); e.setAttribute("class", "lk"); l.el = e; gl.appendChild(e); });
-    nodes.forEach((n, i) => {
-      byId[n.id] = n; const g = document.createElementNS(NS, "g"); g.setAttribute("class", `nd g-${n.g}${n.me ? " me" : ""}`);
-      g.innerHTML = `<circle r="${GR[n.g].r}" fill="${n.me ? "#ADC136" : GR[n.g].c}"/>${n.g === "center" || n.g === "vi" || n.g === "co" || n.me ? `<text y="${GR[n.g].r + 16}" text-anchor="middle">${esc(n.label)}</text>` : ""}`;
-      n.el = g; gn.appendChild(g);
-      if (n.x == null) { const a = (i / nodes.length) * Math.PI * 12, rr = n.g === "center" ? 0 : (RING[n.g] || 0.3); n.x = W / 2 + Math.cos(a) * rr * Math.min(W, Hh) * 1.2 + (Math.random() - 0.5) * 40; n.y = Hh / 2 + Math.sin(a) * rr * Math.min(W, Hh) + (Math.random() - 0.5) * 40; n.vx = 0; n.vy = 0; }
-      g.addEventListener("pointerdown", (e) => { drag = n; g.setPointerCapture(e.pointerId); wake(); });
-      g.addEventListener("pointerenter", () => focus(n)); g.addEventListener("pointerleave", () => focus(null));
-    });
-  }
-  function size() { const r = svg.getBoundingClientRect(); W = r.width; Hh = r.height; svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); }
-  function focus(n) {
-    const hid = new Set(); if (n) links.forEach((l) => { if (l[0] === n.id || l[1] === n.id) { hid.add(l[0]); hid.add(l[1]); } });
-    nodes.forEach((m) => m.el.classList.toggle("dim", !!n && !hid.has(m.id)));
-    links.forEach((l) => l.el.classList.toggle("hi", !!n && (l[0] === n.id || l[1] === n.id)));
-    if (n) { tip.hidden = false; tip.textContent = n.label + (n.g !== "center" ? " · " + (n.me ? "la tua realtà" : GR[n.g].l.toLowerCase()) : ""); tip.style.left = n.x + "px"; tip.style.top = n.y - GR[n.g].r + "px"; } else tip.hidden = true;
-  }
-  function step() {
-    const k = Math.min(W, Hh);
-    nodes.forEach((a) => {
-      if (a.g === "center") { a.vx += (W / 2 - a.x) * 0.02; a.vy += (Hh / 2 - a.y) * 0.02; }
-      nodes.forEach((b) => { if (a === b) return; const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + 0.01, min = (GR[a.g].r + GR[b.g].r + 14); if (d2 < 22000) { const f = (a.g === "center" || b.g === "center" ? 900 : 380) / d2; a.vx += dx * f; a.vy += dy * f; } if (d2 < min * min) { const d = Math.sqrt(d2); a.vx += (dx / d) * 0.6; a.vy += (dy / d) * 0.6; } });
-    });
-    links.forEach((l) => { const a = byId[l[0]], b = byId[l[1]]; const rest = b.g === "center" ? (RING[a.g] || 0.3) * k : 0.14 * k; const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, f = (d - rest) * 0.004; a.vx += dx / d * f * d * 0.02; a.vy += dy / d * f * d * 0.02; if (b.g !== "center") { b.vx -= dx / d * f * d * 0.02; b.vy -= dy / d * f * d * 0.02; } });
-    energy = 0;
-    nodes.forEach((n) => {
-      if (n === drag) return;
-      n.vx *= 0.82; n.vy *= 0.82; n.x += n.vx; n.y += n.vy;
-      const m = GR[n.g].r + 10; n.x = Math.max(m, Math.min(W - m, n.x)); n.y = Math.max(m, Math.min(Hh - m - 30, n.y));
-      energy += Math.abs(n.vx) + Math.abs(n.vy);
-    });
-    links.forEach((l) => { const a = byId[l[0]], b = byId[l[1]]; l.el.setAttribute("x1", a.x.toFixed(1)); l.el.setAttribute("y1", a.y.toFixed(1)); l.el.setAttribute("x2", b.x.toFixed(1)); l.el.setAttribute("y2", b.y.toFixed(1)); });
-    nodes.forEach((n) => n.el.setAttribute("transform", `translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})`));
-    if (energy > 0.4 || drag) requestAnimationFrame(step); else running = false;
-  }
-  function wake() { if (!running) { running = true; requestAnimationFrame(step); } }
-  svg.addEventListener("pointermove", (e) => { if (!drag) return; const r = svg.getBoundingClientRect(); drag.x = e.clientX - r.left; drag.y = e.clientY - r.top; drag.vx = drag.vy = 0; focus(drag); });
-  addEventListener("pointerup", () => { if (drag) { drag = null; wake(); } });
-  size(); build();
-  new IntersectionObserver(([en]) => { if (en.isIntersecting) wake(); }, { threshold: 0.2 }).observe(cst);
-  addEventListener("resize", () => { size(); wake(); });
-  // filtri per gruppo
-  const counts = { az: D.aziende.length, co: D.comuni.length, vi: D.vitigni.length, pa: D.partner.length };
-  $("[data-chips]").innerHTML = Object.entries(counts).map(([g, n]) => `<button type="button" class="chip" data-g="${g}" aria-pressed="true"><i style="background:${GR[g].c}"></i>${GR[g].l} <b>${n}</b></button>`).join("");
-  $("[data-chips]").addEventListener("click", (e) => { const c = e.target.closest(".chip"); if (!c) return; const on = c.getAttribute("aria-pressed") !== "true"; c.setAttribute("aria-pressed", on); nodes.forEach((n) => { if (n.g === c.dataset.g) n.el.style.display = on ? "" : "none"; }); links.forEach((l) => { const a = byId[l[0]]; if (a.g === c.dataset.g) l.el.style.display = on ? "" : "none"; }); });
-  // aggiungi la tua realtà
-  $("[data-addme]").addEventListener("click", () => {
-    if (byId.me) { window.__lenis ? window.__lenis.scrollTo("#aderisci", { offset: -40 }) : $("#aderisci").scrollIntoView(); return; }
-    const n = { id: "me", g: "az", me: true, label: "Tu", x: W - 80, y: Hh - 80, vx: -6, vy: -6 };
-    nodes.push(n); links.push(["me", "c"]); links.push(["me", nodes.find((x) => x.g === "co").id]);
-    build(); wake(); focus(n);
-    $$("[data-siamo]").forEach((s) => (s.textContent = "17 + 1"));
-    $("[data-addme]").textContent = "Completa la candidatura →";
-    if (hasG && !RM) { const me = byId.me.el.querySelector("circle"); gsap.fromTo(me, { scale: 5, transformOrigin: "50% 50%" }, { scale: 1, duration: 1.1, ease: "back.out(3)" }); $$(".lk").slice(-2).forEach((l) => gsap.fromTo(l, { strokeOpacity: 1, strokeWidth: 4, stroke: "#ADC136" }, { strokeOpacity: 0.8, strokeWidth: 1.8, duration: 1.4 })); }
-  });
+  /* ================= IL TRALCIO DELLA RETE ================= */
+  const tralcio = window.LSDVTralcio.crea($("[data-tralcio]"), { loghi: "loghi-chiari" });
+  $("[data-addme]").addEventListener("click", (e) => { e.preventDefault(); window.__lenis ? window.__lenis.scrollTo("#aderisci", { offset: -40 }) : $("#aderisci").scrollIntoView({ behavior: "smooth" }); });
 
   /* ================= PERCORSI ================= */
   const pmap = $(".perc-map svg");
@@ -292,7 +223,6 @@
   gsap.fromTo(".voci", { borderRadius: "120px 120px 0 0" }, { borderRadius: "40px 40px 0 0", ease: "none", scrollTrigger: { trigger: ".voci", start: "top bottom", end: "top 40%", scrub: true } });
 
   // ---------- costellazione e percorsi ----------
-  gsap.from(".chip", { y: 20, autoAlpha: 0, stagger: 0.06, duration: 0.7, ease: "back.out(2)", scrollTrigger: { trigger: ".chips", start: "top 90%" } });
   ScrollTrigger.create({ trigger: ".perc-map", start: "top 70%", once: true, onEnter: () => route("borghi") });
   gsap.from(".ptab", { x: -40, autoAlpha: 0, stagger: 0.1, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".perc-tabs", start: "top 85%" } });
 

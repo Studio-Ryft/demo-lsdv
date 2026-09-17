@@ -1,0 +1,53 @@
+/* «Il tralcio della rete» — colori: corteccia, oliva #4B5D23, chartreuse #ADC136, uva #7C2F4B, crema #FCF6E1 */
+.tc{position:relative;perspective:1600px}
+.tc-scena{transform-style:preserve-3d;will-change:transform}
+.tc-svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* ramo con il nome inciso */
+.tc-ramo{fill:none;stroke-width:40;stroke-linecap:round}
+.tc-ramo-ombra{fill:none;stroke:rgba(40,20,10,.28);stroke-width:44;stroke-linecap:round;transform:translate(0,14px)}
+.tc-ramo-luce{fill:none;stroke:rgba(255,236,200,.22);stroke-width:4;stroke-linecap:round;transform:translate(0,-12px)}
+.tc-nome{font:600 19px/1 var(--tc-font,"Fraunces",Georgia,serif);letter-spacing:.2em;fill:#FCF6E1;paint-order:stroke;stroke:rgba(40,20,10,.35);stroke-width:1px}
+@media (max-width:760px){.tc-nome{font-size:21px;letter-spacing:.14em}.tc-ramo{stroke-width:44}}
+
+/* piccioli, foglie, viticci */
+.tc-picciolo{fill:none;stroke:#6A4A2E;stroke-width:5;stroke-linecap:round}
+.tc-foglia path{fill:#4B5D23;opacity:.92}
+.tc-foglia .tc-nerv{fill:none;stroke:#ADC136;stroke-width:1.6;opacity:.55}
+.tc-viticcio{fill:none;stroke:#8A9A3A;stroke-width:3;stroke-linecap:round}
+
+/* chicchi */
+.tc-acino{cursor:pointer;outline:none}
+.tc-a-in{transform-box:fill-box}
+.tc-a-ombra{fill:rgba(30,12,8,.38)}
+.tc-bordo{fill:none;stroke:rgba(255,220,235,.22);stroke-width:1.2}
+.tc-mono{fill:#7C2F4B;font:500 20px/1 var(--tc-font,"Fraunces",Georgia,serif);text-anchor:middle;letter-spacing:.04em}
+.tc-logo{opacity:1}
+.tc-disco{stroke:rgba(74,24,48,.35);stroke-width:1.2}
+.tc-anello{fill:none;stroke:#ADC136;stroke-width:2.5;opacity:0;transition:opacity .3s}
+.tc-acino .tc-a-in>circle:nth-of-type(2),.tc-acino .tc-a-in{transition:filter .35s}
+.tc-acino:hover .tc-anello,.tc-acino:focus-visible .tc-anello,.tc-acino.on .tc-anello{opacity:1}
+.tc-acino:hover .tc-a-in,.tc-acino:focus-visible .tc-a-in,.tc-acino.on .tc-a-in{filter:brightness(1.12) drop-shadow(0 0 10px rgba(173,193,54,.55))}
+.tc.fuoco .tc-acino:not(.on) .tc-a-in{filter:saturate(.55) brightness(.85)}
+
+/* scheda */
+.tc-card{position:absolute;z-index:5;transform:translate(-50%,calc(-100% - 22px));min-width:230px;max-width:290px;pointer-events:none;
+  padding:1rem 1.1rem;border-radius:18px;text-align:center;background:#FCF6E1;border:1px solid rgba(68,36,19,.16);box-shadow:0 26px 50px -24px rgba(40,20,10,.55)}
+.tc-card-l{display:grid;place-items:center;min-height:54px;margin-bottom:.5rem}
+.tc-card-l img{max-width:150px;max-height:54px;object-fit:contain}
+.tc-card-l i{font:500 1.6rem/1 var(--tc-font,"Fraunces",Georgia,serif);font-style:normal;color:#7C2F4B}
+.tc-card b{display:block;font:400 1.35rem/1.1 var(--tc-font,"Fraunces",Georgia,serif);color:#442413}
+.tc-card small{display:block;margin-top:.35rem;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4B5D23}
+
+/* barra sotto */
+.tc-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
+.tc-conta{font-size:14px;color:inherit;opacity:.8}
+.tc-conta b{font:500 1.9rem/1 var(--tc-font,"Fraunces",Georgia,serif);font-variant-numeric:tabular-nums;margin-right:.2rem}
+.tc-rivedi{border:1px solid currentColor;background:transparent;color:inherit;border-radius:40px;padding:.6rem 1.1rem;font:600 12.5px/1 inherit;letter-spacing:.04em;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s,background .3s}
+.tc.cresciuto .tc-rivedi{opacity:.85;pointer-events:auto}
+.tc-rivedi:hover{background:rgba(68,36,19,.08)}
+
+@media (prefers-reduced-motion:reduce){
+  .tc-scena{transform:none!important}
+  .tc-rivedi{display:none}
+}

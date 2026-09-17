@@ -84,9 +84,8 @@
   $("[data-adnota]").textContent = D.adesione.nota;
   $("[data-cats]").innerHTML = D.adesione.categorie.map((c) => `<button type="button" class="cat" data-cat="${c.id}" aria-pressed="false">${icon(c.icona)}<span><b>${esc(c.nome)}</b><small>${esc(c.desc)}</small></span></button>`).join("");
   $("#lcomuni").innerHTML = D.comuni.map((c) => `<option value="${esc(c.nome)}">`).join("");
-  $("[data-partner]").innerHTML = D.partner.map((p) => `<div class="pt"><b>${esc(p.nome)}</b><span>${esc(p.ruolo)}</span></div>`).join("");
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
-  $("[data-contatti]").innerHTML = `${esc(D.ente.sede)}<br><a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
+  $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
   demoBadge("A · L'Archivio Vivo");
 
