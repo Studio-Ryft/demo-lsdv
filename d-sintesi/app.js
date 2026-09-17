@@ -15,7 +15,7 @@
   pit.setAttribute("viewBox", B.pitto.vb);
   pit.innerHTML = `<path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/>`;
 
-  $("[data-missione]").textContent = D.ente.missione;
+  $("[data-missione]").textContent = (D.ente.intro && D.ente.intro.d) || D.ente.missione;
   $("[data-nums]").innerHTML = D.numeri.map((n) => `<li><b data-count="${n.n}">${n.n}</b><span>${esc(n.label)}</span></li>`).join("");
   $("[data-quote]").textContent = "«" + D.ente.citazione.testo + "»";
   $("[data-quote-a]").textContent = `${D.ente.citazione.autore} · ${D.ente.citazione.ruolo}`;

@@ -14,7 +14,7 @@
   const pit = $("[data-pitto]");
   if (pit) { pit.setAttribute("viewBox", B.pitto.vb); pit.innerHTML = `<path class="o" fill-rule="evenodd" d="${B.pitto.br}"/><path class="f" fill-rule="evenodd" d="${B.pitto.br}"/><path class="g" fill-rule="evenodd" d="${B.pitto.gr}"/>`; }
 
-  $("[data-missione]").textContent = D.ente.missione;
+  $("[data-missione]").textContent = (D.ente.intro && D.ente.intro.a) || D.ente.missione;
   $("[data-quote]").textContent = D.ente.citazione.testo;
   $("[data-quote-a]").textContent = `${D.ente.citazione.autore} · ${D.ente.citazione.ruolo}`;
   $("[data-manifesto]").innerHTML = D.manifesto.map((m, i) => `<div class="mf-item"><span class="n">0${i + 1}</span><h3>${esc(m.t)}</h3><p>${esc(m.d)}</p></div>`).join("");

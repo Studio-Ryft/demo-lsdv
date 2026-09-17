@@ -87,7 +87,7 @@ html.menu-open .hd{transform:none!important;background:var(--cream)}
 
 /* ---------- INTRO SEZIONE ---------- */
 .intro-sec{padding:clamp(110px,14vw,200px) var(--gut) clamp(60px,8vw,110px);max-width:1300px;margin:0 auto}
-.big{font:300 clamp(1.9rem,3.8vw,3.6rem)/1.18 var(--fs);letter-spacing:-.015em}
+.big{font:300 clamp(1.45rem,2.5vw,2.45rem)/1.28 var(--fs);letter-spacing:-.01em;max-width:1080px}
 .big .w{opacity:.18}
 .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:clamp(60px,7vw,100px)}
 .num{background:var(--cream);border-radius:var(--r);padding:1.6rem;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .6s var(--ease),background .4s}

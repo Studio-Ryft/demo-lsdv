@@ -47,7 +47,7 @@
   }
   avvia();
 
-  $("[data-missione]").textContent = D.ente.missione;
+  $("[data-missione]").textContent = (D.ente.intro && D.ente.intro.b) || D.ente.missione;
   $("[data-herodata]").innerHTML = D.numeri.map((n) => `<li><b data-count="${n.n}">${n.n}</b>${esc(n.label)}</li>`).join("");
   $("[data-herocont]").innerHTML = mapSVG({ luoghi: false });
   $("[data-incont]").innerHTML = mapSVG({ luoghi: false });

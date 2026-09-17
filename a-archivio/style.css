@@ -105,7 +105,7 @@ html.menu-open .hd{transform:none!important;background:var(--paper2)}
 .hero-t{font:400 clamp(3.2rem,8.4vw,8.6rem)/.92 var(--fs);letter-spacing:-.02em}
 .hero-t .ln{display:block;overflow:hidden;padding-bottom:.06em}
 .hero-t em{font-style:italic}
-.hero-lead{margin:2rem 0 2.4rem;max-width:520px;font-size:clamp(16px,1.3vw,19px);color:var(--ink2)}
+.hero-lead{margin:1.8rem 0 2.2rem;max-width:620px;font-size:clamp(15.5px,1.15vw,17.5px);line-height:1.62;color:var(--ink2)}
 .hero-act{display:flex;gap:12px;flex-wrap:wrap}
 .pin-card{position:absolute;z-index:6;width:250px;background:var(--paper2);border:1px solid var(--ink);box-shadow:8px 8px 0 var(--ink);pointer-events:none;transform:translate(-50%,calc(-100% - 24px))}
 .pin-card img{width:100%;aspect-ratio:3/2;object-fit:cover;filter:sepia(.2)}

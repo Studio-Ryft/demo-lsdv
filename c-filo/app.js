@@ -12,7 +12,7 @@
   $$("[data-logo]").forEach((el) => logo(el, "#442413", "#ADC136"));
   logo($("[data-logow]"), "#FCF6E1", "#ADC136"); logo($("[data-logow2]"), "#FCF6E1", "#ADC136");
 
-  $("[data-missione]").textContent = D.ente.missione;
+  $("[data-missione]").textContent = (D.ente.intro && D.ente.intro.c) || D.ente.missione;
   $("[data-nums]").innerHTML = D.numeri.map((n) => `<div class="num"><b data-count="${n.n}">${n.n}</b><span>${esc(n.label)}</span></div>`).join("");
   $("[data-quote]").textContent = `«${D.ente.citazione.testo}» ${D.ente.citazione.autore}, ${D.ente.citazione.ruolo}.`;
 
