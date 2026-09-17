@@ -93,9 +93,9 @@ function tuboVivo(curva, seg, rad, raggio, ripeti = 1) {
   const fr = curva.computeFrenetFrames(seg, false), P = new THREE.Vector3(), N = new THREE.Vector3();
   const pos = [], nor = [], uv = [], idx = [];
   for (let i = 0; i <= seg; i++) {
-    const u = i / seg, r = raggio(u); curva.getPointAt(u, P);
+    const u = i / seg; curva.getPointAt(u, P);
     for (let j = 0; j <= rad; j++) {
-      const v = (j / rad) * Math.PI * 2, s = Math.sin(v), c = -Math.cos(v);
+      const v = (j / rad) * Math.PI * 2, s = Math.sin(v), c = -Math.cos(v), r = raggio(u, j === rad ? 0 : v);
       N.set(c * fr.normals[i].x + s * fr.binormals[i].x, c * fr.normals[i].y + s * fr.binormals[i].y, c * fr.normals[i].z + s * fr.binormals[i].z).normalize();
       pos.push(P.x + r * N.x, P.y + r * N.y, P.z + r * N.z); nor.push(N.x, N.y, N.z); uv.push(u * ripeti, j / rad);
     }
@@ -113,7 +113,7 @@ function tuboVivo(curva, seg, rad, raggio, ripeti = 1) {
 }
 
 // corteccia procedurale: fibre lungo il ramo, crepe scure, strisce che si sfaldano; colore e rilievo dallo stesso disegno
-function corteccia(tinte, seme, W = 1024, H = 256) {
+function corteccia(tinte, seme, W = 1024, H = 256, puntini = 0) {
   const cc = document.createElement("canvas"), cb = document.createElement("canvas");
   cc.width = cb.width = W; cc.height = cb.height = H;
   const gc = cc.getContext("2d"), gb = cb.getContext("2d"), r = rnd(seme);
@@ -135,6 +135,11 @@ function corteccia(tinte, seme, W = 1024, H = 256) {
     const x = r() * W, y = r() * H, lw = 50 + r() * 180, lh = 3 + r() * 9;
     gc.globalAlpha = 0.28; gc.fillStyle = tinte.chiaro; gc.beginPath(); gc.ellipse(x, y, lw / 2, lh / 2, 0, 0, Math.PI * 2); gc.fill();
     gb.globalAlpha = 0.6; gb.fillStyle = "#e0e0e0"; gb.beginPath(); gb.ellipse(x, y, lw / 2, lh / 2, 0, 0, Math.PI * 2); gb.fill();
+  }
+  for (let k = 0; k < puntini; k++) { // lenticelle
+    const x = r() * W, y = r() * H, lw = 2 + r() * 6, lh = 1 + r() * 2.2;
+    gc.globalAlpha = 0.55; gc.fillStyle = r() < 0.6 ? tinte.chiaro : tinte.crepa; gc.beginPath(); gc.ellipse(x, y, lw, lh, 0, 0, Math.PI * 2); gc.fill();
+    gb.globalAlpha = 0.8; gb.fillStyle = "#d0d0d0"; gb.beginPath(); gb.ellipse(x, y, lw, lh, 0, 0, Math.PI * 2); gb.fill();
   }
   gc.globalAlpha = gb.globalAlpha = 1;
   const map = new THREE.CanvasTexture(cc), bump = new THREE.CanvasTexture(cb);
@@ -214,6 +219,19 @@ function geometriaFoglia(att, lato, curva) {
   return geo;
 }
 
+function pelleAcino() {
+  const W = 512, H = 256, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  g.fillStyle = "#ffffff"; g.fillRect(0, 0, W, H);
+  const cima = g.createLinearGradient(0, 0, 0, 22); cima.addColorStop(0, "rgba(96,86,40,.95)"); cima.addColorStop(1, "rgba(160,140,120,0)");
+  g.fillStyle = cima; g.fillRect(0, 0, W, 22);
+  const fondo = g.createLinearGradient(0, H - 16, 0, H); fondo.addColorStop(0, "rgba(120,80,70,0)"); fondo.addColorStop(0.55, "rgba(70,40,30,.55)"); fondo.addColorStop(1, "rgba(40,22,16,.95)");
+  g.fillStyle = fondo; g.fillRect(0, H - 16, W, 16);
+  for (let k = 0; k < 40; k++) { g.globalAlpha = 0.05; g.fillStyle = k % 2 ? "#e8d8ec" : "#3a1a2a"; g.fillRect((k / 40) * W, 20, 3, H - 40); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 function pruina(seme) {
   const S = 256, c = document.createElement("canvas"); c.width = c.height = S;
   const g = c.getContext("2d"), r = rnd(seme);
@@ -286,9 +304,13 @@ async function crea(host) {
 
   // --- materiali: corteccia del tralcio, raspo legnoso-verde, buccia con pruina ---
   const legno = corteccia({ base: "#5A3B26", scuro: "#2E1D12", medio: "#6E4B32", chiaro: "#9C7B5C", crepa: "#1A0F09" }, 71);
-  const raspo = corteccia({ base: "#76673A", scuro: "#4A4020", medio: "#8A7A48", chiaro: "#B3A56E", crepa: "#2E2812" }, 113, 512, 128);
+  const raspo = corteccia({ base: "#6F6536", scuro: "#433B1C", medio: "#857A45", chiaro: "#B9AD74", crepa: "#29230F" }, 113, 1024, 256, 420);
+  const verde = corteccia({ base: "#7C7A3A", scuro: "#4E4C20", medio: "#949146", chiaro: "#C2BE78", crepa: "#35331A" }, 277, 512, 128, 160);
+  const ped = corteccia({ base: "#5E452C", scuro: "#33231A", medio: "#735638", chiaro: "#A08462", crepa: "#1C130C" }, 191, 1024, 256, 260);
   const matLegno = new THREE.MeshStandardMaterial({ map: legno.map, bumpMap: legno.bump, bumpScale: 4, roughness: 0.92, metalness: 0 });
-  const matRaspo = new THREE.MeshStandardMaterial({ map: raspo.map, bumpMap: raspo.bump, bumpScale: 1.5, roughness: 0.78, metalness: 0 });
+  const matRaspo = new THREE.MeshStandardMaterial({ map: raspo.map, bumpMap: raspo.bump, bumpScale: 2.2, roughness: 0.74, metalness: 0 });
+  const matPicciolo = new THREE.MeshStandardMaterial({ map: verde.map, bumpMap: verde.bump, bumpScale: 1.6, roughness: 0.62, metalness: 0 });
+  const matPeduncolo = new THREE.MeshStandardMaterial({ map: ped.map, bumpMap: ped.bump, bumpScale: 3, roughness: 0.88, metalness: 0 });
   const matViticcio = new THREE.MeshStandardMaterial({ color: 0x8a9a3a, roughness: 0.6 });
 
   // --- tralcio con il nome: si assottiglia verso la punta, con due nodi fuori dalla scritta ---
@@ -332,49 +354,94 @@ async function crea(host) {
   const grappolo = new THREE.Group(); grappolo.position.copy(PERNO); mondo.add(grappolo);
   const interno = new THREE.Group(); interno.position.copy(PERNO).negate(); grappolo.add(interno);
 
-  const pedCurva = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 1.62, 0), new THREE.Vector3(0.18, 1.0, 0.05), new THREE.Vector3(0, 0.35, 0)]);
-  const pedGeo = tuboVivo(pedCurva, 40, 14, (u) => 0.13 - 0.05 * u + nodo(u, 0.02, 0.05, 0.03), 1.2);
-  interno.add(ombre(new THREE.Mesh(pedGeo, matLegno)));
-  const rachide = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0.08, -1.4, 0.04), new THREE.Vector3(-0.06, -3.4, 0), new THREE.Vector3(0.04, -5.4, 0)]);
-  const rachGeo = tuboVivo(rachide, 90, 10, (u) => 0.085 - 0.055 * u, 3);
+  // peduncolo legnoso: sezione irregolare, un nodo all'attacco sul tralcio
+  const pedCurva = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 1.62, 0), new THREE.Vector3(0.16, 1.05, 0.06), new THREE.Vector3(0.02, 0.62, -0.02), new THREE.Vector3(0, 0.35, 0)]);
+  const pedGeo = tuboVivo(pedCurva, 48, 16, (u, a) => (0.135 - 0.05 * u + nodo(u, 0.03, 0.05, 0.035)) * (1 + 0.08 * Math.sin(a * 3 + u * 14) + 0.04 * Math.sin(a * 7 - u * 30)), 1.4);
+  interno.add(ombre(new THREE.Mesh(pedGeo, matPeduncolo)));
+  // raspo: asse centrale verde-bruno, un po' a zig-zag, si assottiglia verso la punta
+  const rachide = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0.1, -0.9, 0.05), new THREE.Vector3(-0.08, -2.2, -0.04), new THREE.Vector3(0.07, -3.6, 0.03), new THREE.Vector3(-0.03, -5.2, 0)]);
+  const rRach = (u, a) => (0.095 - 0.062 * u) * (1 + 0.1 * Math.sin(a * 3 + u * 37) + 0.05 * Math.sin(a * 5 - u * 19));
+  const rachGeo = tuboVivo(rachide, 110, 14, rRach, 4);
   interno.add(ombre(new THREE.Mesh(rachGeo, matRaspo)));
 
   // --- chicchi: prima i 17 col logotipo, sul guscio esterno; poi i chicchi pieni ---
   const Y0 = 0.1, ALT = 5.7, Rb = (t) => 2.3 * Math.pow(Math.max(1 - t, 0), 0.72) + 0.32;
-  const R_LOGO = 0.47, chicchi = [];
+  const R_LOGO = 0.44, ALL = 1.15, chicchi = [];
   for (let k = 0; k < n; k++) {
     const t = 0.07 + (k / (n - 1)) * 0.82, y = Y0 - t * ALT, a = k * 2.39996 + 0.6, rad = Rb(t) * 0.93;
-    chicchi.push({ p: new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad), r: R_LOGO, i: k });
+    chicchi.push({ p: new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad), r: R_LOGO, i: k, logo: true });
   }
   for (let it = 0; it < 60; it++) {
     let mosso = false;
     for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) {
-      const A = chicchi[a].p, B = chicchi[b].p, d = A.distanceTo(B), min = R_LOGO * 2 + 0.05;
+      const A = chicchi[a].p, B = chicchi[b].p, d = A.distanceTo(B), min = R_LOGO * 2 * ALL + 0.06;
       if (d < min) { const v = B.clone().sub(A).setY(0).normalize().multiplyScalar((min - d) / 2 + 0.01); A.sub(v); B.add(v); A.y += 0.02; B.y -= 0.02; mosso = true; }
     }
     if (!mosso) break;
   }
   const casuale = rnd(20260917), pieni = [];
-  for (let tent = 0; tent < 2600 && pieni.length < 70; tent++) {
-    const t = 0.02 + casuale() * 0.95, y = Y0 - t * ALT, a = casuale() * Math.PI * 2, rad = Rb(t) * (0.2 + casuale() * 0.72), r = 0.29 + casuale() * 0.1;
+  for (let tent = 0; tent < 3000 && pieni.length < 74; tent++) {
+    const t = 0.02 + casuale() * 0.95, y = Y0 - t * ALT, a = casuale() * Math.PI * 2, rad = Rb(t) * (0.2 + casuale() * 0.72), r = 0.33 + casuale() * 0.08;
     const p = new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad);
-    if ([...chicchi, ...pieni].every((o) => o.p.distanceTo(p) > o.r + r + 0.015)) pieni.push({ p, r });
+    if ([...chicchi, ...pieni].every((o) => o.p.distanceTo(p) > (o.r + r) * 1.07 + 0.012)) pieni.push({ p, r });
   }
 
-  const sfera = new THREE.SphereGeometry(1, 48, 32); sfera.scale(1, 1.05, 1);
+  // forma dell'acino: ovale, un poco più largo verso il fondo; l'asse lungo punta al picciolo
+  const sfera = new THREE.SphereGeometry(1, 48, 32);
+  {
+    const pp = sfera.attributes.position;
+    for (let i = 0; i < pp.count; i++) {
+      const y = pp.getY(i), largo = 1 + 0.05 * Math.max(0, -y) - 0.03 * Math.max(0, y);
+      pp.setXYZ(i, pp.getX(i) * largo, y * ALL, pp.getZ(i) * largo);
+    }
+    sfera.computeVertexNormals();
+  }
   const bloom = pruina(3307);
-  const matBuccia = new THREE.MeshPhysicalMaterial({ color: COL.buccia, roughness: 0.42, roughnessMap: bloom, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.45, sheen: 1, sheenRoughness: 0.55, sheenColor: new THREE.Color(0xc3a9d2) });
+  const pelle = pelleAcino();
+  const matBuccia = new THREE.MeshPhysicalMaterial({ color: COL.buccia, map: pelle, roughness: 0.46, roughnessMap: bloom, metalness: 0, clearcoat: 0.28, clearcoatRoughness: 0.5, sheen: 1, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xc6aed6) });
   const matBucciaAccesa = matBuccia.clone(); matBucciaAccesa.emissive = new THREE.Color(0x3d4a10); matBucciaAccesa.emissiveIntensity = 0.9;
 
-  // piccioli: dal raspo a ogni chicco, sottili e con il ricettacolo ingrossato
-  const piccioli = [];
+  // grappoletti: ogni gruppo di acini vicini pende da una ramificazione laterale del raspo
+  const gruppi = new Map(), laterali = [];
+  [...chicchi, ...pieni].forEach((c) => {
+    const banda = Math.round((Y0 - c.p.y) / 0.8), ang = Math.atan2(c.p.z, c.p.x), settore = Math.round(((ang + Math.PI) / (Math.PI * 2)) * 6) % 6;
+    const k = banda + ":" + settore; if (!gruppi.has(k)) gruppi.set(k, []); gruppi.get(k).push(c);
+  });
+  gruppi.forEach((lista) => {
+    const cen = lista.reduce((s, c) => s.add(c.p), new THREE.Vector3()).multiplyScalar(1 / lista.length);
+    const yAtt = Math.min(cen.y + 0.5, 0.28), u = THREE.MathUtils.clamp((0.35 - yAtt) / 5.55, 0, 1);
+    const s = rachide.getPointAt(u), fine = new THREE.Vector3(cen.x * 0.52, cen.y + 0.28, cen.z * 0.52);
+    const mid = s.clone().lerp(fine, 0.5).add(new THREE.Vector3(0, 0.1, 0));
+    const curva = new THREE.CatmullRomCurve3([s, mid, fine]);
+    const geo = tuboVivo(curva, 18, 9, (q, a) => (0.052 - 0.024 * q) * (1 + 0.1 * Math.sin(a * 2 + q * 17)), 1);
+    interno.add(ombre(new THREE.Mesh(geo, matRaspo), false));
+    const campioni = curva.getSpacedPoints(30);
+    laterali.push(geo);
+    lista.forEach((c) => (c.lat = campioni));
+  });
+
+  // picciolo corto dal laterale all'acino, con il cercine ingrossato dove entra nel chicco
+  const piccioli = [], perni = [], SU = new THREE.Vector3(0, 1, 0);
   const picciolo = (c) => {
-    const ys = Math.min(c.p.y + 0.55, 0.3), u = THREE.MathUtils.clamp((0.35 - ys) / 5.75, 0, 1);
-    const s = rachide.getPointAt(u), dir = c.p.clone().sub(s), fine = c.p.clone().sub(dir.clone().normalize().multiplyScalar(c.r * 0.9));
-    const mid = s.clone().lerp(fine, 0.5).add(new THREE.Vector3(0, 0.22, 0));
-    const r0 = c.r > 0.4 ? 0.036 : 0.028;
-    const geo = tuboVivo(new THREE.CatmullRomCurve3([s, mid, fine]), 14, 7, (q) => r0 * (1 - 0.35 * q) + 0.03 * Math.max(0, (q - 0.82) / 0.18) ** 2, 1);
-    const m = ombre(new THREE.Mesh(geo, matRaspo), false); interno.add(m); piccioli.push({ geo, c });
+    let att = c.lat[0], bd = 1e9;
+    c.lat.forEach((q) => { const d = q.distanceTo(c.p); if (d < bd) { bd = d; att = q; } });
+    const asse = att.clone().sub(c.p).normalize();
+    c.q = new THREE.Quaternion().setFromUnitVectors(SU, asse);
+    const cima = c.p.clone().add(asse.clone().multiplyScalar(c.r * ALL * 0.92));
+    const piega = att.clone().lerp(cima, 0.5).add(new THREE.Vector3(0, 0.06, 0));
+    const r0 = c.logo ? 0.03 : 0.024;
+    const raggio = (q, a) => (r0 * (1 - 0.3 * q) + 0.035 * Math.max(0, (q - 0.78) / 0.22) ** 2.2) * (1 + 0.06 * Math.sin(a * 3 + q * 9));
+    let geo;
+    if (c.logo) { // il chicco col logo oscilla sul suo picciolo: picciolo e chicco stanno in un perno
+      const perno = new THREE.Group(); perno.position.copy(att); interno.add(perno);
+      geo = tuboVivo(new THREE.CatmullRomCurve3([new THREE.Vector3(), piega.clone().sub(att), cima.clone().sub(att)]), 12, 8, raggio, 1);
+      perno.add(ombre(new THREE.Mesh(geo, matPicciolo), false));
+      c.perno = perno; perni.push(perno);
+    } else {
+      geo = tuboVivo(new THREE.CatmullRomCurve3([att, piega, cima]), 12, 8, raggio, 1);
+      interno.add(ombre(new THREE.Mesh(geo, matPicciolo), false));
+    }
+    piccioli.push({ geo, c });
   };
   pieni.forEach(picciolo); chicchi.forEach(picciolo);
 
@@ -383,12 +450,13 @@ async function crea(host) {
   pieni.forEach((c, k) => { const v = casuale(); inst.setColorAt(k, tinta.setHSL(0.93 + v * 0.04, 0.35 + v * 0.2, 0.62 + casuale() * 0.22)); });
   interno.add(inst);
   const tmp = new THREE.Object3D();
-  const setPieno = (k, s) => { const c = pieni[k]; tmp.position.copy(c.p); tmp.scale.setScalar(Math.max(c.r * s, 0.0001)); tmp.updateMatrix(); inst.setMatrixAt(k, tmp.matrix); };
+  const setPieno = (k, s) => { const c = pieni[k]; tmp.position.copy(c.p); tmp.quaternion.copy(c.q); tmp.scale.setScalar(Math.max(c.r * s, 0.0001)); tmp.updateMatrix(); inst.setMatrixAt(k, tmp.matrix); };
 
   const imgs = await Promise.all(aziende.map((a) => loghi[a] ? caricaImg(`../shared/img/loghi/${loghi[a]}.png`) : Promise.resolve(null)));
   const meshLogo = [], sprite = [];
   chicchi.forEach((c, k) => {
-    const m = ombre(new THREE.Mesh(sfera, matBuccia)); m.position.copy(c.p); m.scale.setScalar(c.r); m.userData.i = k; interno.add(m); meshLogo.push(m);
+    const m = ombre(new THREE.Mesh(sfera, matBuccia)); m.position.copy(c.p).sub(c.perno.position); m.quaternion.copy(c.q); m.scale.setScalar(c.r); m.userData.i = k;
+    c.perno.add(m); meshLogo.push(m);
     const tex = [etichetta(imgs[k], iniziali(aziende[k]), false), etichetta(imgs[k], iniziali(aziende[k]), true)];
     const sm = new THREE.SpriteMaterial({ map: tex[0], transparent: true, depthWrite: false });
     const sp = new THREE.Sprite(sm); sp.userData = { i: k, tex }; sp.scale.setScalar(c.r * 1.42); mondo.add(sp); sprite.push(sp);
@@ -400,38 +468,48 @@ async function crea(host) {
   const terra = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.MeshBasicMaterial({ map: ombraTerra(), transparent: true, depthWrite: false, opacity: 0.6 }));
   terra.rotation.x = -Math.PI / 2; terra.position.set(0, -6.44, 0); mondo.add(terra);
 
-  // --- vento: il passaggio del puntatore spinge il grappolo, che oscilla e torna; le foglie fremono ---
+  // --- vento: il grappolo si muove appena; i chicchi col logo dondolano sul picciolo; le foglie fremono ---
   const vento = { ax: 0, az: 0, vx: 0, vz: 0, energia: 0 };
+  const pendoli = chicchi.map((c, k) => ({ ax: 0, az: 0, vx: 0, vz: 0, f: 0.75 + ((k * 37) % 10) / 20 }));
   const destra = new THREE.Vector3(), avanti = new THREE.Vector3();
   let ultimo = null;
+  const spinta = (px, pz) => {
+    vento.vz += px * 0.000022; vento.vx -= pz * 0.000022;
+    pendoli.forEach((q) => { q.vz += px * 0.0011 * q.f; q.vx -= pz * 0.0011 * q.f; });
+  };
   const soffia = (e) => {
     if (RM) return;
     if (ultimo) {
       const dx = THREE.MathUtils.clamp(e.clientX - ultimo.x, -60, 60), dy = THREE.MathUtils.clamp(e.clientY - ultimo.y, -60, 60);
       destra.setFromMatrixColumn(camera.matrixWorld, 0); avanti.setFromMatrixColumn(camera.matrixWorld, 2);
-      const px = destra.x * dx + avanti.x * dy * 0.4, pz = destra.z * dx + avanti.z * dy * 0.4;
-      vento.vz += px * 0.00016; vento.vx -= pz * 0.00016;
-      vento.energia = Math.min(1, vento.energia + (Math.abs(dx) + Math.abs(dy)) * 0.006);
+      spinta(destra.x * dx + avanti.x * dy * 0.4, destra.z * dx + avanti.z * dy * 0.4);
+      vento.energia = Math.min(1, vento.energia + (Math.abs(dx) + Math.abs(dy)) * 0.005);
     }
     ultimo = { x: e.clientX, y: e.clientY };
   };
-  const passoVento = (t) => {
+  const urta = (i) => { if (RM || i < 0) return; const q = pendoli[i]; q.vz += 0.018 * (i % 2 ? 1 : -1); q.vx += 0.01; };
+  const molla = (o, k, smorza, lim) => {
     for (const asse of ["x", "z"]) {
       const a = "a" + asse, v = "v" + asse;
-      vento[v] += -0.014 * vento[a]; vento[v] *= 0.962; vento[a] = THREE.MathUtils.clamp(vento[a] + vento[v], -0.3, 0.3);
+      o[v] += -k * o[a]; o[v] *= smorza; o[a] = THREE.MathUtils.clamp(o[a] + o[v], -lim, lim);
     }
-    const brezza = RM ? 0 : Math.sin(t * 0.0007) * 0.012 + Math.sin(t * 0.0017 + 1) * 0.005;
+  };
+  const passoVento = (t) => {
+    molla(vento, 0.02, 0.94, 0.05);
+    const brezza = RM ? 0 : Math.sin(t * 0.0007) * 0.006 + Math.sin(t * 0.0017 + 1) * 0.0025;
     grappolo.rotation.z = vento.az + brezza;
     grappolo.rotation.x = vento.ax + brezza * 0.6;
+    pendoli.forEach((q, k) => {
+      molla(q, 0.03, 0.955, 0.5);
+      perni[k].rotation.z = q.az + (RM ? 0 : Math.sin(t * 0.0021 + k * 1.3) * 0.02);
+      perni[k].rotation.x = q.ax + (RM ? 0 : Math.cos(t * 0.0019 + k) * 0.015);
+    });
     foglie.forEach((f, k) => {
       const b = f.userData.base, ph = f.userData.fase, e = vento.energia;
-      f.rotation.x = b.x + vento.ax * 1.5 + brezza * 1.4 + Math.sin(t * 0.011 + ph) * 0.09 * e;
-      f.rotation.z = b.z + vento.az * 1.3 + Math.cos(t * 0.014 + ph) * 0.07 * e;
-      f.rotation.y = b.y + Math.sin(t * 0.009 + ph * 2) * 0.05 * e;
+      f.rotation.x = b.x + vento.ax * 1.2 + brezza * 2 + Math.sin(t * 0.011 + ph) * 0.08 * e;
+      f.rotation.z = b.z + vento.az * 1.1 + Math.cos(t * 0.014 + ph) * 0.06 * e;
+      f.rotation.y = b.y + Math.sin(t * 0.009 + ph * 2) * 0.045 * e;
     });
-    if (vento.energia > 0.002) {
-      meshLogo.forEach((m, k) => { const c = chicchi[k]; m.position.set(c.p.x + Math.sin(t * 0.021 + k * 1.7) * 0.025 * vento.energia, c.p.y, c.p.z + Math.cos(t * 0.019 + k) * 0.025 * vento.energia); });
-    }
     vento.energia *= 0.982;
   };
 
@@ -446,6 +524,7 @@ async function crea(host) {
     foglie.forEach((f) => { f.scale.setScalar(Math.max(S.fo, 0.0001)); f.userData.stelo.visible = S.fo > 0.02; });
     pedGeo.setDrawRange(0, Math.floor(pedGeo.index.count * Math.min(S.ped * 2, 1) / 6) * 6);
     rachGeo.setDrawRange(0, Math.floor(rachGeo.index.count * Math.max(S.ped * 2 - 1, 0) / 6) * 6);
+    laterali.forEach((g) => g.setDrawRange(0, Math.floor(g.index.count * THREE.MathUtils.clamp(S.ped * 2.4 - 1.4, 0, 1) / 6) * 6));
     piccioli.forEach((q, k) => q.geo.setDrawRange(0, Math.floor(q.geo.index.count * S.ramo[k].v / 6) * 6));
     meshLogo.forEach((m, k) => m.scale.setScalar(Math.max(chicchi[k].r * S.acino[k].v, 0.0001)));
     sprite.forEach((sp, k) => { sp.material.opacity = S.lab[k].v; sp.visible = S.lab[k].v > 0.01; });
@@ -538,7 +617,7 @@ async function crea(host) {
     soffia(e);
     if (e.pointerType === "touch") return;
     const i = colpo(e); canvas.style.cursor = i >= 0 ? "pointer" : (controls.enabled ? "grab" : "default");
-    if (i !== sopra) { sopra = i; if (scelto < 0) { accendi(i); scheda(i); } }
+    if (i !== sopra) { sopra = i; urta(i); if (scelto < 0) { accendi(i); scheda(i); } }
   });
   canvas.addEventListener("pointerleave", () => { ultimo = null; sopra = -1; if (scelto < 0) { accendi(-1); card.hidden = true; } });
   let giu = null;
@@ -584,7 +663,7 @@ async function crea(host) {
     chicchi.forEach((c, k) => {
       const m = meshLogo[k], s = m.scale.x;
       m.getWorldPosition(mondoP);
-      sprite[k].position.copy(mondoP).add(camera.position.clone().sub(mondoP).setLength(s * 1.05));
+      sprite[k].position.copy(mondoP).add(camera.position.clone().sub(mondoP).setLength(s * ALL * 1.06));
       sprite[k].scale.setScalar(s * 1.42);
     });
     if (!card.hidden) {
