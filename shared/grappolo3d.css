@@ -2,7 +2,17 @@
 .g3{position:relative;color:#442413}
 .g3-scena{position:relative;border-radius:32px;overflow:hidden;
   background:radial-gradient(70% 60% at 50% 42%,#FFF9EA 0%,#F6EBD3 55%,#EADBBE 100%)}
-.g3-canvas{display:block;width:100%;height:min(88svh,880px);cursor:grab}
+/* la carta del territorio resta ferma dietro il grappolo, in trasparenza */
+.g3-carta{position:absolute;inset:-6% -4%;pointer-events:none;opacity:.16;
+  -webkit-mask-image:radial-gradient(70% 65% at 50% 48%,#000 25%,transparent 85%);mask-image:radial-gradient(70% 65% at 50% 48%,#000 25%,transparent 85%)}
+.g3-carta svg{width:100%;height:100%;display:block}
+.g3-terra .ct{fill:none;stroke:#442413;stroke-width:.8;vector-effect:non-scaling-stroke}
+.g3-terra .ct.mi{stroke-opacity:.35}
+.g3-terra .ct.ma{stroke-opacity:.7;stroke-width:1.2}
+.g3-terra .fiume{fill:none;stroke:#4B5D23;stroke-opacity:.6;stroke-width:2;vector-effect:non-scaling-stroke}
+.g3-terra .pin-halo,.g3-terra .pin-lbl,.g3-terra .luogo-lbl,.g3-terra .luogo-mk{display:none}
+.g3-terra .pin-dot{fill:#7C2F4B;stroke:none}
+.g3-canvas{position:relative;display:block;width:100%;height:min(88svh,880px);cursor:grab}
 .g3-canvas:active{cursor:grabbing}
 @media (max-width:760px){.g3-canvas{height:min(92svh,720px)}}
 

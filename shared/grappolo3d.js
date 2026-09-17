@@ -155,8 +155,8 @@ function fogliaVite(seme) {
   const gc = cc.getContext("2d"), gb = cb.getContext("2d"), r = rnd(seme);
   const C = { x: S / 2, y: S * 0.52 }, R = S * 0.4;
   // raggio del contorno per angolo (0 = in alto, positivo in senso orario)
-  const punti = [[-180, 0.26], [-150, 0.62], [-118, 0.8], [-92, 0.6], [-62, 0.97], [-32, 0.72], [0, 1.02], [32, 0.72], [62, 0.97], [92, 0.6], [118, 0.8], [150, 0.62], [180, 0.26]]
-    .map(([a, v]) => [a, v * (0.94 + r() * 0.1)]);
+  const punti = [[-180, 0.22], [-152, 0.68], [-120, 0.9], [-95, 0.55], [-64, 1.02], [-33, 0.66], [0, 1.0], [33, 0.66], [64, 1.02], [95, 0.55], [120, 0.9], [152, 0.68], [180, 0.22]]
+    .map(([a, v]) => [a, v * (0.92 + r() * 0.14)]);
   const raggio = (deg) => {
     for (let k = 0; k < punti.length - 1; k++) {
       const [a0, v0] = punti[k], [a1, v1] = punti[k + 1];
@@ -166,9 +166,9 @@ function fogliaVite(seme) {
   };
   const sagoma = new Path2D();
   for (let d = -179; d <= 179; d += 0.5) {
-    const dente = 1 + 0.045 * Math.abs(((d * 0.22) % 2 + 2) % 2 - 1) - 0.022;
+    const dente = 1 + 0.075 * Math.abs(((d * 0.19) % 2 + 2) % 2 - 1) - 0.036 + 0.012 * Math.sin(d * 1.7);
     const rr = R * raggio(d) * dente, a = (d * Math.PI) / 180;
-    const x = C.x + Math.sin(a) * rr, y = C.y - Math.cos(a) * rr;
+    const x = C.x + Math.sin(a) * rr * 1.12, y = C.y - Math.cos(a) * rr;
     d === -179 ? sagoma.moveTo(x, y) : sagoma.lineTo(x, y);
   }
   sagoma.closePath();
@@ -177,15 +177,24 @@ function fogliaVite(seme) {
   const grad = gc.createLinearGradient(0, C.y - R, 0, C.y + R);
   grad.addColorStop(0, "#6E8A34"); grad.addColorStop(0.5, "#557128"); grad.addColorStop(1, "#46601F");
   gc.fillStyle = grad; gc.fillRect(0, 0, S, S);
-  for (let k = 0; k < 900; k++) { // macchie della lamina
-    gc.globalAlpha = 0.05 + r() * 0.08; gc.fillStyle = r() < 0.5 ? "#2F4214" : "#9DB25A";
-    gc.beginPath(); gc.arc(r() * S, r() * S, 4 + r() * 26, 0, Math.PI * 2); gc.fill();
+  for (let k = 0; k < 1100; k++) { // macchie e variazioni della lamina
+    gc.globalAlpha = 0.05 + r() * 0.09; gc.fillStyle = r() < 0.5 ? "#2A3C11" : "#A7BB63";
+    gc.beginPath(); gc.arc(r() * S, r() * S, 4 + r() * 30, 0, Math.PI * 2); gc.fill();
+  }
+  for (let k = 0; k < 26; k++) { // qualche imperfezione bruna, come sulle foglie vere
+    gc.globalAlpha = 0.16 + r() * 0.2; gc.fillStyle = r() < 0.6 ? "#6B5A22" : "#84541F";
+    gc.beginPath(); gc.arc(r() * S, r() * S, 2 + r() * 7, 0, Math.PI * 2); gc.fill();
   }
   gc.globalAlpha = 1;
   gb.fillStyle = "#000"; gb.fillRect(0, 0, S, S); gb.save(); gb.clip(sagoma); gb.fillStyle = "#6c6c6c"; gb.fillRect(0, 0, S, S);
+  for (let k = 0; k < 700; k++) { // lamina bollosa fra le nervature
+    gb.globalAlpha = 0.25 + r() * 0.3; gb.fillStyle = r() < 0.5 ? "#4a4a4a" : "#a6a6a6";
+    gb.beginPath(); gb.arc(r() * S, r() * S, 6 + r() * 20, 0, Math.PI * 2); gb.fill();
+  }
+  gb.globalAlpha = 1;
   const nervatura = (x0, y0, x1, y1, w, curva) => {
     const mx = (x0 + x1) / 2 + curva, my = (y0 + y1) / 2;
-    [[gc, "rgba(214,226,150,.62)"], [gb, "#e6e6e6"]].forEach(([g, col]) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = "round"; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(mx, my, x1, y1); g.stroke(); });
+    [[gc, "rgba(222,232,158,.72)"], [gb, "#f2f2f2"]].forEach(([g, col]) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = "round"; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(mx, my, x1, y1); g.stroke(); });
   };
   [-118, -62, 0, 62, 118].forEach((d) => { // nervature principali verso le punte dei lobi e secondarie verso il bordo
     const a = (d * Math.PI) / 180, L = R * raggio(d) * 0.97;
@@ -200,7 +209,8 @@ function fogliaVite(seme) {
     }
   });
   gc.restore(); gb.restore();
-  gc.lineWidth = 5; gc.strokeStyle = "rgba(122,112,40,.55)"; gc.stroke(sagoma); // bordo leggermente ingiallito
+  gc.lineWidth = 6; gc.strokeStyle = "rgba(134,120,44,.6)"; gc.stroke(sagoma); // bordo ingiallito
+  gc.lineWidth = 2; gc.strokeStyle = "rgba(60,72,24,.5)"; gc.stroke(sagoma);
   const map = new THREE.CanvasTexture(cc), bump = new THREE.CanvasTexture(cb);
   map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = bump.anisotropy = 8;
   // punto d'attacco del picciolo nelle coordinate del piano (lato 1)
@@ -213,7 +223,7 @@ function geometriaFoglia(att, lato, curva) {
   const p = geo.attributes.position;
   for (let i = 0; i < p.count; i++) { // la lamina si incurva a coppa e si piega verso il basso in punta
     const x = p.getX(i), y = p.getY(i);
-    p.setZ(i, curva * (0.11 * x * x + 0.05 * y * y - 0.035 * y) + 0.03 * Math.sin(x * 3.1) * y);
+    p.setZ(i, curva * (0.14 * x * x + 0.06 * y * y - 0.05 * y) + 0.05 * Math.sin(x * 2.6) * (y + 0.6) + 0.02 * Math.cos(y * 3.4));
   }
   geo.computeVertexNormals();
   return geo;
@@ -271,6 +281,8 @@ async function crea(host) {
     </div>
     <ul class="g3-lista">${aziende.map((a, i) => `<li><button type="button" data-g3i="${i}">${esc(a)}</button></li>`).join("")}</ul>`;
 
+  const scena = host.querySelector(".g3-scena");
+  if (window.LSDVCore.mapSVG) scena.insertAdjacentHTML("afterbegin", `<div class="g3-carta" aria-hidden="true">${window.LSDVCore.mapSVG({ cls: "g3-terra", luoghi: false })}</div>`);
   const canvas = host.querySelector(".g3-canvas"), card = host.querySelector(".g3-card"), conta = host.querySelector(".g3-conta b"), hint = host.querySelector(".g3-hint");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -296,7 +308,7 @@ async function crea(host) {
   const controls = new OrbitControls(camera, canvas);
   controls.target.copy(CENTRO); controls.enablePan = false; controls.enableZoom = false; controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.rotateSpeed = 0.75; controls.minPolarAngle = 1.0; controls.maxPolarAngle = 2.05;
-  controls.autoRotate = !RM; controls.autoRotateSpeed = 0.8;
+  controls.autoRotate = !RM; controls.autoRotateSpeed = 0.5;
   if (touch) { controls.enabled = false; canvas.style.touchAction = "pan-y"; }
 
   const mondo = new THREE.Group(); scene.add(mondo);
@@ -337,7 +349,8 @@ async function crea(host) {
     const fine = p0.clone().add(new THREE.Vector3(...f.stelo));
     const steloGeo = tuboVivo(new THREE.CatmullRomCurve3([p0, p0.clone().lerp(fine, 0.5).add(new THREE.Vector3(0, 0.12, 0.05)), fine]), 16, 8, (u) => 0.05 - 0.025 * u, 1);
     const stelo = ombre(new THREE.Mesh(steloGeo, matRaspo)); mondo.add(stelo);
-    const mat = new THREE.MeshStandardMaterial({ map: T.map, bumpMap: T.bump, bumpScale: 2.5, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.58, metalness: 0 });
+    const mat = new THREE.MeshPhysicalMaterial({ map: T.map, bumpMap: T.bump, bumpScale: 3.4, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.54, metalness: 0,
+      clearcoat: 0.14, clearcoatRoughness: 0.6, sheen: 0.55, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xd8e6a8) });
     const lamina = new THREE.Mesh(geometriaFoglia(T.attacco, f.lato, f.curva), mat);
     lamina.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: T.map, alphaTest: 0.5 });
     ombre(lamina);
@@ -380,11 +393,23 @@ async function crea(host) {
     if (!mosso) break;
   }
   const casuale = rnd(20260917), pieni = [];
-  for (let tent = 0; tent < 3000 && pieni.length < 74; tent++) {
-    const t = 0.02 + casuale() * 0.95, y = Y0 - t * ALT, a = casuale() * Math.PI * 2, rad = Rb(t) * (0.2 + casuale() * 0.72), r = 0.33 + casuale() * 0.08;
+  for (let tent = 0; tent < 3200 && pieni.length < 78; tent++) {
+    const t = 0.02 + casuale() * 0.95, y = Y0 - t * ALT, a = casuale() * Math.PI * 2, rad = Rb(t) * (0.2 + casuale() * 0.72), r = 0.29 + casuale() * 0.13;
     const p = new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad);
-    if ([...chicchi, ...pieni].every((o) => o.p.distanceTo(p) > (o.r + r) * 1.07 + 0.012)) pieni.push({ p, r });
+    if ([...chicchi, ...pieni].every((o) => o.p.distanceTo(p) > (o.r + r) * 1.05 + 0.01)) pieni.push({ p, r });
   }
+  // nessun acino identico a un altro: forma, inclinazione e colore cambiano da chicco a chicco
+  const TINTE = [
+    { col: 0x350f22, ruvido: 0.3, pruina: 0.4 }, { col: 0x4a1a32, ruvido: 0.46, pruina: 0.8 },
+    { col: 0x5a2440, ruvido: 0.58, pruina: 1 }, { col: 0x2e1c34, ruvido: 0.38, pruina: 0.65 },
+    { col: 0x260c1a, ruvido: 0.26, pruina: 0.3 }, { col: 0x63293f, ruvido: 0.62, pruina: 1 }
+  ];
+  [...pieni, ...chicchi].forEach((c) => {
+    const v = casuale();
+    c.forma = new THREE.Vector3(0.94 + casuale() * 0.1, 1.04 + v * 0.26, 0.94 + casuale() * 0.1);
+    c.storto = new THREE.Euler((casuale() - 0.5) * 0.3, casuale() * 6.28, (casuale() - 0.5) * 0.3);
+    c.tinta = Math.floor(casuale() * TINTE.length);
+  });
 
   // forma dell'acino: ovale, un poco più largo verso il fondo; l'asse lungo punta al picciolo
   const sfera = new THREE.SphereGeometry(1, 48, 32);
@@ -398,8 +423,13 @@ async function crea(host) {
   }
   const bloom = pruina(3307);
   const pelle = pelleAcino();
-  const matBuccia = new THREE.MeshPhysicalMaterial({ color: COL.buccia, map: pelle, roughness: 0.46, roughnessMap: bloom, metalness: 0, clearcoat: 0.28, clearcoatRoughness: 0.5, sheen: 1, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xc6aed6) });
-  const matBucciaAccesa = matBuccia.clone(); matBucciaAccesa.emissive = new THREE.Color(0x3d4a10); matBucciaAccesa.emissiveIntensity = 0.9;
+  const matAcino = TINTE.map((v) => new THREE.MeshPhysicalMaterial({
+    color: v.col, map: pelle, roughness: v.ruvido, roughnessMap: bloom, bumpMap: bloom, bumpScale: 0.35, metalness: 0,
+    clearcoat: 0.42 - v.pruina * 0.3, clearcoatRoughness: 0.35 + v.pruina * 0.3,
+    sheen: v.pruina, sheenRoughness: 0.45, sheenColor: new THREE.Color(0xd3c2de)
+  }));
+  const matAcinoAcceso = matAcino.map((m) => { const c = m.clone(); c.emissive = new THREE.Color(0x3d4a10); c.emissiveIntensity = 0.9; return c; });
+  const matPieni = matAcino[1].clone(); matPieni.color.set(0xffffff); // il colore dei chicchi pieni arriva da instanceColor
 
   // grappoletti: ogni gruppo di acini vicini pende da una ramificazione laterale del raspo
   const gruppi = new Map(), laterali = [];
@@ -445,17 +475,24 @@ async function crea(host) {
   };
   pieni.forEach(picciolo); chicchi.forEach(picciolo);
 
-  const inst = ombre(new THREE.InstancedMesh(sfera, matBuccia, pieni.length));
+  const inst = ombre(new THREE.InstancedMesh(sfera, matPieni, pieni.length));
   const tinta = new THREE.Color();
-  pieni.forEach((c, k) => { const v = casuale(); inst.setColorAt(k, tinta.setHSL(0.93 + v * 0.04, 0.35 + v * 0.2, 0.62 + casuale() * 0.22)); });
+  pieni.forEach((c, k) => inst.setColorAt(k, tinta.setHex(TINTE[c.tinta].col).offsetHSL(0, (casuale() - 0.5) * 0.05, (casuale() - 0.5) * 0.05)));
   interno.add(inst);
   const tmp = new THREE.Object3D();
-  const setPieno = (k, s) => { const c = pieni[k]; tmp.position.copy(c.p); tmp.quaternion.copy(c.q); tmp.scale.setScalar(Math.max(c.r * s, 0.0001)); tmp.updateMatrix(); inst.setMatrixAt(k, tmp.matrix); };
+  const giraStorto = new THREE.Quaternion();
+  const setPieno = (k, s) => {
+    const c = pieni[k]; tmp.position.copy(c.p);
+    tmp.quaternion.copy(c.q).multiply(giraStorto.setFromEuler(c.storto));
+    tmp.scale.set(c.forma.x, c.forma.y, c.forma.z).multiplyScalar(Math.max(c.r * s, 0.0001));
+    tmp.updateMatrix(); inst.setMatrixAt(k, tmp.matrix);
+  };
 
   const imgs = await Promise.all(aziende.map((a) => loghi[a] ? caricaImg(`../shared/img/loghi/${loghi[a]}.png`) : Promise.resolve(null)));
   const meshLogo = [], sprite = [];
   chicchi.forEach((c, k) => {
-    const m = ombre(new THREE.Mesh(sfera, matBuccia)); m.position.copy(c.p).sub(c.perno.position); m.quaternion.copy(c.q); m.scale.setScalar(c.r); m.userData.i = k;
+    const m = ombre(new THREE.Mesh(sfera, matAcino[c.tinta])); m.position.copy(c.p).sub(c.perno.position);
+    m.quaternion.copy(c.q).multiply(new THREE.Quaternion().setFromEuler(c.storto)); m.userData.i = k;
     c.perno.add(m); meshLogo.push(m);
     const tex = [etichetta(imgs[k], iniziali(aziende[k]), false), etichetta(imgs[k], iniziali(aziende[k]), true)];
     const sm = new THREE.SpriteMaterial({ map: tex[0], transparent: true, depthWrite: false });
@@ -474,8 +511,8 @@ async function crea(host) {
   const destra = new THREE.Vector3(), avanti = new THREE.Vector3();
   let ultimo = null;
   const spinta = (px, pz) => {
-    vento.vz += px * 0.000022; vento.vx -= pz * 0.000022;
-    pendoli.forEach((q) => { q.vz += px * 0.0011 * q.f; q.vx -= pz * 0.0011 * q.f; });
+    vento.vz += px * 0.000006; vento.vx -= pz * 0.000006;
+    pendoli.forEach((q) => { q.vz += px * 0.00026 * q.f; q.vx -= pz * 0.00026 * q.f; });
   };
   const soffia = (e) => {
     if (RM) return;
@@ -487,7 +524,7 @@ async function crea(host) {
     }
     ultimo = { x: e.clientX, y: e.clientY };
   };
-  const urta = (i) => { if (RM || i < 0) return; const q = pendoli[i]; q.vz += 0.018 * (i % 2 ? 1 : -1); q.vx += 0.01; };
+  const urta = (i) => { if (RM || i < 0) return; const q = pendoli[i]; q.vz += 0.005 * (i % 2 ? 1 : -1); q.vx += 0.003; };
   const molla = (o, k, smorza, lim) => {
     for (const asse of ["x", "z"]) {
       const a = "a" + asse, v = "v" + asse;
@@ -495,20 +532,20 @@ async function crea(host) {
     }
   };
   const passoVento = (t) => {
-    molla(vento, 0.02, 0.94, 0.05);
-    const brezza = RM ? 0 : Math.sin(t * 0.0007) * 0.006 + Math.sin(t * 0.0017 + 1) * 0.0025;
+    molla(vento, 0.02, 0.94, 0.014);
+    const brezza = RM ? 0 : Math.sin(t * 0.0005) * 0.002 + Math.sin(t * 0.0013 + 1) * 0.001;
     grappolo.rotation.z = vento.az + brezza;
     grappolo.rotation.x = vento.ax + brezza * 0.6;
     pendoli.forEach((q, k) => {
-      molla(q, 0.03, 0.955, 0.5);
-      perni[k].rotation.z = q.az + (RM ? 0 : Math.sin(t * 0.0021 + k * 1.3) * 0.02);
-      perni[k].rotation.x = q.ax + (RM ? 0 : Math.cos(t * 0.0019 + k) * 0.015);
+      molla(q, 0.028, 0.95, 0.13);
+      perni[k].rotation.z = q.az + (RM ? 0 : Math.sin(t * 0.0016 + k * 1.3) * 0.008);
+      perni[k].rotation.x = q.ax + (RM ? 0 : Math.cos(t * 0.0014 + k) * 0.006);
     });
     foglie.forEach((f, k) => {
       const b = f.userData.base, ph = f.userData.fase, e = vento.energia;
-      f.rotation.x = b.x + vento.ax * 1.2 + brezza * 2 + Math.sin(t * 0.011 + ph) * 0.08 * e;
-      f.rotation.z = b.z + vento.az * 1.1 + Math.cos(t * 0.014 + ph) * 0.06 * e;
-      f.rotation.y = b.y + Math.sin(t * 0.009 + ph * 2) * 0.045 * e;
+      f.rotation.x = b.x + vento.ax * 0.8 + brezza * 3 + Math.sin(t * 0.008 + ph) * 0.028 * e;
+      f.rotation.z = b.z + vento.az * 0.7 + Math.cos(t * 0.01 + ph) * 0.022 * e;
+      f.rotation.y = b.y + Math.sin(t * 0.007 + ph * 2) * 0.016 * e;
     });
     vento.energia *= 0.982;
   };
@@ -526,7 +563,7 @@ async function crea(host) {
     rachGeo.setDrawRange(0, Math.floor(rachGeo.index.count * Math.max(S.ped * 2 - 1, 0) / 6) * 6);
     laterali.forEach((g) => g.setDrawRange(0, Math.floor(g.index.count * THREE.MathUtils.clamp(S.ped * 2.4 - 1.4, 0, 1) / 6) * 6));
     piccioli.forEach((q, k) => q.geo.setDrawRange(0, Math.floor(q.geo.index.count * S.ramo[k].v / 6) * 6));
-    meshLogo.forEach((m, k) => m.scale.setScalar(Math.max(chicchi[k].r * S.acino[k].v, 0.0001)));
+    meshLogo.forEach((m, k) => { const c = chicchi[k]; m.scale.set(c.forma.x, c.forma.y, c.forma.z).multiplyScalar(Math.max(c.r * S.acino[k].v, 0.0001)); });
     sprite.forEach((sp, k) => { sp.material.opacity = S.lab[k].v; sp.visible = S.lab[k].v > 0.01; });
     pieni.forEach((c, k) => setPieno(k, S.pieno[k].v)); inst.instanceMatrix.needsUpdate = true;
   };
@@ -588,7 +625,7 @@ async function crea(host) {
     return h ? h.object.userData.i : -1;
   };
   const accendi = (i) => {
-    meshLogo.forEach((m, k) => { m.material = k === i ? matBucciaAccesa : matBuccia; });
+    meshLogo.forEach((m, k) => { m.material = k === i ? matAcinoAcceso[chicchi[k].tinta] : matAcino[chicchi[k].tinta]; });
     sprite.forEach((sp, k) => { sp.material.map = sp.userData.tex[k === i ? 1 : 0]; sp.material.needsUpdate = true; });
   };
   const scheda = (i) => {
@@ -661,9 +698,9 @@ async function crea(host) {
     mondo.updateMatrixWorld();
     // le etichette stanno sulla faccia del chicco rivolta verso chi guarda
     chicchi.forEach((c, k) => {
-      const m = meshLogo[k], s = m.scale.x;
+      const m = meshLogo[k], s = m.scale.x / chicchi[k].forma.x;
       m.getWorldPosition(mondoP);
-      sprite[k].position.copy(mondoP).add(camera.position.clone().sub(mondoP).setLength(s * ALL * 1.06));
+      sprite[k].position.copy(mondoP).add(camera.position.clone().sub(mondoP).setLength(s * chicchi[k].forma.y * ALL * 1.04));
       sprite[k].scale.setScalar(s * 1.42);
     });
     if (!card.hidden) {
