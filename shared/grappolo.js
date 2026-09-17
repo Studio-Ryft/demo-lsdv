@@ -48,7 +48,7 @@
         }).join("")}</ul>
         <figcaption class="gp-cap">Diciassette grappoli, diciassette aziende · foto dai vigneti dell'Alta Campania</figcaption>
       </figure>
-      <aside class="gp-card" id="gp-card" hidden aria-live="polite"><div class="gp-card-in"><span class="gp-n"></span><span class="gp-l"></span><b></b><small>azienda aderente della Strada</small></div></aside>`;
+      <aside class="gp-card" id="gp-card" hidden aria-live="polite"><div class="gp-card-in"><span class="gp-n"></span><span class="gp-l"></span><b></b><small>azienda aderente della Strada</small><div class="gp-card-m"></div></div></aside>`;
 
     const card = root.querySelector(".gp-card"), foto = root.querySelector(".gp-foto");
     const mostra = (li) => {
@@ -56,6 +56,7 @@
       card.querySelector("b").textContent = a;
       card.querySelector(".gp-n").textContent = String(i + 1).padStart(2, "0") + " / " + az.length;
       card.querySelector(".gp-l").innerHTML = l ? `<img src="../shared/img/${cartella}/${l}.png" alt="">` : "";
+      card.querySelector(".gp-card-m").innerHTML = window.LSDVCore.schedaAzienda(a);
       const r = li.getBoundingClientRect(), fr = foto.getBoundingClientRect();
       card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, 140), fr.width - 140) + "px";
       card.style.top = r.top - fr.top + "px";
@@ -64,14 +65,15 @@
       if (window.gsap && !window.LSDVCore.RM) window.gsap.fromTo(card, { autoAlpha: 0, y: 12, scale: 0.95 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.7)" });
       window.LSDVSound && window.LSDVSound.play("hover");
     };
-    const nascondi = () => { card.hidden = true; root.querySelectorAll(".gp-a").forEach((x) => x.classList.remove("on")); };
+    const nascondi = () => { if (card.classList.contains("aperta")) return; card.hidden = true; root.querySelectorAll(".gp-a").forEach((x) => x.classList.remove("on")); };
     root.querySelectorAll(".gp-a").forEach((li, k) => {
       li.style.setProperty("--ritardo", (k % 6) * 0.45 + "s");
       li.addEventListener("pointerenter", () => mostra(li));
       li.addEventListener("focusin", () => mostra(li));
-      li.addEventListener("click", () => mostra(li));
+      li.addEventListener("click", () => { mostra(li); card.classList.add("aperta"); });
     });
     foto.addEventListener("pointerleave", nascondi);
+    root.addEventListener("click", (e) => { if (!e.target.closest(".gp-a") && !e.target.closest(".gp-card")) { card.classList.remove("aperta"); card.hidden = true; } });
     root.addEventListener("focusout", (e) => { if (!root.contains(e.relatedTarget)) nascondi(); });
     window.LSDVSound && window.LSDVSound.bind(root);
     return { foto, acini: Array.from(root.querySelectorAll(".gp-a")) };

@@ -25,7 +25,7 @@
 
     root.classList.add("tc");
     root.innerHTML = `<div class="tc-scena"><svg class="tc-svg" role="img" aria-labelledby="${id}-t"><title id="${id}-t">Il tralcio della Strada del Vino: ${aziende.length} aziende socie, una per chicco</title></svg></div>
-      <aside class="tc-card" hidden aria-live="polite"><span class="tc-card-l"></span><b></b><small>azienda socia della Strada</small></aside>
+      <aside class="tc-card" hidden aria-live="polite"><span class="tc-card-l"></span><b></b><small>azienda socia della Strada</small><div class="tc-card-m"></div></aside>
       <div class="tc-bar"><p class="tc-conta"><b data-tc-n>0</b> / ${aziende.length} aziende</p><button type="button" class="tc-rivedi" data-tc-rivedi>Rivedi la crescita</button></div>`;
     const svg = root.querySelector(".tc-svg"), card = root.querySelector(".tc-card"), conta = root.querySelector("[data-tc-n]");
 
@@ -114,6 +114,7 @@
         const nome = aziende[+el.dataset.i], logo = loghi[nome];
         card.querySelector("b").textContent = nomeBreve(nome);
         card.querySelector(".tc-card-l").innerHTML = logo ? `<img src="../shared/img/loghi/${logo}.png" alt="">` : `<i>${esc(iniziali(nomeBreve(nome)))}</i>`;
+        card.querySelector(".tc-card-m").innerHTML = window.LSDVCore.schedaAzienda(nome);
         const r = el.getBoundingClientRect(), fr = root.getBoundingClientRect();
         card.style.left = Math.min(Math.max(r.left - fr.left + r.width / 2, 130), fr.width - 130) + "px";
         card.style.top = r.top - fr.top + "px";
@@ -123,9 +124,10 @@
         if (hasG && !RM) gsap.fromTo(card, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power3.out", overwrite: true });
         window.LSDVSound && window.LSDVSound.play("hover");
       };
-      const nascondi = () => { card.hidden = true; acini.forEach((a) => a.classList.remove("on")); root.classList.remove("fuoco"); };
-      acini.forEach((a) => { a.addEventListener("pointerenter", () => mostra(a)); a.addEventListener("focus", () => mostra(a)); a.addEventListener("click", () => mostra(a)); a.addEventListener("blur", nascondi); });
+      const nascondi = () => { if (card.classList.contains("aperta")) return; card.hidden = true; acini.forEach((a) => a.classList.remove("on")); root.classList.remove("fuoco"); };
+      acini.forEach((a) => { a.addEventListener("pointerenter", () => mostra(a)); a.addEventListener("focus", () => mostra(a)); a.addEventListener("click", () => { mostra(a); card.classList.add("aperta"); }); a.addEventListener("blur", nascondi); });
       svg.addEventListener("pointerleave", nascondi);
+      svg.addEventListener("click", (e) => { if (!e.target.closest(".tc-acino")) { card.classList.remove("aperta"); card.hidden = true; } });
 
       // stato di partenza e timeline di crescita
       tl && tl.kill();

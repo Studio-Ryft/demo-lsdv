@@ -107,6 +107,111 @@ window.LSDV = {
       }
     ]
   },
+  // sito e descrizione di ogni azienda (raccolti dai siti ufficiali il 17/09/2026; dove manca il sito il pulsante non compare)
+  info: {
+    "Alois": {
+      "sito": "https://www.vinialois.it/",
+      "tipo": "sito",
+      "testo": "Cantina di famiglia a Pontelatone, su un altopiano di nove ettari ai piedi del monte Friento. Michele Alois lavora Casavecchia, Pallagrello bianco e nero, Aglianico e Falanghina nelle linee Alois Cru e Michele Alois.",
+      "fonte": "https://www.vinialois.it/storia-di-famiglia"
+    },
+    "Canestrini": {
+      "sito": "https://www.canestriniwine.com/",
+      "tipo": "sito",
+      "testo": "Piccola cantina di famiglia a Castel Campagnano, con la tenuta acquistata negli anni Novanta: vigna, vinificazione, imbottigliamento e vendita restano in casa. In produzione Pallagrello bianco, Casavecchia e un Casavecchia rosato.",
+      "fonte": "https://www.canestriniwine.com/"
+    },
+    "Civittolo": {
+      "sito": "https://www.instagram.com/cantinacivittolo/",
+      "tipo": "social",
+      "testo": "Azienda agricola di Pontelatone che produce Casavecchia, socia della Strada del Vino. Non ha un sito e il profilo Instagram non riporta una descrizione: i dati qui sopra vengono da fonti terze.",
+      "fonte": "https://www.facebook.com/UnpliCaserta/photos/azienda-agricola-civittolo-pontelatone-alla-festa-del-vino-di-giano-vetusto/861909466507078/"
+    },
+    "Domus Vinaria · Palmieri": {
+      "sito": "https://www.domusvinaria.com/",
+      "tipo": "sito",
+      "testo": "Azienda Palmieri, a Pontelatone in via Salomone Acquaviva. Coltiva vitigni autoctoni casertani e imbottiglia due etichette, il Pallagrello bianco Stilla e il Casavecchia Rudis, con un approccio dichiarato alla sostenibilità.",
+      "fonte": "https://www.domusvinaria.com/cantina/"
+    },
+    "Elysium (già Cantine Rao)": {
+      "sito": "",
+      "tipo": "",
+      "testo": "Ex Cantine Rao, a Caiazzo. Con il nome nuovo non risultano né sito né canali social: i soli dati verificabili sono il comune e la partecipazione all'Anteprima Casavecchia e Pallagrello come socia della Strada.",
+      "fonte": "https://www.lucianopignataro.it/a/anteprima-casavecchia-e-pallagrello-produttori-e-degustatori-a-confronto-sulle-nuove-annate/286675/"
+    },
+    "I Vignai del Casavecchia": {
+      "sito": "https://www.viticoltoridelcasavecchia.it/",
+      "tipo": "sito",
+      "testo": "Piccola cooperativa di viticoltori casertani con sede a Pontelatone, in via Madonna delle Grazie. Mette insieme vigne di famiglia di lunga tradizione locale e lavora Pallagrello bianco, Pallagrello nero e Casavecchia.",
+      "fonte": "https://www.viticoltoridelcasavecchia.it/azienda/"
+    },
+    "Il Verro": {
+      "sito": "https://www.ilverro.it/",
+      "tipo": "sito",
+      "testo": "Azienda di Cesare Avenia sulle colline di Formicola, in località Acquavalle. Coltivazione e vinificazione biologiche certificate, circa 30.000 bottiglie da Pallagrello bianco e nero, Casavecchia e Coda di Pecora.",
+      "fonte": "https://www.ilverro.it/chi-siamo/"
+    },
+    "Laboris Catrame": {
+      "sito": "https://laboriscatrame.com/",
+      "tipo": "sito",
+      "testo": "Nata a Castel Campagnano, su un altopiano tra Roccamonfina e il Volturno. Si presenta come viticoltura dell'Alta Campania con approccio biologico ed etico, su vecchie vigne di Casavecchia e Pallagrello bianco.",
+      "fonte": "https://laboriscatrame.com/pages/terra"
+    },
+    "Le Fontanelle": {
+      "sito": "https://www.agriturismolefontanelle.it/",
+      "tipo": "sito",
+      "testo": "Agriturismo aperto nel 2002 dai fratelli Izzo a Pontelatone, nella valle del Medio Volturno ai piedi dei Monti Trebulani. Cucina di tradizione contadina e un Casavecchia di produzione propria servito in tavola.",
+      "fonte": "https://www.agriturismolefontanelle.it/home/"
+    },
+    "Le Ghiandaie": {
+      "sito": "https://www.leghiandaie.it/",
+      "tipo": "sito",
+      "testo": "Agriturismo in un casale del Settecento sulle colline caiatine, a Piana di Monte Verna. Dai vigneti escono Pallagrello bianco, Pallagrello nero e uno spumante brut; in azienda anche olio, miele e carni.",
+      "fonte": "https://www.leghiandaie.it/"
+    },
+    "Masseria Piccirillo": {
+      "sito": "https://www.masseriapiccirillo.com/",
+      "tipo": "sito",
+      "testo": "Cantina ed eno-agriturismo di famiglia a Caiazzo, avviata nel 1998 sui Beati Colli. Quattro ettari di Pallagrello bianco, Pallagrello nero e Casavecchia, con visite in cantina, degustazioni e cucina di casa.",
+      "fonte": "https://www.masseriapiccirillo.com/famiglia/"
+    },
+    "Sagliocco": {
+      "sito": "https://www.facebook.com/saglioccovini/",
+      "tipo": "social",
+      "testo": "Vigneti di Sergio Sagliocco su una collina argillosa sopra Formicola, alle falde di Monte Maggiore, allevati a Guyot con Casavecchia, Pallagrello nero e bianco. Il canale indicato è la pagina Facebook, non un sito.",
+      "fonte": "https://www.lucianopignataro.it/a/sagliocco-a-formicola/289901/"
+    },
+    "Scaramuzzo": {
+      "sito": "https://www.facebook.com/ScaramuzzoWinery/",
+      "tipo": "social",
+      "testo": "Scaramuzzo Winery, a Pontelatone, socia della Strada del Vino. Non ha un sito e la pagina Facebook non pubblica una descrizione dell'azienda: restano verificabili solo il comune e l'attività vitivinicola.",
+      "fonte": "https://www.facebook.com/ScaramuzzoWinery/"
+    },
+    "Sclavia": {
+      "sito": "https://www.sclavia.com/",
+      "tipo": "sito",
+      "testo": "Fondata nel 2003 da Andrea Granito a Liberi, borgo di origine longobarda. Lavora Pallagrello e Casavecchia; la cantina in mezzo alle vigne, del 2011, è firmata dagli architetti Vargas e Palmiero. Visite e degustazioni.",
+      "fonte": "https://www.sclavia.com/azienda/"
+    },
+    "Tenuta Pezzapane": {
+      "sito": "https://tenutapezzapane.it/",
+      "tipo": "sito",
+      "testo": "Tenuta a Ruviano che tiene insieme cantina, wine resort e ristorante. Dai vigneti Pallagrello bianco, Pallagrello nero e Casavecchia, più un rosato; in calendario degustazioni, cooking class ed eventi.",
+      "fonte": "https://tenutapezzapane.it/"
+    },
+    "Teresa Mincione": {
+      "sito": "",
+      "tipo": "",
+      "testo": "Ex avvocato passata alla vigna: sede a Caiazzo e circa sette ettari tra Pontelatone e Castel Campagnano, con Casavecchia, Pallagrello bianco e nero. Il dominio teresamincione.it esiste ma è una pagina vuota.",
+      "fonte": "https://www.lucianopignataro.it/a/teresa-mincione-niente-avviene-per-caso-a-caiazzo/290961/"
+    },
+    "Vestini Campagnano · Poderi Foglia": {
+      "sito": "https://www.vestinicampagnano.it/",
+      "tipo": "sito",
+      "testo": "Realtà delle famiglie Barletta e Quaranta, con sede a Caiazzo. Lavora Pallagrello nero e bianco, Casavecchia e Asprinio; alla stessa proprietà fa capo Poderi Foglia, a Conca della Campania, nella DOC Galluccio.",
+      "fonte": "https://www.vestinicampagnano.it/azienda/"
+    }
+  },
   aziende: [
     "Alois", "Canestrini", "Civittolo", "Domus Vinaria · Palmieri", "Elysium (già Cantine Rao)", "I Vignai del Casavecchia",
     "Il Verro", "Laboris Catrame", "Le Fontanelle", "Le Ghiandaie", "Masseria Piccirillo", "Sagliocco",

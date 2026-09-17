@@ -276,7 +276,7 @@ async function crea(host) {
         <button type="button" class="g3-b" data-g3="giro" aria-pressed="${!RM}">Rotazione</button>
         <button type="button" class="g3-b" data-g3="intera">Vista intera</button>
       </div>
-      <aside class="g3-card" hidden aria-live="polite"><span class="g3-card-l"></span><b></b><small>azienda socia della Strada</small></aside>
+      <aside class="g3-card" hidden aria-live="polite"><button type="button" class="g3-card-x" data-g3="chiudi" aria-label="Chiudi">×</button><span class="g3-card-l"></span><b></b><small>azienda socia della Strada</small><div class="g3-card-m"></div></aside>
       <div class="g3-bar"><p class="g3-conta"><b>0</b> / ${n} aziende</p><button type="button" class="g3-b g3-rivedi" data-g3="rivedi">Rivedi la crescita</button></div>
     </div>
     <ul class="g3-lista">${aziende.map((a, i) => `<li><button type="button" data-g3i="${i}">${esc(a)}</button></li>`).join("")}</ul>`;
@@ -633,6 +633,7 @@ async function crea(host) {
     const a = aziende[i], l = loghi[a];
     card.querySelector("b").textContent = a.split(" (")[0];
     card.querySelector(".g3-card-l").innerHTML = l ? `<img src="../shared/img/loghi/${l}.png" alt="">` : `<i>${esc(iniziali(a))}</i>`;
+    card.querySelector(".g3-card-m").innerHTML = window.LSDVCore.schedaAzienda(a);
     card.hidden = false; card.dataset.i = i;
     window.LSDVSound && window.LSDVSound.play("hover");
   };
@@ -646,9 +647,9 @@ async function crea(host) {
     const pos = p.clone().add(fuori.multiplyScalar(7.6)).add(new THREE.Vector3(0, 0.8, 0));
     if (gsap && !RM) { gsap.to(controls.target, { x: p.x, y: p.y, z: p.z, duration: 1.1, ease: "power3.inOut" }); gsap.to(camera.position, { x: pos.x, y: pos.y, z: pos.z, duration: 1.1, ease: "power3.inOut" }); }
     else { controls.target.copy(p); camera.position.copy(pos); }
-    host.classList.add("esplora-uno");
+    host.classList.add("esplora-uno"); card.classList.add("aperta");
   };
-  const chiudi = () => { scelto = -1; accendi(-1); card.hidden = true; host.classList.remove("esplora-uno"); vistaIntera(); riprendiGiro(1400); };
+  const chiudi = () => { scelto = -1; accendi(-1); card.hidden = true; card.classList.remove("aperta"); host.classList.remove("esplora-uno"); vistaIntera(); riprendiGiro(1400); };
 
   canvas.addEventListener("pointermove", (e) => {
     soffia(e);
@@ -669,6 +670,7 @@ async function crea(host) {
   host.querySelector(".g3-ctrl").addEventListener("click", (e) => {
     const b = e.target.closest("[data-g3]"); if (!b) return;
     const cmd = b.dataset.g3;
+    if (cmd === "chiudi") return chiudi();
     if (cmd === "piu" || cmd === "meno") {
       const dir = camera.position.clone().sub(controls.target), d = THREE.MathUtils.clamp(dir.length() * (cmd === "piu" ? 0.78 : 1.28), 3.2, distanzaIntera * 1.3);
       const pos = controls.target.clone().add(dir.setLength(d));
@@ -683,6 +685,7 @@ async function crea(host) {
       host.classList.toggle("esplorando", on); hint.hidden = true;
     }
   });
+  card.addEventListener("click", (e) => { if (e.target.closest('[data-g3="chiudi"]')) chiudi(); });
   host.querySelector('[data-g3="rivedi"]').addEventListener("click", () => { chiudi(); cresci(); });
   host.querySelector(".g3-lista").addEventListener("click", (e) => { const b = e.target.closest("[data-g3i]"); if (b) esplora(+b.dataset.g3i); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && scelto >= 0) chiudi(); });

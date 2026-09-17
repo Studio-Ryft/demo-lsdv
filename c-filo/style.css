@@ -168,7 +168,8 @@ html.menu-open .hd{transform:none!important;background:var(--cream)}
 .perc-map .walker-ring{fill:none;stroke:var(--chart);stroke-width:3}
 
 /* ---------- STORIA (mazzo) ---------- */
-.storia{padding:clamp(90px,12vw,170px) var(--gut);background:var(--blush);border-radius:40px}
+.storia{padding:clamp(90px,12vw,170px) var(--gut) clamp(40px,5vw,70px);background:var(--blush);border-radius:40px}
+.deck .scard:last-child{margin-bottom:0}
 .deck{max-width:1000px;margin:0 auto}
 .scard{position:sticky;top:110px;min-height:360px;border-radius:30px;padding:clamp(24px,3vw,46px);margin-bottom:40px;display:grid;grid-template-columns:230px 1fr;gap:clamp(20px,3vw,40px);box-shadow:0 -10px 40px -24px rgba(68,36,19,.4);transform-origin:center top}
 .scard:nth-child(4n+1){background:var(--cream)}

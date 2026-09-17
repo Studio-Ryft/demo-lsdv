@@ -123,6 +123,14 @@
     return true;
   }
 
+  /* ---------- scheda di un'azienda: descrizione e collegamento al suo sito ---------- */
+  function schedaAzienda(nome) {
+    const i = (D.info || {})[nome] || {};
+    const etichetta = i.tipo === "social" ? (/instagram/.test(i.sito) ? "Vai al profilo Instagram" : "Vai alla pagina Facebook") : "Vai al sito";
+    return `${i.testo ? `<p class="sch-t">${esc(i.testo)}</p>` : ""}` +
+      `${i.sito ? `<a class="sch-b" href="${esc(i.sito)}" target="_blank" rel="noopener">${etichetta}<i aria-hidden="true">↗</i></a>` : '<p class="sch-no">Nessun sito indicato dall\'azienda</p>'}`;
+  }
+
   /* ---------- sezione «Chi siamo»: stesso testo, grafica di ciascuna versione ---------- */
   function chiSiamo(el) {
     const c = D.chisiamo; if (!el || !c) return;
@@ -139,5 +147,5 @@
     });
   });
 
-  window.LSDVCore = { D, M, RM, $, $$, esc, slug, html, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce, chiSiamo };
+  window.LSDVCore = { D, M, RM, $, $$, esc, slug, html, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce, chiSiamo, schedaAzienda };
 })();
