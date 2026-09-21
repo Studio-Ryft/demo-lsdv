@@ -392,7 +392,7 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
 
 /* ---------- intro isometrica ---------- */
 @media (orientation:landscape){
-  .in-t{left:clamp(24px,5vw,84px);right:auto;bottom:auto;top:clamp(70px,14vh,150px);text-align:left;font-size:clamp(2.4rem,4.2vw,4.4rem);line-height:.98;max-width:30vw}
+  .in-t{left:clamp(24px,5vw,84px);right:auto;top:auto;bottom:clamp(46px,9vh,100px);text-align:left;font-size:clamp(2.4rem,4.2vw,4.4rem);line-height:.98;max-width:30vw}
   .in-t span,.in-t em{display:block}
 }
 .in-svg.iso-root{overflow:hidden}

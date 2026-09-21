@@ -197,7 +197,7 @@
   if (vgm && window.LSDVIso && hasG) {
     const iso = window.LSDVIso.crea(vgm), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
     const LEGS = [[0, false, 1], [1, false, 2], [2, false, 3], [2, true, 2], [3, false, 4], [4, false, 5], [5, false, 6], [6, false, 7]];
-    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.3 : 1.8);
+    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.6 : 2.1);
     const cam = { x: 0, y: 0, w: iso.intera().w };
     const c0 = iso.paesi[IDS[0]];
     const testi = Object.fromEntries(D.comuni.map((c) => [c.id, c]));
@@ -209,10 +209,9 @@
       gsap.fromTo(cardEl, { y: 16, autoAlpha: 0.2 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", overwrite: true });
       IDS.forEach((id, j) => iso.mostraEtichetta(id, j === k));
     };
-    iso.gCielo.style.display = "";
     iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
     iso.posiziona(0, 0, false); iso.auto.setAttribute("opacity", 1);
-    const focus = (p) => ({ x: p.sx, y: p.sy - 28 });
+    const focus = (p) => ({ x: p.sx, y: p.sy });
     const quando = [];   // istante di arrivo a ciascun paese
     const tl = gsap.timeline({ defaults: { ease: "none" } });
     const f0 = focus(c0); cam.x = iso.intera().cx; cam.y = iso.intera().cy;
@@ -222,7 +221,7 @@
       const pr = { t: 0 }, a = iso.paesi[IDS[dest]];
       tl.fromTo(pr, { t: 0 }, { t: 1, duration: 1.7, ease: "sine.inOut", onUpdate: () => {
           const q = iso.posiziona(i, pr.t, rev); if (!rev) iso.disegnaTratto(i, pr.t);
-          cam.x += (q.x - cam.x) * 0.22; cam.y += (q.y - 28 - cam.y) * 0.22; cam.w = zoom(); iso.vai(cam.x, cam.y, cam.w);
+          cam.x += (q.x - cam.x) * 0.22; cam.y += (q.y - cam.y) * 0.22; cam.w = zoom(); iso.vai(cam.x, cam.y, cam.w);
         } }, t0);
       t0 += 1.7;
       if (!rev) { quando[dest] = t0; }
@@ -255,35 +254,33 @@
   const intro = $("#intro");
   if (introOnce("lsdvC")) {
     H.classList.add("intro-run"); lenis && lenis.stop();
-    // la mappa isometrica si costruisce a strati, poi l'auto percorre la Strada del Vino e si ferma in ogni paese
+    // la carta nasce dalle sole curve di livello; poi il grappolo corre lungo la strada e la colora, paese per paese
     const host = $("[data-instrada]"), portrait = innerHeight > innerWidth;
     const iso = window.LSDVIso.crea(host), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
     const LEGS = [[0, false, "pontelatone"], [1, false, "castel-di-sasso"], [2, false, "liberi"], [2, true, "castel-di-sasso"], [3, false, "piana-di-monte-verna"], [4, false, "caiazzo"], [5, false, "ruviano"], [6, false, "castel-campagnano"]];
-    const v0 = iso.intera(), W = portrait ? iso.B.w * 0.36 : v0.w;
-    let cam = { x: v0.cx, y: v0.cy, w: v0.w * (portrait ? 0.5 : 1.12) };
+    const v0 = iso.intera();
+    let cam = { x: v0.cx, y: v0.cy, w: portrait ? 480 : v0.w * 1.04 };
+    if (portrait) { const f = iso.paesi.formicola; cam.x = f.sx; cam.y = f.sy; }
     iso.vai(cam.x, cam.y, cam.w);
-    gsap.set(iso.gruppi, { opacity: 0, y: 46 });
+    gsap.set(iso.righe, { drawSVG: "0%" });
     gsap.set(iso.fiumi, { opacity: 0 });
-    IDS.forEach((id) => gsap.set(iso.paesi[id].g, { scale: 0, svgOrigin: `${iso.paesi[id].sx} ${iso.paesi[id].sy}` }));
+    IDS.forEach((id) => gsap.set(iso.paesi[id].g, { opacity: 0 }));
     iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
-    gsap.set(iso.gCielo, { opacity: 0 });
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
     const tl = gsap.timeline();
-    tl.to(iso.gruppi, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 1.9 / iso.gruppi.length }, 0.1)
-      .to(iso.fiumi, { opacity: 1, duration: 0.8 }, 1.2)
-      .to(iso.gCielo, { opacity: 1, duration: 1.2 }, 1.4)
-      .to(IDS.map((id) => iso.paesi[id].g), { scale: 1, duration: 0.55, ease: "back.out(2.6)", stagger: 0.09 }, 1.6)
+    tl.to(iso.righe, { drawSVG: "100%", duration: 1.5, ease: "power1.inOut", stagger: 0.04 }, 0.1)
+      .to(iso.fiumi, { opacity: 1, duration: 0.8 }, 1.4)
+      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.5, stagger: 0.08 }, 1.9)
       .to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.09 }, 0.9);
-    if (!portrait) tl.to(cam, { w: v0.w, duration: 3.4, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    if (!portrait) tl.to(cam, { w: v0.w, duration: 5.5, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
     // il viaggio
-    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 4.1, PAUSA = 0.24;
-    let t0 = 2.5; iso.posiziona(0, 0, false);
+    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 4.4, PAUSA = 0.26;
+    let t0 = 2.4; iso.posiziona(0, 0, false);
     tl.to(iso.auto, { opacity: 1, duration: 0.3 }, t0 - 0.2).add(() => iso.mostraEtichetta("formicola", true), t0 - 0.1);
     let prec = "formicola";
     LEGS.forEach(([i, rev, fine]) => {
-      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 };
-      const daNascondere = prec;
+      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 }, daNascondere = prec;
       tl.add(() => { iso.mostraEtichetta(daNascondere, false); }, t0 + 0.05);
       tl.fromTo(pr, { t: 0 }, { t: 1, duration: dur, ease: "sine.inOut", onUpdate: () => {
           const q = iso.posiziona(i, pr.t, rev); iso.polvere(q.x, q.y);
@@ -291,8 +288,7 @@
           if (portrait) { cam.x += (q.x - cam.x) * 0.09; cam.y += (q.y - cam.y) * 0.09; iso.vai(cam.x, cam.y, cam.w); }
         } }, t0 + 0.05);
       t0 += 0.05 + dur;
-      if (!(rev)) { tl.add(() => iso.mostraEtichetta(fine, true), t0); }
-      else tl.add(() => iso.mostraEtichetta(fine, true), t0);
+      tl.add(() => iso.mostraEtichetta(fine, true), t0);
       prec = fine; t0 += PAUSA;
     });
     tl.addLabel("out", t0 + 0.5)
