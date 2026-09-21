@@ -197,7 +197,7 @@
   if (vgm && window.LSDVIso && hasG) {
     const iso = window.LSDVIso.crea(vgm), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
     const LEGS = [[0, false, 1], [1, false, 2], [2, false, 3], [2, true, 2], [3, false, 4], [4, false, 5], [5, false, 6], [6, false, 7]];
-    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.7 : 2.15);
+    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.3 : 1.8);
     const cam = { x: 0, y: 0, w: iso.intera().w };
     const c0 = iso.paesi[IDS[0]];
     const testi = Object.fromEntries(D.comuni.map((c) => [c.id, c]));
@@ -262,7 +262,7 @@
     const v0 = iso.intera(), W = portrait ? iso.B.w * 0.36 : v0.w;
     let cam = { x: v0.cx, y: v0.cy, w: v0.w * (portrait ? 0.5 : 1.12) };
     iso.vai(cam.x, cam.y, cam.w);
-    gsap.set(iso.gruppi, { opacity: 0, y: 70 });
+    gsap.set(iso.gruppi, { opacity: 0, y: 46 });
     gsap.set(iso.fiumi, { opacity: 0 });
     IDS.forEach((id) => gsap.set(iso.paesi[id].g, { scale: 0, svgOrigin: `${iso.paesi[id].sx} ${iso.paesi[id].sy}` }));
     iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
@@ -270,7 +270,7 @@
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
     const tl = gsap.timeline();
-    tl.to(iso.gruppi, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.16 }, 0.1)
+    tl.to(iso.gruppi, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 1.9 / iso.gruppi.length }, 0.1)
       .to(iso.fiumi, { opacity: 1, duration: 0.8 }, 1.2)
       .to(iso.gCielo, { opacity: 1, duration: 1.2 }, 1.4)
       .to(IDS.map((id) => iso.paesi[id].g), { scale: 1, duration: 0.55, ease: "back.out(2.6)", stagger: 0.09 }, 1.6)
