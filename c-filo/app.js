@@ -152,32 +152,59 @@
 
   $$("section h2").forEach((h) => { const sp = SplitText.create(h, { type: "lines,words", mask: "lines" }); gsap.from(sp.words, { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: h, start: "top 85%" } }); });
 
-  // ---------- LA STRADA come indicatore di percorso ----------
-  // una capsula sottile sul margine: un punto scorre lungo la strada e si ferma su ogni capitolo; un clic porta lì
+  // ---------- LA STRADA che si disegna lungo la pagina ----------
+  // il tracciato passa da un margine all'altro a ogni capitolo; scorrendo, la parte percorsa diventa strada (asfalto, bordi chiari, mezzeria)
+  // e un punto avanza. Disegno su un canvas fisso grande quanto lo schermo: si traccia solo il tratto visibile, quindi resta fluido.
   (function () {
-    if (!hasG) return;
-    const secs = $$("[data-knot]").filter((x) => x.id && x.id !== "home");
-    if (secs.length < 2) return;
-    const nomiNav = {}; $$(".hd-nav a").forEach((a) => { nomiNav[a.getAttribute("href").slice(1)] = a.textContent.trim(); }); nomiNav.aderisci = "Aderisci";
-    const n = secs.length;
-    const nav = window.LSDVCore.html(`<nav class="rail" aria-label="Percorso della pagina"><span class="rail-road"><i class="rail-line"></i></span><ol>${secs.map((x, i) => `<li style="--i:${i / (n - 1)}"><a href="#${x.id}" data-i="${i}"><i class="rail-st"><b>${String(i + 1).padStart(2, "0")}</b></i><span>${esc(nomiNav[x.id] || x.id)}</span></a></li>`).join("")}</ol><i class="rail-fill"></i><span class="rail-dot"></span></nav>`);
-    document.body.appendChild(nav);
-    const dot = $(".rail-dot", nav), fill = $(".rail-fill", nav), links = $$("a", nav);
-    let tops = [], alt = 1;
-    const misura = () => { tops = secs.map((x) => x.getBoundingClientRect().top + scrollY); alt = $("ol", nav).offsetHeight || 1; };
-    misura(); ScrollTrigger.addEventListener("refresh", misura);
-    const yTo = gsap.quickTo(dot, "y", { duration: 0.45, ease: "power3" }), hTo = gsap.quickTo(fill, "height", { duration: 0.45, ease: "power3" });
-    let corrente = -1;
-    const aggiorna = () => {
-      const y = scrollY + innerHeight * 0.4; let f = 0;
-      if (y >= tops[0]) { let i = 0; while (i < n - 1 && y >= tops[i + 1]) i++; f = i >= n - 1 ? n - 1 : i + (y - tops[i]) / ((tops[i + 1] - tops[i]) || 1); }
-      const px = (f / (n - 1)) * alt; yTo(px); hTo(px);
-      const k = y >= tops[0] ? Math.min(n - 1, Math.round(f)) : -1;
-      if (k !== corrente) { corrente = k; links.forEach((a, i) => { a.classList.toggle("on", i === k); a.classList.toggle("fatto", i < k); }); }
-      nav.classList.toggle("visibile", y >= tops[0] - innerHeight * 0.3);
-    };
-    ScrollTrigger.create({ start: 0, end: "max", onUpdate: aggiorna, onRefresh: aggiorna }); aggiorna();
-    nav.addEventListener("click", (e) => { const a = e.target.closest("a"); if (!a) return; e.preventDefault(); const t = secs[+a.dataset.i]; if (lenis) lenis.scrollTo(t, { offset: 0, duration: 1.2 }); else t.scrollIntoView({ behavior: "smooth" }); });
+    if (!hasG || RM) return;
+    const cv = document.createElement("canvas"); cv.className = "strada-cv"; cv.setAttribute("aria-hidden", "true"); document.body.appendChild(cv);
+    const ctx = cv.getContext("2d");
+    let pts = [], cum = [], total = 0, dpr = 1, docH = 1, dt = 0, dv = 0, sy = 0;
+    function costruisci() {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+      docH = document.documentElement.scrollHeight;
+      const w = document.documentElement.clientWidth, gut = Math.max(9, Math.min(34, w * 0.02));
+      const knots = $$("[data-knot]").map((el) => el.getBoundingClientRect().top + scrollY).slice(1);
+      pts = []; let x = w / 2, y = innerHeight * 0.92; pts.push([x, y]);
+      const linea = (nx, ny) => { const n = Math.max(1, Math.round(Math.abs(ny - y) / 40)); for (let i = 1; i <= n; i++) pts.push([x + ((nx - x) * i) / n, y + ((ny - y) * i) / n]); x = nx; y = ny; };
+      const curva = (c1x, c1y, c2x, c2y, ex, ey) => { const x0 = x, y0 = y; for (let i = 1; i <= 22; i++) { const t = i / 22, u = 1 - t; pts.push([u * u * u * x0 + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * ex, u * u * u * y0 + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * ey]); } x = ex; y = ey; };
+      knots.forEach((ky, i) => { const nx = i % 2 === 0 ? w - gut : gut, cy = ky + 30; linea(x, Math.max(y, cy - 80)); curva(x, cy, nx, cy - 40, nx, cy + 40); });
+      linea(x, docH - 40);
+      cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      total = cum[cum.length - 1] || 1; aggiorna(true);
+    }
+    const primoDopo = (yy) => { let lo = 0, hi = pts.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; pts[m][1] < yy ? (lo = m + 1) : (hi = m); } return lo; };
+    function punto(d) { let lo = 0, hi = cum.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; cum[m] < d ? (lo = m + 1) : (hi = m); } const i = Math.max(1, lo), t = (d - cum[i - 1]) / ((cum[i] - cum[i - 1]) || 1); return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * t, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t, i]; }
+    function disegna() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, -sy * dpr); ctx.clearRect(0, sy - 4, innerWidth, innerHeight + 8);
+      if (!pts.length) return;
+      const i0 = Math.max(0, primoDopo(sy - 60) - 2), i1 = Math.min(pts.length - 1, primoDopo(sy + innerHeight + 60) + 2);
+      const traccia = (da, a, fine) => { ctx.beginPath(); ctx.moveTo(pts[da][0], pts[da][1]); for (let i = da + 1; i <= a; i++) ctx.lineTo(pts[i][0], pts[i][1]); if (fine) ctx.lineTo(fine[0], fine[1]); };
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      // tratto ancora da percorrere: solo un punteggiato sottile
+      ctx.setLineDash([2, 9]); ctx.strokeStyle = "rgba(68,36,19,.34)"; ctx.lineWidth = 2.4; traccia(i0, i1); ctx.stroke(); ctx.setLineDash([]);
+      // tratto percorso: strada
+      const q = punto(dv), iv = q[2] - 1;
+      if (iv >= i0) {
+        const da = i0, a = Math.min(iv, i1);
+        ctx.strokeStyle = "#FCF6E1"; ctx.lineWidth = 14; traccia(da, a, iv <= i1 ? q : null); ctx.stroke();
+        ctx.strokeStyle = "#442413"; ctx.lineWidth = 8.5; traccia(da, a, iv <= i1 ? q : null); ctx.stroke();
+        ctx.strokeStyle = "#ADC136"; ctx.lineWidth = 1.8; ctx.setLineDash([6, 6]); traccia(da, a, iv <= i1 ? q : null); ctx.stroke(); ctx.setLineDash([]);
+      }
+      // il punto che avanza
+      if (q[1] > sy - 20 && q[1] < sy + innerHeight + 20) {
+        ctx.fillStyle = "rgba(173,193,54,.3)"; ctx.beginPath(); ctx.arc(q[0], q[1], 15, 0, 7); ctx.fill();
+        ctx.fillStyle = "#ADC136"; ctx.strokeStyle = "#442413"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(q[0], q[1], 7.2, 0, 7); ctx.fill(); ctx.stroke();
+      }
+    }
+    function aggiorna(forza) {
+      sy = scrollY; const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      dt = (sy / max) * total; if (forza) dv = dt; disegna();
+    }
+    // il punto raggiunge il bersaglio con un piccolo ritardo morbido
+    gsap.ticker.add(() => { sy = scrollY; const max = Math.max(1, document.documentElement.scrollHeight - innerHeight); dt = (sy / max) * total; if (Math.abs(dt - dv) > 0.4) { dv += (dt - dv) * 0.18; disegna(); } else if (dv !== dt) { dv = dt; disegna(); } else if (cv._y !== sy) { disegna(); } cv._y = sy; });
+    costruisci(); ScrollTrigger.addEventListener("refresh", costruisci); addEventListener("resize", costruisci);
   })();
 
   // il territorio come motivo del sito: curve di livello in filigrana dietro la missione
