@@ -198,6 +198,8 @@ html.rp-lock,html.rp-lock body{overflow:hidden;height:100%}
   var pre = document.getElementById("ryft-pre"), wordEl = document.getElementById("rp-word"),
       countEl = document.getElementById("rp-count"), bar = document.getElementById("rp-bar"),
       end = document.getElementById("rp-end"), skip = document.getElementById("rp-skip");
+  // arrivando dal tasto Home delle proposte l'intro si salta
+  if (/[?&]salta/.test(location.search)) { if (pre.parentNode) pre.parentNode.removeChild(pre); return; }
   var ridotto = matchMedia("(prefers-reduced-motion: reduce)").matches, chiuso = false;
   document.documentElement.classList.add("rp-lock");
 
@@ -249,7 +251,7 @@ html.rp-lock,html.rp-lock body{overflow:hidden;height:100%}
   requestAnimationFrame(giro);
 })();
 </script>
-<script src="shared/brand.js?v=202609211141"></script>
+<script src="shared/brand.js?v=202609211511"></script>
 <script>var B=window.LSDV_BRAND,s=document.querySelector("[data-logo]");s.setAttribute("viewBox",B.logo.vb);s.innerHTML='<path fill="#442413" fill-rule="evenodd" d="'+B.logo.br+'"/><path fill="#4B5D23" fill-rule="evenodd" d="'+B.logo.gr+'"/>';</script>
 </body>
 </html>

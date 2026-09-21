@@ -221,34 +221,30 @@
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
     const tl = gsap.timeline();
-    tl.to(iso.righe, { drawSVG: "100%", duration: 0.6, ease: "power1.inOut", stagger: 0.01 }, 0)
-      .to(iso.fiumi, { opacity: 1, duration: 0.4 }, 0.4)
-      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.3, stagger: 0.03 }, 0.5)
-      .to(tw.words, { yPercent: 0, duration: 0.8, ease: "expo.out", stagger: 0.05 }, 0.3);
-    if (!portrait) tl.to(cam, { w: v0.w, duration: 2.2, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
-    // il viaggio
-    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 1.4, PAUSA = 0.07;
-    let t0 = 0.8; iso.posiziona(0, 0, false);
-    tl.to(iso.auto, { opacity: 1, duration: 0.3 }, t0 - 0.2).add(() => iso.mostraEtichetta("formicola", true), t0 - 0.1);
-    let prec = "formicola";
-    LEGS.forEach(([i, rev, fine]) => {
-      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 }, daNascondere = prec;
-      tl.add(() => { iso.mostraEtichetta(daNascondere, false); }, t0 + 0.05);
-      tl.fromTo(pr, { t: 0 }, { t: 1, duration: dur, ease: "sine.inOut", onUpdate: () => {
+    tl.to(iso.righe, { drawSVG: "100%", duration: 0.45, ease: "power1.inOut", stagger: 0.006 }, 0)
+      .to(iso.fiumi, { opacity: 1, duration: 0.3 }, 0.15)
+      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.25, stagger: 0.02 }, 0.2)
+      .to(tw.words, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 0.15);
+    if (!portrait) tl.to(cam, { w: v0.w, duration: 1.4, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    // il viaggio: un solo passaggio continuo, senza soste
+    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 0.85;
+    let t0 = 0.35; iso.posiziona(0, 0, false);
+    tl.to(iso.auto, { opacity: 1, duration: 0.15 }, t0 - 0.1);
+    LEGS.forEach(([i, rev]) => {
+      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 };
+      tl.fromTo(pr, { t: 0 }, { t: 1, duration: dur, ease: "none", onUpdate: () => {
           const q = iso.posiziona(i, pr.t, rev); iso.polvere(q.x, q.y);
           if (!rev) iso.disegnaTratto(i, pr.t);
-          if (portrait) { cam.x += (q.x - cam.x) * 0.09; cam.y += (q.y - cam.y) * 0.09; iso.vai(cam.x, cam.y, cam.w); }
-        } }, t0 + 0.05);
-      t0 += 0.05 + dur;
-      tl.add(() => iso.mostraEtichetta(fine, true), t0);
-      prec = fine; t0 += PAUSA;
+          if (portrait) { cam.x += (q.x - cam.x) * 0.12; cam.y += (q.y - cam.y) * 0.12; iso.vai(cam.x, cam.y, cam.w); }
+        } }, t0);
+      t0 += dur;
     });
-    tl.addLabel("out", t0 + 0.15)
-      .to(tw.words, { yPercent: -110, duration: 0.5, ease: "power3.in", stagger: 0.03 }, "out")
-      .to(iso.auto, { opacity: 0, duration: 0.3 }, "out")
-      .to(intro, { clipPath: "inset(50% 0% 50% 0%)", duration: 1.1, ease: "expo.inOut" }, "out+=0.5")
-      .add(() => heroIn(0), "out+=0.7")
-      .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=1.6");
+    tl.addLabel("out", t0 + 0.1)
+      .to(iso.auto, { opacity: 0, duration: 0.15 }, "out")
+      .to(tw.words, { yPercent: -110, duration: 0.3, ease: "power3.in", stagger: 0.02 }, "out")
+      .to(intro, { opacity: 0, duration: 0.4, ease: "power1.out" }, "out+=0.1")
+      .add(() => heroIn(0), "out+=0.2")
+      .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=0.55");
     const skip = () => tl.timeScale(5);
     $(".in-skip").addEventListener("click", skip); addEventListener("wheel", skip, { once: true, passive: true }); addEventListener("touchmove", skip, { once: true, passive: true }); addEventListener("keydown", (e) => e.key === "Escape" && skip(), { once: true });
   } else { intro.remove(); heroIn(0.1); }

@@ -123,7 +123,7 @@
     const b = html(`<nav class="demo-badge" aria-label="Navigazione della demo">
       <button type="button" class="dn-b" data-dn="back" aria-label="Indietro" title="Indietro"><i>←</i></button>
       <button type="button" class="dn-b" data-dn="fwd" aria-label="Avanti" title="Avanti"><i>→</i></button>
-      <a class="dn-b home" href="../index.html" target="_top" title="Torna alle quattro direzioni"><i>Home</i></a>
+      <a class="dn-b home" href="../index.html?salta" target="_top" title="Torna alle quattro direzioni"><i>Home</i></a>
       <span>Demo</span><em class="dn-l">${esc(label)}</em></nav>`);
     b.addEventListener("click", (e) => { const t = e.target.closest("[data-dn]"); if (!t) return; t.dataset.dn === "back" ? history.back() : history.forward(); });
     document.body.appendChild(b);

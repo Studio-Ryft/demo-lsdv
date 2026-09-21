@@ -55,7 +55,7 @@
   fs.innerHTML = `<nav class="fs-bar" aria-label="Navigazione dell'anteprima">
       <button type="button" class="nb-b" data-fs="back" aria-label="Indietro" title="Indietro">←</button>
       <button type="button" class="nb-b" data-fs="fwd" aria-label="Avanti" title="Avanti">→</button>
-      <a class="nb-b nb-home" href="../index.html" title="Torna alle quattro direzioni">Home</a>
+      <a class="nb-b nb-home" href="../index.html?salta" title="Torna alle quattro direzioni">Home</a>
       <span class="fs-t"></span>
       <button type="button" class="nb-b nb-x" data-fs="chiudi" aria-label="Chiudi l'anteprima" title="Chiudi (Esc)">Chiudi ✕</button>
     </nav><iframe class="fs-if" title="Anteprima a schermo intero"></iframe>`;
