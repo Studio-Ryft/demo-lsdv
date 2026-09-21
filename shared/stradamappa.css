@@ -31,7 +31,7 @@
 .st-paese.on .st-l-n{opacity:0}
 .st-paese.on .st-nocc{fill:#ADC136}
 
-.st-auto-onda{fill:none;stroke:#7C2F4B;stroke-width:1.8;transform-box:fill-box;transform-origin:center;animation:stOnda 1.7s ease-out infinite}
+.st-auto-onda{fill:none;stroke:#442413;stroke-width:1.8;transform-box:fill-box;transform-origin:center;animation:stOnda 1.7s ease-out infinite}
 .iso-auto-c{transform:none}
-.st-punto-mobile{fill:#7C2F4B;stroke:#FCF6E1;stroke-width:2.4}
+.st-punto-mobile{fill:#ADC136;stroke:#442413;stroke-width:2.6}
 @media (prefers-reduced-motion:reduce){.st-brilla,.st-onda,.st-auto-onda{animation:none}}

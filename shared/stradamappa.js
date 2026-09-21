@@ -36,14 +36,14 @@
     const gM = el("g", { mask: `url(#${id}-fade)` }); gOut.appendChild(gM);
 
     // ---- colore: fasce ogni 50 m, mascherate dalla strada percorsa ----
-    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)`, opacity: 0.11 }); gM.appendChild(gCol);
+    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)`, opacity: 0.35 }); gM.appendChild(gCol);
     strati.forEach((s) => {
       if (s.q % 50) return;
       gCol.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd" }));
     });
     // un secondo velo di colore, più tenue, su tutta la carta: la terra non è mai del tutto spenta
     const gVelo = el("g", { class: "st-velo" }); gM.insertBefore(gVelo, gCol);
-    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.02 })); });
+    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.1 })); });
 
     // ---- curve di livello (le si disegna una a una) ----
     const gL = el("g", { class: "st-linee" }); gM.appendChild(gL);

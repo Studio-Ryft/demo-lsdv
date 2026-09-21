@@ -40,7 +40,7 @@
   $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
-  demoBadge("C · La Strada");
+  demoBadge("C · La Strada · v4");
 
   // quote indicative (COMASTRA §8.3, da deliberare)
   const TIERS = {
