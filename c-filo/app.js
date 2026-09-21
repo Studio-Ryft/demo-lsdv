@@ -40,7 +40,7 @@
   $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
-  demoBadge("C · La Strada · v4");
+  demoBadge("C · La Strada");
 
   // quote indicative (COMASTRA §8.3, da deliberare)
   const TIERS = {
@@ -191,54 +191,6 @@
   const isec = $(".intro-sec");
   if (isec) isec.insertAdjacentHTML("afterbegin", `<div class="terr-bg" aria-hidden="true">${mapSVG({ cls: "terr-bg-svg", luoghi: false, viewBox: "0 180 1600 760" })}</div>`);
 
-
-  // ---------- IL VIAGGIO: lo scorrimento guida l'auto lungo la strada, paese per paese ----------
-  const vgm = $("[data-vgmap]");
-  if (vgm && window.LSDVIso && hasG) {
-    const iso = window.LSDVIso.crea(vgm), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
-    const LEGS = [[0, false, 1], [1, false, 2], [2, false, 3], [2, true, 2], [3, false, 4], [4, false, 5], [5, false, 6], [6, false, 7]];
-    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.6 : 2.1);
-    const cam = { x: 0, y: 0, w: iso.intera().w };
-    const c0 = iso.paesi[IDS[0]];
-    const testi = Object.fromEntries(D.comuni.map((c) => [c.id, c]));
-    const card = { n: $("[data-vn]"), nome: $("[data-vnome]"), q: $("[data-vq]"), t: $("[data-vt]") }, barra = $(".vg-prog i"), cardEl = $(".vg-card"), vgH = $(".vg-h");
-    let corrente = -1;
-    const setStop = (k) => {
-      if (k === corrente) return; corrente = k; const p = iso.paesi[IDS[k]], c = testi[IDS[k]] || {};
-      card.n.textContent = String(k + 1).padStart(2, "0"); card.nome.textContent = p.nome; card.q.textContent = Math.round(p.q) + " m s.l.m."; card.t.textContent = c.testo || "";
-      gsap.fromTo(cardEl, { y: 16, autoAlpha: 0.2 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", overwrite: true });
-      IDS.forEach((id, j) => iso.mostraEtichetta(id, j === k));
-    };
-    iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
-    iso.posiziona(0, 0, false); iso.auto.setAttribute("opacity", 1);
-    const focus = (p) => ({ x: p.sx, y: p.sy });
-    const quando = [];   // istante di arrivo a ciascun paese
-    const tl = gsap.timeline({ defaults: { ease: "none" } });
-    const f0 = focus(c0); cam.x = iso.intera().cx; cam.y = iso.intera().cy;
-    tl.to(cam, { x: f0.x, y: f0.y, w: zoom(), duration: 1.0, ease: "power2.inOut", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
-    quando[0] = 0.8; let t0 = 0.8 + 0.3;
-    LEGS.forEach(([i, rev, dest], n) => {
-      const pr = { t: 0 }, a = iso.paesi[IDS[dest]];
-      tl.fromTo(pr, { t: 0 }, { t: 1, duration: 0.8, ease: "sine.inOut", onUpdate: () => {
-          const q = iso.posiziona(i, pr.t, rev); if (!rev) iso.disegnaTratto(i, pr.t);
-          cam.x += (q.x - cam.x) * 0.22; cam.y += (q.y - cam.y) * 0.22; cam.w = zoom(); iso.vai(cam.x, cam.y, cam.w);
-        } }, t0);
-      t0 += 0.8;
-      if (!rev) { quando[dest] = t0; }
-      t0 += 0.3;
-    });
-    // per il ritorno da Liberi a Castel di Sasso non c'è sosta: la strada continua verso Piana di Monte Verna
-    const durata = t0;
-    const st = ScrollTrigger.create({
-      trigger: ".viaggio", start: "top top", end: () => "+=" + Math.round(innerHeight * 3.4), pin: ".vg-pin", scrub: 0.9, animation: tl, anticipatePin: 1, invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const tt = self.progress * durata; let k = 0; quando.forEach((q, j) => { if (q !== undefined && tt >= q - 0.05) k = j; });
-        setStop(k); barra.style.transform = `scaleY(${self.progress})`; vgH.style.opacity = Math.max(0, 1 - self.progress * 14);
-      }
-    });
-    setStop(0);
-    addEventListener("resize", () => iso.vai(cam.x, cam.y, cam.w));
-  }
 
   // ---------- INTRO ----------
   const hsplit = SplitText.create(".hero-t", { type: "words", mask: "words" });
