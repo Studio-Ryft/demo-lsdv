@@ -368,10 +368,10 @@ legend{font:400 2rem/1 var(--fs);margin-bottom:1.1rem}
 
 /* ---------- CHI SIAMO ---------- */
 .chisiamo{padding:clamp(90px,11vw,160px) var(--gut) clamp(60px,8vw,110px)}
-.cs-in{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:clamp(30px,5vw,90px);align-items:start}
+.cs-in{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.5fr);gap:clamp(30px,5vw,90px);align-items:start}
 .cs-kick{display:flex;align-items:center;gap:.6rem;font:500 11px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--olive)}
 .cs-kick::before{content:"";width:26px;height:1px;background:var(--olive)}
-.cs-t{font:400 clamp(2.2rem,3.8vw,3.8rem)/1.04 var(--fs);letter-spacing:-.02em;margin-top:1.1rem;color:var(--walnut)}
+.cs-t{font:400 clamp(2rem,3.1vw,3.1rem)/1.06 var(--fs);letter-spacing:-.02em;margin-top:1.1rem;color:var(--walnut);text-wrap:balance;hyphens:none}
 .cs-h{position:sticky;top:120px}
 .cs-grid{display:grid;gap:14px}
 .cs-b{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.2rem 1.4rem;background:rgba(252,246,225,.72);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,2.4vw,32px)}

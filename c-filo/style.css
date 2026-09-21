@@ -355,7 +355,7 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
 .cs-in{max-width:1240px;margin:0 auto}
 .cs-h{text-align:center}
 .cs-kick{display:inline-block;font:600 12px/1 var(--fj);letter-spacing:.14em;text-transform:uppercase;color:var(--olive);background:rgba(173,193,54,.22);padding:.55rem .9rem;border-radius:40px}
-.cs-t{font:400 clamp(2.2rem,4.8vw,4.4rem)/1.04 var(--fs);letter-spacing:-.02em;max-width:900px;margin:1.2rem auto 0;color:var(--walnut)}
+.cs-t{font:400 clamp(2.2rem,4.8vw,4.4rem)/1.04 var(--fs);letter-spacing:-.02em;max-width:900px;margin:1.2rem auto 0;color:var(--walnut);text-wrap:balance;hyphens:none}
 .cs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:clamp(36px,5vw,70px)}
 .cs-b{background:var(--cream);border:1.5px solid var(--line);border-radius:28px;padding:clamp(22px,2.6vw,36px);transition:transform .5s var(--ease),box-shadow .5s}
 .cs-b:hover{transform:translateY(-6px);box-shadow:0 30px 50px -30px rgba(68,36,19,.35)}

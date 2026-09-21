@@ -448,7 +448,7 @@ legend{font:400 clamp(1.8rem,2.6vw,2.4rem)/1.05 var(--fs);margin-bottom:1.4rem}
 .chisiamo{padding:clamp(90px,11vw,160px) var(--gut) clamp(60px,8vw,110px);border-top:1px solid var(--rule)}
 .cs-in{max-width:1280px;margin:0 auto}
 .cs-kick{font:500 11.5px/1 var(--fj);letter-spacing:.32em;text-transform:uppercase;color:var(--olive);margin-bottom:1.4rem}
-.cs-t{font:400 clamp(2.2rem,4.6vw,4.4rem)/1.02 var(--fs);max-width:900px}
+.cs-t{font:400 clamp(2.2rem,4.6vw,4.4rem)/1.02 var(--fs);max-width:900px;text-wrap:balance;hyphens:none}
 .cs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3.4vw,56px);margin-top:clamp(40px,6vw,80px)}
 .cs-b{border-top:1px solid var(--ink);padding-top:1.4rem}
 .cs-n{font:italic 400 2.2rem/1 var(--fs);color:var(--wine)}
