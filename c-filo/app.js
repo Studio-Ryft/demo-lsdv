@@ -152,40 +152,33 @@
 
   $$("section h2").forEach((h) => { const sp = SplitText.create(h, { type: "lines,words", mask: "lines" }); gsap.from(sp.words, { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: h, start: "top 85%" } }); });
 
-  // ---------- LA STRADA lungo la pagina ----------
-  // una strada che scende sul margine sinistro: asfalto, mezzeria, pietre chilometriche a ogni capitolo;
-  // la mezzeria si accende e l'auto avanza man mano che si scorre
-  const th = $(".thread"), tEdge = $(".thread-edge"), tbg = $(".thread-bg"), tmid = $(".thread-mid"), tfg = $(".thread-fg"), tmk = $(".thread-mk"), tkm = $(".thread-km"), tcar = $(".thread-car");
-  let tLen = 0, kms = [], kmEls = [];
-  function layoutThread() {
-    const docH = document.documentElement.scrollHeight, w = document.documentElement.clientWidth, gut = Math.max(9, Math.min(30, w * 0.02));
-    th.setAttribute("height", docH); th.setAttribute("viewBox", `0 0 ${w} ${docH}`); th.style.height = docH + "px";
-    th.querySelector("mask").setAttribute("width", w); th.querySelector("mask").setAttribute("height", docH);
-    const y0 = innerHeight * 0.9, y1 = docH - 40, xa = (y) => gut + Math.sin(y / 310) * Math.min(9, gut * 0.4) + Math.sin(y / 97) * 1.6;
-    let d = `M${xa(y0).toFixed(1)} ${y0.toFixed(1)}`;
-    for (let y = y0 + 28; y < y1; y += 28) d += ` L${xa(y).toFixed(1)} ${y.toFixed(1)}`;
-    [tEdge, tbg, tmid, tfg, tmk].forEach((p) => p.setAttribute("d", d));
-    tLen = tfg.getTotalLength();
-    // pietre chilometriche: una per capitolo, sul punto della strada all'altezza della sezione
-    const knots = $$("[data-knot]").map((el) => el.getBoundingClientRect().top + scrollY).slice(1);
-    kms = knots.map((ky, i) => {
-      const yy = Math.max(y0 + 40, ky + 34);
-      let lo = 0, hi = tLen; for (let k = 0; k < 18; k++) { const m = (lo + hi) / 2; tfg.getPointAtLength(m).y < yy ? (lo = m) : (hi = m); }
-      const pt = tfg.getPointAtLength(lo);
-      return { at: lo, x: pt.x, y: pt.y, n: String(i + 1).padStart(2, "0") };
-    });
-    tkm.innerHTML = kms.map((k) => `<g class="km" transform="translate(${k.x.toFixed(1)} ${k.y.toFixed(1)})"><rect x="-21" y="-11" width="42" height="22" rx="6"/><text y="4">KM ${k.n}</text></g>`).join("");
-    kmEls = $$(".km", tkm);
-  }
-  layoutThread();
-  const strada = (p) => {
-    gsap.set(tmk, { drawSVG: `0% ${p * 100}%` });
-    const pt = tfg.getPointAtLength(tLen * p); tcar.setAttribute("transform", `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
-    kmEls.forEach((el, i) => el.classList.toggle("on", kms[i].at <= tLen * p + 4));
-  };
-  strada(0);
-  ScrollTrigger.create({ trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6, onUpdate: (st) => strada(st.progress) });
-  ScrollTrigger.addEventListener("refreshInit", () => layoutThread());
+  // ---------- LA STRADA come indicatore di percorso ----------
+  // una capsula sottile sul margine: un punto scorre lungo la strada e si ferma su ogni capitolo; un clic porta lì
+  (function () {
+    if (!hasG) return;
+    const secs = $$("[data-knot]").filter((x) => x.id && x.id !== "home");
+    if (secs.length < 2) return;
+    const nomiNav = {}; $$(".hd-nav a").forEach((a) => { nomiNav[a.getAttribute("href").slice(1)] = a.textContent.trim(); }); nomiNav.aderisci = "Aderisci";
+    const n = secs.length;
+    const nav = window.LSDVCore.html(`<nav class="rail" aria-label="Percorso della pagina"><span class="rail-line"><i class="rail-fill"></i></span><ol>${secs.map((x, i) => `<li style="--i:${i / (n - 1)}"><a href="#${x.id}" data-i="${i}"><i></i><b>${String(i + 1).padStart(2, "0")}</b><span>${esc(nomiNav[x.id] || x.id)}</span></a></li>`).join("")}</ol><span class="rail-dot"></span></nav>`);
+    document.body.appendChild(nav);
+    const dot = $(".rail-dot", nav), fill = $(".rail-fill", nav), links = $$("a", nav);
+    let tops = [], alt = 1;
+    const misura = () => { tops = secs.map((x) => x.getBoundingClientRect().top + scrollY); alt = $("ol", nav).offsetHeight || 1; };
+    misura(); ScrollTrigger.addEventListener("refresh", misura);
+    const yTo = gsap.quickTo(dot, "y", { duration: 0.45, ease: "power3" }), hTo = gsap.quickTo(fill, "height", { duration: 0.45, ease: "power3" });
+    let corrente = -1;
+    const aggiorna = () => {
+      const y = scrollY + innerHeight * 0.4; let f = 0;
+      if (y >= tops[0]) { let i = 0; while (i < n - 1 && y >= tops[i + 1]) i++; f = i >= n - 1 ? n - 1 : i + (y - tops[i]) / ((tops[i + 1] - tops[i]) || 1); }
+      const px = (f / (n - 1)) * alt; yTo(px); hTo(px);
+      const k = y >= tops[0] ? Math.min(n - 1, Math.round(f)) : -1;
+      if (k !== corrente) { corrente = k; links.forEach((a, i) => { a.classList.toggle("on", i === k); a.classList.toggle("fatto", i < k); }); }
+      nav.classList.toggle("visibile", y >= tops[0] - innerHeight * 0.3);
+    };
+    ScrollTrigger.create({ start: 0, end: "max", onUpdate: aggiorna, onRefresh: aggiorna }); aggiorna();
+    nav.addEventListener("click", (e) => { const a = e.target.closest("a"); if (!a) return; e.preventDefault(); const t = secs[+a.dataset.i]; if (lenis) lenis.scrollTo(t, { offset: 0, duration: 1.2 }); else t.scrollIntoView({ behavior: "smooth" }); });
+  })();
 
   // il territorio come motivo del sito: curve di livello in filigrana dietro la missione
   const isec = $(".intro-sec");
@@ -206,45 +199,19 @@
   const intro = $("#intro");
   if (introOnce("lsdvC")) {
     H.classList.add("intro-run"); lenis && lenis.stop();
-    // la carta nasce dalle sole curve di livello; poi il grappolo corre lungo la strada e la colora, paese per paese
-    const host = $("[data-instrada]"), portrait = innerHeight > innerWidth;
-    const iso = window.LSDVIso.crea(host), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
-    const LEGS = [[0, false, "pontelatone"], [1, false, "castel-di-sasso"], [2, false, "liberi"], [2, true, "castel-di-sasso"], [3, false, "piana-di-monte-verna"], [4, false, "caiazzo"], [5, false, "ruviano"], [6, false, "castel-campagnano"]];
-    const v0 = iso.intera();
-    let cam = { x: v0.cx, y: v0.cy, w: portrait ? 480 : v0.w * 1.04 };
-    if (portrait) { const f = iso.paesi.formicola; cam.x = f.sx; cam.y = f.sy; }
-    iso.vai(cam.x, cam.y, cam.w);
-    gsap.set(iso.righe, { drawSVG: "0%" });
-    gsap.set(iso.fiumi, { opacity: 0 });
-    IDS.forEach((id) => gsap.set(iso.paesi[id].g, { opacity: 0 }));
-    iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
+    // la carta nasce in linea, poi il punto percorre la strada e la colora, paese per paese
+    const st = window.LSDVStrada.crea($("[data-instrada]")), prog = { p: 0 };
+    st.render(0);
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
     const tl = gsap.timeline();
-    tl.to(iso.righe, { drawSVG: "100%", duration: 0.45, ease: "power1.inOut", stagger: 0.006 }, 0)
-      .to(iso.fiumi, { opacity: 1, duration: 0.3 }, 0.15)
-      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.25, stagger: 0.02 }, 0.2)
-      .to(tw.words, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 0.15);
-    if (!portrait) tl.to(cam, { w: v0.w, duration: 1.4, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
-    // il viaggio: un solo passaggio continuo, senza soste
-    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 0.85;
-    let t0 = 0.35; iso.posiziona(0, 0, false);
-    tl.to(iso.auto, { opacity: 1, duration: 0.15 }, t0 - 0.1);
-    LEGS.forEach(([i, rev]) => {
-      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 };
-      tl.fromTo(pr, { t: 0 }, { t: 1, duration: dur, ease: "none", onUpdate: () => {
-          const q = iso.posiziona(i, pr.t, rev); iso.polvere(q.x, q.y);
-          if (!rev) iso.disegnaTratto(i, pr.t);
-          if (portrait) { cam.x += (q.x - cam.x) * 0.12; cam.y += (q.y - cam.y) * 0.12; iso.vai(cam.x, cam.y, cam.w); }
-        } }, t0);
-      t0 += dur;
-    });
-    tl.addLabel("out", t0 + 0.1)
-      .to(iso.auto, { opacity: 0, duration: 0.15 }, "out")
-      .to(tw.words, { yPercent: -110, duration: 0.3, ease: "power3.in", stagger: 0.02 }, "out")
-      .to(intro, { opacity: 0, duration: 0.4, ease: "power1.out" }, "out+=0.1")
-      .add(() => heroIn(0), "out+=0.2")
-      .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=0.55");
+    tl.to(prog, { p: 1, duration: 4, ease: "none", onUpdate: () => st.render(prog.p) }, 0)
+      .to(tw.words, { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.35)
+      .addLabel("out", 4.05)
+      .to(tw.words, { yPercent: -110, duration: 0.4, ease: "power3.in", stagger: 0.03 }, "out")
+      .to(intro, { opacity: 0, duration: 0.55, ease: "power1.out" }, "out+=0.1")
+      .add(() => heroIn(0), "out+=0.3")
+      .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=0.75");
     const skip = () => tl.timeScale(5);
     $(".in-skip").addEventListener("click", skip); addEventListener("wheel", skip, { once: true, passive: true }); addEventListener("touchmove", skip, { once: true, passive: true }); addEventListener("keydown", (e) => e.key === "Escape" && skip(), { once: true });
   } else { intro.remove(); heroIn(0.1); }

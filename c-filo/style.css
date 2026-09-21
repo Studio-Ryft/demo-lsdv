@@ -421,3 +421,28 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
   .vg-prog{display:none}
 }
 @media (prefers-reduced-motion:reduce){.vg-pin{height:auto}}
+
+/* ---------- intro su canvas ---------- */
+.sc-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ---------- la strada come indicatore di percorso ---------- */
+.rail{position:fixed;left:16px;top:50%;z-index:60;transform:translateY(-50%);height:min(54vh,460px);padding:18px 11px;border-radius:26px;
+  background:rgba(252,246,225,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(68,36,19,.14);box-shadow:0 18px 40px -22px rgba(40,20,10,.5);
+  opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.rail.visibile{opacity:1;pointer-events:auto}
+.rail ol{list-style:none;position:relative;height:100%;width:0}
+.rail-line{position:absolute;left:50%;top:18px;bottom:18px;width:0;border-left:2px dashed rgba(68,36,19,.28);transform:translateX(-1px)}
+.rail-fill{position:absolute;left:-2px;top:0;width:2px;height:0;background:var(--chart);box-shadow:0 0 0 1px rgba(68,36,19,.35)}
+.rail li{position:absolute;left:0;top:calc(var(--i) * 100%);width:0;height:0}
+.rail a{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:flex;align-items:center;text-decoration:none;color:var(--walnut);outline-offset:6px}
+.rail a>i{width:11px;height:11px;border-radius:50%;background:var(--cream);border:2px solid var(--walnut);flex:none;transition:transform .35s var(--ease),background .3s,border-color .3s}
+.rail a b,.rail a span{position:absolute;left:24px;white-space:nowrap;opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .35s var(--ease);pointer-events:none}
+.rail a b{font:700 10px/1 var(--fj);letter-spacing:.1em;color:var(--olive);top:-8px}
+.rail a span{font:600 12.5px/1 var(--fj);top:2px;background:var(--cream);padding:.4rem .7rem;border-radius:999px;border:1px solid rgba(68,36,19,.16);box-shadow:0 8px 20px -12px rgba(40,20,10,.5)}
+.rail a:hover b,.rail a:hover span,.rail a:focus-visible b,.rail a:focus-visible span{opacity:1;transform:none}
+.rail a.fatto>i{background:var(--chart);border-color:var(--walnut)}
+.rail a.on>i{background:var(--chart);transform:scale(1.5)}
+.rail a:hover>i{transform:scale(1.4)}
+.rail-dot{position:absolute;left:50%;top:18px;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;background:var(--chart);border:2.5px solid var(--walnut);box-shadow:0 0 0 5px rgba(173,193,54,.28);pointer-events:none}
+@media (max-width:900px){.rail{display:none}}
+@media (prefers-reduced-motion:reduce){.rail{transition:none}.rail-dot,.rail-fill{transition:none}}
