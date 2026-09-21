@@ -1,6 +1,6 @@
 /* «La strada del vino» come carta artistica in piano.
    Lo sfondo è il rilievo reale (DEM) ridotto a fasce di colore, come una stampa a due passaggi: prima solo le curve di livello,
-   poi il colore. Un grappolo luminoso corre lungo la strada tra gli otto comuni e la strada, passando, colora la terra.
+   poi il colore. Un punto corre lungo la strada tra gli otto comuni e la strada, passando, colora la terra.
    Il motore costruisce la scena e le sue funzioni; le timeline stanno in chi lo usa (intro e viaggio). */
 (function () {
   "use strict";
@@ -36,14 +36,14 @@
     const gM = el("g", { mask: `url(#${id}-fade)` }); gOut.appendChild(gM);
 
     // ---- colore: fasce ogni 50 m, mascherate dalla strada percorsa ----
-    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)`, opacity: 0.5 }); gM.appendChild(gCol);
+    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)`, opacity: 0.24 }); gM.appendChild(gCol);
     strati.forEach((s) => {
       if (s.q % 50) return;
       gCol.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd" }));
     });
     // un secondo velo di colore, più tenue, su tutta la carta: la terra non è mai del tutto spenta
     const gVelo = el("g", { class: "st-velo" }); gM.insertBefore(gVelo, gCol);
-    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.12 })); });
+    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.05 })); });
 
     // ---- curve di livello (le si disegna una a una) ----
     const gL = el("g", { class: "st-linee" }); gM.appendChild(gL);
@@ -87,7 +87,7 @@
       gP.appendChild(g); paesi[p.id] = { ...p, g, lab: g, nome, sx: p.x, sy: p.y };
     });
 
-    // ---- grappolo luminoso ----
+    // ---- punto che percorre la strada ----
     const gFx = el("g", { class: "st-fx" }); gM.appendChild(gFx);
     const gScia = el("g", { class: "st-scia" }); gFx.appendChild(gScia);
     const auto = el("g", { class: "iso-auto", opacity: 0 });
