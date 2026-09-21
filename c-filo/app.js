@@ -160,7 +160,7 @@
     if (secs.length < 2) return;
     const nomiNav = {}; $$(".hd-nav a").forEach((a) => { nomiNav[a.getAttribute("href").slice(1)] = a.textContent.trim(); }); nomiNav.aderisci = "Aderisci";
     const n = secs.length;
-    const nav = window.LSDVCore.html(`<nav class="rail" aria-label="Percorso della pagina"><span class="rail-line"><i class="rail-fill"></i></span><ol>${secs.map((x, i) => `<li style="--i:${i / (n - 1)}"><a href="#${x.id}" data-i="${i}"><i></i><b>${String(i + 1).padStart(2, "0")}</b><span>${esc(nomiNav[x.id] || x.id)}</span></a></li>`).join("")}</ol><span class="rail-dot"></span></nav>`);
+    const nav = window.LSDVCore.html(`<nav class="rail" aria-label="Percorso della pagina"><span class="rail-road"><i class="rail-line"></i></span><ol>${secs.map((x, i) => `<li style="--i:${i / (n - 1)}"><a href="#${x.id}" data-i="${i}"><i class="rail-st"><b>${String(i + 1).padStart(2, "0")}</b></i><span>${esc(nomiNav[x.id] || x.id)}</span></a></li>`).join("")}</ol><i class="rail-fill"></i><span class="rail-dot"></span></nav>`);
     document.body.appendChild(nav);
     const dot = $(".rail-dot", nav), fill = $(".rail-fill", nav), links = $$("a", nav);
     let tops = [], alt = 1;

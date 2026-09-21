@@ -426,23 +426,32 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
 .sc-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 /* ---------- la strada come indicatore di percorso ---------- */
-.rail{position:fixed;left:16px;top:50%;z-index:60;transform:translateY(-50%);height:min(54vh,460px);padding:18px 11px;border-radius:26px;
-  background:rgba(252,246,225,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(68,36,19,.14);box-shadow:0 18px 40px -22px rgba(40,20,10,.5);
-  opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+/* una strada verticale: asfalto, bordi chiari, mezzeria che si accende dove si è passati, pietre miliari a ogni capitolo, traguardo in fondo */
+.rail{--r-top:20px;position:fixed;left:10px;top:50%;z-index:60;transform:translateY(-50%);width:20px;height:min(58vh,500px);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
 .rail.visibile{opacity:1;pointer-events:auto}
-.rail ol{list-style:none;position:relative;height:100%;width:0}
-.rail-line{position:absolute;left:50%;top:18px;bottom:18px;width:0;border-left:2px dashed rgba(68,36,19,.28);transform:translateX(-1px)}
-.rail-fill{position:absolute;left:-2px;top:0;width:2px;height:0;background:var(--chart);box-shadow:0 0 0 1px rgba(68,36,19,.35)}
-.rail li{position:absolute;left:0;top:calc(var(--i) * 100%);width:0;height:0}
-.rail a{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:flex;align-items:center;text-decoration:none;color:var(--walnut);outline-offset:6px}
-.rail a>i{width:11px;height:11px;border-radius:50%;background:var(--cream);border:2px solid var(--walnut);flex:none;transition:transform .35s var(--ease),background .3s,border-color .3s}
-.rail a b,.rail a span{position:absolute;left:24px;white-space:nowrap;opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .35s var(--ease);pointer-events:none}
-.rail a b{font:700 10px/1 var(--fj);letter-spacing:.1em;color:var(--olive);top:-8px}
-.rail a span{font:600 12.5px/1 var(--fj);top:2px;background:var(--cream);padding:.4rem .7rem;border-radius:999px;border:1px solid rgba(68,36,19,.16);box-shadow:0 8px 20px -12px rgba(40,20,10,.5)}
-.rail a:hover b,.rail a:hover span,.rail a:focus-visible b,.rail a:focus-visible span{opacity:1;transform:none}
-.rail a.fatto>i{background:var(--chart);border-color:var(--walnut)}
-.rail a.on>i{background:var(--chart);transform:scale(1.5)}
-.rail a:hover>i{transform:scale(1.4)}
-.rail-dot{position:absolute;left:50%;top:18px;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;background:var(--chart);border:2.5px solid var(--walnut);box-shadow:0 0 0 5px rgba(173,193,54,.28);pointer-events:none}
+.rail-road{position:absolute;inset:0;border-radius:10px 10px 4px 4px;background:var(--walnut);box-shadow:0 0 0 3px var(--cream),0 0 0 4px rgba(68,36,19,.35),0 14px 28px -14px rgba(40,20,10,.6);overflow:hidden}
+.rail-road::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-conic-gradient(var(--cream) 0 25%,var(--walnut) 0 50%) 0 0/6px 6px;opacity:.9}
+.rail-line{position:absolute;left:50%;top:var(--r-top);bottom:14px;width:2px;transform:translateX(-1px);background:repeating-linear-gradient(to bottom,rgba(252,246,225,.32) 0 7px,transparent 7px 14px)}
+.rail-fill{position:absolute;left:50%;top:var(--r-top);width:2px;height:0;margin-left:-1px;background:repeating-linear-gradient(to bottom,var(--chart) 0 7px,transparent 7px 14px);background-size:2px 14px;animation:railFlusso .7s linear infinite;pointer-events:none}
+@keyframes railFlusso{to{background-position:0 14px}}
+.rail ol{list-style:none;position:absolute;left:0;right:0;top:var(--r-top);bottom:14px}
+.rail li{position:absolute;left:0;top:calc(var(--i) * 100%);width:100%;height:0}
+.rail a{position:absolute;left:100%;top:0;transform:translateY(-50%);display:flex;align-items:center;text-decoration:none;color:var(--walnut);outline-offset:4px}
+/* pietra miliare: una piccola lapide con il numero del capitolo, unita alla strada da un segno */
+.rail a::before{content:"";width:6px;height:2px;background:var(--walnut);margin-right:0;margin-left:3px;opacity:.7}
+.rail .rail-st{display:grid;place-items:center;width:13px;height:11px;border-radius:6px 6px 2px 2px;background:var(--cream);border:1.5px solid var(--walnut);transition:width .3s var(--ease),height .3s var(--ease),background .3s}
+.rail .rail-st b{font:700 9.5px/1 var(--fj);letter-spacing:.04em;color:var(--walnut);opacity:0;transition:opacity .2s;overflow:hidden;width:0}
+.rail a:hover .rail-st,.rail a:focus-visible .rail-st{width:26px;height:19px}
+.rail a:hover .rail-st b,.rail a:focus-visible .rail-st b{opacity:1;width:auto}
+.rail a span{position:absolute;left:44px;white-space:nowrap;opacity:0;transform:translateX(-6px);pointer-events:none;transition:opacity .3s,transform .35s var(--ease);
+  font:600 12.5px/1 var(--fj);background:var(--cream);padding:.42rem .75rem;border-radius:999px;border:1px solid rgba(68,36,19,.18);box-shadow:0 8px 20px -12px rgba(40,20,10,.55)}
+.rail a:hover span,.rail a:focus-visible span{opacity:1;transform:none}
+.rail a.fatto .rail-st{background:var(--chart)}
+.rail a.on .rail-st{background:var(--chart);width:17px;height:14px}
+/* il punto che avanza: una freccia luminosa sulla mezzeria */
+.rail-dot{position:absolute;left:50%;top:var(--r-top);width:20px;height:20px;margin:-10px 0 0 -10px;pointer-events:none}
+.rail-dot::before{content:"";position:absolute;inset:0;animation:railPulsa 1.4s ease-in-out infinite;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M10 19 L1.5 7.5 H6.5 V1.5 H13.5 V7.5 H18.5Z' fill='%23ADC136' stroke='%23442413' stroke-width='1.6' stroke-linejoin='round'/></svg>") center/contain no-repeat}
+@keyframes railPulsa{50%{transform:translateY(3px)}}
 @media (max-width:900px){.rail{display:none}}
-@media (prefers-reduced-motion:reduce){.rail{transition:none}.rail-dot,.rail-fill{transition:none}}
+@media (prefers-reduced-motion:reduce){.rail{transition:none}.rail-fill,.rail-dot::before{animation:none}}
