@@ -36,14 +36,14 @@
     const gM = el("g", { mask: `url(#${id}-fade)` }); gOut.appendChild(gM);
 
     // ---- colore: fasce ogni 50 m, mascherate dalla strada percorsa ----
-    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)` }); gM.appendChild(gCol);
+    const gCol = el("g", { class: "st-colore", mask: `url(#${id}-lav)`, opacity: 0.5 }); gM.appendChild(gCol);
     strati.forEach((s) => {
       if (s.q % 50) return;
       gCol.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd" }));
     });
     // un secondo velo di colore, più tenue, su tutta la carta: la terra non è mai del tutto spenta
     const gVelo = el("g", { class: "st-velo" }); gM.insertBefore(gVelo, gCol);
-    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.34 })); });
+    strati.forEach((s) => { if (s.q % 100) return; gVelo.appendChild(el("path", { d: s.d, fill: rampa((s.q - zmin) / (zmax - zmin)), "fill-rule": "evenodd", opacity: 0.12 })); });
 
     // ---- curve di livello (le si disegna una a una) ----
     const gL = el("g", { class: "st-linee" }); gM.appendChild(gL);
@@ -91,9 +91,7 @@
     const gFx = el("g", { class: "st-fx" }); gM.appendChild(gFx);
     const gScia = el("g", { class: "st-scia" }); gFx.appendChild(gScia);
     const auto = el("g", { class: "iso-auto", opacity: 0 });
-    auto.innerHTML = `<circle class="st-alone" r="34"/><circle class="st-auto-onda" r="12"/><g class="iso-auto-c"><g class="st-grappolo">
-      <circle cx="-5.5" cy="-4" r="5.6"/><circle cx="5.5" cy="-4" r="5.6"/><circle cx="0" cy="-6.5" r="5.6"/><circle cx="-3" cy="3.5" r="5.6"/><circle cx="3" cy="3.5" r="5.6"/><circle cx="0" cy="10" r="5.6"/>
-      <circle class="lu" cx="-2.2" cy="-7.4" r="1.7"/><path class="fo" d="M0 -11 q5 -7 11 -5 q-2 6 -11 5z"/></g></g>`;
+    auto.innerHTML = `<circle class="st-auto-onda" r="9"/><g class="iso-auto-c"><circle class="st-punto-mobile" r="6"/></g>`;
     gFx.appendChild(auto);
 
     // ---- vista ----

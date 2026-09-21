@@ -215,22 +215,22 @@
     const quando = [];   // istante di arrivo a ciascun paese
     const tl = gsap.timeline({ defaults: { ease: "none" } });
     const f0 = focus(c0); cam.x = iso.intera().cx; cam.y = iso.intera().cy;
-    tl.to(cam, { x: f0.x, y: f0.y, w: zoom(), duration: 1.2, ease: "power2.inOut", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
-    quando[0] = 1.2; let t0 = 1.2 + 0.7;
+    tl.to(cam, { x: f0.x, y: f0.y, w: zoom(), duration: 1.0, ease: "power2.inOut", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    quando[0] = 1.0; let t0 = 1.0 + 0.45;
     LEGS.forEach(([i, rev, dest], n) => {
       const pr = { t: 0 }, a = iso.paesi[IDS[dest]];
-      tl.fromTo(pr, { t: 0 }, { t: 1, duration: 1.7, ease: "sine.inOut", onUpdate: () => {
+      tl.fromTo(pr, { t: 0 }, { t: 1, duration: 1.15, ease: "sine.inOut", onUpdate: () => {
           const q = iso.posiziona(i, pr.t, rev); if (!rev) iso.disegnaTratto(i, pr.t);
           cam.x += (q.x - cam.x) * 0.22; cam.y += (q.y - cam.y) * 0.22; cam.w = zoom(); iso.vai(cam.x, cam.y, cam.w);
         } }, t0);
-      t0 += 1.7;
+      t0 += 1.15;
       if (!rev) { quando[dest] = t0; }
-      t0 += 0.7;
+      t0 += 0.45;
     });
     // per il ritorno da Liberi a Castel di Sasso non c'è sosta: la strada continua verso Piana di Monte Verna
     const durata = t0;
     const st = ScrollTrigger.create({
-      trigger: ".viaggio", start: "top top", end: () => "+=" + Math.round(innerHeight * 6.4), pin: ".vg-pin", scrub: 0.9, animation: tl, anticipatePin: 1, invalidateOnRefresh: true,
+      trigger: ".viaggio", start: "top top", end: () => "+=" + Math.round(innerHeight * 4.8), pin: ".vg-pin", scrub: 0.9, animation: tl, anticipatePin: 1, invalidateOnRefresh: true,
       onUpdate: (self) => {
         const tt = self.progress * durata; let k = 0; quando.forEach((q, j) => { if (q !== undefined && tt >= q - 0.05) k = j; });
         setStop(k); barra.style.transform = `scaleY(${self.progress})`; vgH.style.opacity = Math.max(0, 1 - self.progress * 14);
@@ -269,14 +269,14 @@
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
     const tl = gsap.timeline();
-    tl.to(iso.righe, { drawSVG: "100%", duration: 1.5, ease: "power1.inOut", stagger: 0.04 }, 0.1)
-      .to(iso.fiumi, { opacity: 1, duration: 0.8 }, 1.4)
-      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.5, stagger: 0.08 }, 1.9)
-      .to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.09 }, 0.9);
-    if (!portrait) tl.to(cam, { w: v0.w, duration: 5.5, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    tl.to(iso.righe, { drawSVG: "100%", duration: 1.0, ease: "power1.inOut", stagger: 0.02 }, 0.05)
+      .to(iso.fiumi, { opacity: 1, duration: 0.6 }, 0.9)
+      .to(IDS.map((id) => iso.paesi[id].g), { opacity: 1, duration: 0.4, stagger: 0.05 }, 1.1)
+      .to(tw.words, { yPercent: 0, duration: 0.8, ease: "expo.out", stagger: 0.07 }, 0.5);
+    if (!portrait) tl.to(cam, { w: v0.w, duration: 3.6, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
     // il viaggio
-    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 4.4, PAUSA = 0.26;
-    let t0 = 2.4; iso.posiziona(0, 0, false);
+    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 2.5, PAUSA = 0.13;
+    let t0 = 1.5; iso.posiziona(0, 0, false);
     tl.to(iso.auto, { opacity: 1, duration: 0.3 }, t0 - 0.2).add(() => iso.mostraEtichetta("formicola", true), t0 - 0.1);
     let prec = "formicola";
     LEGS.forEach(([i, rev, fine]) => {
@@ -291,7 +291,7 @@
       tl.add(() => iso.mostraEtichetta(fine, true), t0);
       prec = fine; t0 += PAUSA;
     });
-    tl.addLabel("out", t0 + 0.5)
+    tl.addLabel("out", t0 + 0.3)
       .to(tw.words, { yPercent: -110, duration: 0.5, ease: "power3.in", stagger: 0.03 }, "out")
       .to(iso.auto, { opacity: 0, duration: 0.3 }, "out")
       .to(intro, { clipPath: "inset(50% 0% 50% 0%)", duration: 1.1, ease: "expo.inOut" }, "out+=0.5")
