@@ -1,4 +1,4 @@
-/* Versione C · Il Filo */
+/* Versione C · La Strada */
 (function () {
   "use strict";
   const { D, M, RM, $, $$, esc, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce } = window.LSDVCore;
@@ -40,7 +40,7 @@
   $("[data-contatti]").innerHTML = `<a href="mailto:${D.ente.email}">${D.ente.email}</a><a href="tel:+39${D.ente.tel.replace(/\s/g, "")}">${D.ente.tel}</a>`;
   $("[data-fcit]").textContent = "«" + D.ente.citazione2.testo + "»";
   $("#mnav nav").innerHTML = $$(".hd-nav a").map((a) => `<a href="${a.getAttribute("href")}">${a.textContent}</a>`).join("") + '<a href="#aderisci">Aderisci</a>';
-  demoBadge("C · Il Filo");
+  demoBadge("C · La Strada");
 
   // quote indicative (COMASTRA §8.3, da deliberare)
   const TIERS = {
@@ -152,26 +152,44 @@
 
   $$("section h2").forEach((h) => { const sp = SplitText.create(h, { type: "lines,words", mask: "lines" }); gsap.from(sp.words, { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: h, start: "top 85%" } }); });
 
-  // ---------- IL FILO lungo la pagina ----------
-  const th = $(".thread"), tbg = $(".thread-bg"), tfg = $(".thread-fg"), tdot = $(".thread-dot");
-  let tLen = 0;
+  // ---------- LA STRADA lungo la pagina ----------
+  // una strada che scende sul margine sinistro: asfalto, mezzeria, pietre chilometriche a ogni capitolo;
+  // la mezzeria si accende e l'auto avanza man mano che si scorre
+  const th = $(".thread"), tEdge = $(".thread-edge"), tbg = $(".thread-bg"), tmid = $(".thread-mid"), tfg = $(".thread-fg"), tmk = $(".thread-mk"), tkm = $(".thread-km"), tcar = $(".thread-car");
+  let tLen = 0, kms = [], kmEls = [];
   function layoutThread() {
-    const docH = document.documentElement.scrollHeight, w = document.documentElement.clientWidth, gut = Math.max(9, Math.min(34, w * 0.02));
+    const docH = document.documentElement.scrollHeight, w = document.documentElement.clientWidth, gut = Math.max(9, Math.min(30, w * 0.02));
     th.setAttribute("height", docH); th.setAttribute("viewBox", `0 0 ${w} ${docH}`); th.style.height = docH + "px";
-    const knots = $$("[data-knot]").map((el) => el.getBoundingClientRect().top + scrollY);
-    let x = w / 2, y = innerHeight * 0.92, d = `M${x} ${y}`, side = 0;
-    knots.slice(1).forEach((ky, i) => {
-      const nx = i % 2 === 0 ? w - gut : gut, cy = ky + 30;
-      d += ` L${x} ${Math.max(y, cy - 80)} C${x} ${cy} ${nx} ${cy - 40} ${nx} ${cy + 40}`;
-      x = nx; y = cy + 40; side++;
+    th.querySelector("mask").setAttribute("width", w); th.querySelector("mask").setAttribute("height", docH);
+    const y0 = innerHeight * 0.9, y1 = docH - 40, xa = (y) => gut + Math.sin(y / 310) * Math.min(9, gut * 0.4) + Math.sin(y / 97) * 1.6;
+    let d = `M${xa(y0).toFixed(1)} ${y0.toFixed(1)}`;
+    for (let y = y0 + 28; y < y1; y += 28) d += ` L${xa(y).toFixed(1)} ${y.toFixed(1)}`;
+    [tEdge, tbg, tmid, tfg, tmk].forEach((p) => p.setAttribute("d", d));
+    tLen = tfg.getTotalLength();
+    // pietre chilometriche: una per capitolo, sul punto della strada all'altezza della sezione
+    const knots = $$("[data-knot]").map((el) => el.getBoundingClientRect().top + scrollY).slice(1);
+    kms = knots.map((ky, i) => {
+      const yy = Math.max(y0 + 40, ky + 34);
+      let lo = 0, hi = tLen; for (let k = 0; k < 18; k++) { const m = (lo + hi) / 2; tfg.getPointAtLength(m).y < yy ? (lo = m) : (hi = m); }
+      const pt = tfg.getPointAtLength(lo);
+      return { at: lo, x: pt.x, y: pt.y, n: String(i + 1).padStart(2, "0") };
     });
-    d += ` L${x} ${docH - 40}`;
-    tbg.setAttribute("d", d); tfg.setAttribute("d", d); tLen = tfg.getTotalLength();
+    tkm.innerHTML = kms.map((k) => `<g class="km" transform="translate(${k.x.toFixed(1)} ${k.y.toFixed(1)})"><rect x="-21" y="-11" width="42" height="22" rx="6"/><text y="4">KM ${k.n}</text></g>`).join("");
+    kmEls = $$(".km", tkm);
   }
   layoutThread();
-  gsap.set(tfg, { drawSVG: "0%" });
-  const threadST = ScrollTrigger.create({ trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6, onUpdate: (st) => { gsap.set(tfg, { drawSVG: `0% ${st.progress * 100}%` }); const p = tfg.getPointAtLength(tLen * st.progress); tdot.setAttribute("cx", p.x); tdot.setAttribute("cy", p.y); } });
+  const strada = (p) => {
+    gsap.set(tmk, { drawSVG: `0% ${p * 100}%` });
+    const pt = tfg.getPointAtLength(tLen * p); tcar.setAttribute("transform", `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
+    kmEls.forEach((el, i) => el.classList.toggle("on", kms[i].at <= tLen * p + 4));
+  };
+  strada(0);
+  ScrollTrigger.create({ trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6, onUpdate: (st) => strada(st.progress) });
   ScrollTrigger.addEventListener("refreshInit", () => layoutThread());
+
+  // il territorio come motivo del sito: curve di livello in filigrana dietro la missione
+  const isec = $(".intro-sec");
+  if (isec) isec.insertAdjacentHTML("afterbegin", `<div class="terr-bg" aria-hidden="true">${mapSVG({ cls: "terr-bg-svg", luoghi: false, viewBox: "0 180 1600 760" })}</div>`);
 
   // ---------- INTRO ----------
   const hsplit = SplitText.create(".hero-t", { type: "words", mask: "words" });
@@ -187,23 +205,42 @@
   const intro = $("#intro");
   if (introOnce("lsdvC")) {
     H.classList.add("intro-run"); lenis && lenis.stop();
-    const s = $("[data-inthread]"), w = innerWidth, h = innerHeight; s.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    const pts = []; for (let i = 0; i < 28; i++) { const a = i * 2.39996, r = Math.sqrt(i / 28) * Math.min(w, h) * 0.34; pts.push({ x: w / 2 + Math.cos(a) * r * 1.35, y: h * 0.42 + Math.sin(a) * r }); }
-    let lk = ""; pts.forEach((p, i) => { const q = pts[(i * 7 + 3) % pts.length]; lk += `<line class="link" x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}"/>`; });
-    const ord = pts.slice().sort((a, b) => a.x - b.x);
-    const dd = catmull(ord.map((p) => ({ x: +p.x.toFixed(1), y: +p.y.toFixed(1) })));
-    s.innerHTML = `<g>${lk}</g><path class="ln" d="${dd}"/>${pts.map((p, i) => `<circle class="node ${i % 3 ? "" : "c"}" cx="${p.x}" cy="${p.y}" r="${i % 3 ? 5 : 8}"/>`).join("")}`;
+    // la strada attraversa la carta del territorio: parte da Formicola, tocca gli otto comuni, arriva a Castel Campagnano
+    const host = $("[data-instrada]"), portrait = innerHeight > innerWidth;
+    host.innerHTML = mapSVG({ cls: "in-terra", luoghi: false, viewBox: "60 150 1500 760", par: portrait ? "xMidYMid meet" : "xMidYMid slice" });
+    const s = host.querySelector("svg");
+    const ids = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
+    const co = ids.map((id) => M.comuni.find((c) => c.id === id));
+    const via = [{ x: -60, y: 300 }, ...co.map((c) => ({ x: c.x, y: c.y })), { x: 1660, y: 660 }];
+    const dd = catmull(via);
+    const pinsG = s.querySelector(".pins-g");
+    (pinsG || s).insertAdjacentHTML(pinsG ? "beforebegin" : "beforeend", `<defs><mask id="inMask" maskUnits="userSpaceOnUse" x="-100" y="0" width="1800" height="1300"><path class="in-mk" d="${dd}" fill="none" stroke="#fff" stroke-width="60"/></mask></defs>
+      <g class="in-strada"><path class="in-edge" d="${dd}"/><path class="in-asf" d="${dd}"/><path class="in-mezz" d="${dd}" mask="url(#inMask)"/>
+      <circle class="in-car" r="9"/></g>`);
+    const asf = $(".in-asf", s), edge = $(".in-edge", s), mk = $(".in-mk", s), car = $(".in-car", s), mezz = $(".in-mezz", s), L = asf.getTotalLength();
+    // larghezze in pixel di schermo, convertite nelle unità della carta (le tratteggiature di DrawSVG non reggono vector-effect)
+    const kk = (s.getScreenCTM() || { a: 1 }).a || 1;
+    const f = portrait ? 0.45 : 1;
+    edge.style.strokeWidth = (26 * f) / kk; asf.style.strokeWidth = (18 * f) / kk; mezz.style.strokeWidth = (3 * f) / kk; mezz.style.strokeDasharray = `${(14 * f) / kk} ${(14 * f) / kk}`;
+    car.setAttribute("r", (9 * f) / kk); car.style.strokeWidth = (3 * f) / kk;
+    // a che punto della strada cade ogni comune
+    const pos = {}; { const N = 500; co.forEach((c) => { let best = 0, bd = 1e9; for (let i = 0; i <= N; i++) { const p = asf.getPointAtLength((L * i) / N), dx = p.x - c.x, dy = p.y - c.y, q = dx * dx + dy * dy; if (q < bd) { bd = q; best = i / N; } } pos[c.id] = best; }); }
+    const pins = $$(".pin", s);
+    gsap.set(pins, { opacity: 0 }); gsap.set([asf, edge, mk], { drawSVG: "0%" }); gsap.set(car, { opacity: 0 });
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
-    gsap.set($$(".node", s), { scale: 0, transformOrigin: "center" }); gsap.set($$(".link", s), { drawSVG: "0%" }); gsap.set($(".ln", s), { drawSVG: "0%" }); gsap.set(tw.words, { yPercent: 110 });
+    gsap.set(tw.words, { yPercent: 110 });
+    const DUR = 4.2, prog = { p: 0 };
     const tl = gsap.timeline();
-    tl.to($$(".node", s), { scale: 1, duration: 0.6, ease: "back.out(3)", stagger: { each: 0.03, from: "center" } }, 0)
-      .to($$(".link", s), { drawSVG: "100%", duration: 1, ease: "power2.inOut", stagger: 0.02 }, 0.4)
-      .to($(".ln", s), { drawSVG: "100%", duration: 2, ease: "power2.inOut" }, 0.6)
-      .to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.08 }, 1)
-      .addLabel("out", 2.9)
+    tl.to(prog, { p: 1, duration: DUR, ease: "none", onUpdate: () => {
+        const p = prog.p, pt = asf.getPointAtLength(L * p); car.setAttribute("cx", pt.x); car.setAttribute("cy", pt.y);
+        [asf, edge, mk].forEach((e) => gsap.set(e, { drawSVG: `0% ${p * 100}%` }));
+      } }, 0.2)
+      .to(car, { opacity: 1, duration: 0.3 }, 0.2);
+    pins.forEach((el) => { const t = pos[el.dataset.id]; if (t !== undefined) tl.to(el, { opacity: 1, duration: 0.5 }, 0.2 + DUR * t); });
+    tl.to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.08 }, 1.2)
+      .addLabel("out", 4.9)
       .to(tw.words, { yPercent: -110, duration: 0.5, ease: "power3.in", stagger: 0.03 }, "out")
-      .to($$(".node,.link", s), { autoAlpha: 0, duration: 0.5 }, "out")
-      .to($(".ln", s), { drawSVG: "100% 100%", duration: 1, ease: "power3.in" }, "out")
+      .to(car, { opacity: 0, duration: 0.3 }, "out")
       .to(intro, { clipPath: "inset(50% 0% 50% 0%)", duration: 1.1, ease: "expo.inOut" }, "out+=0.5")
       .add(() => heroIn(0), "out+=0.7")
       .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=1.6");

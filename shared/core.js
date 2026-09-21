@@ -112,7 +112,20 @@
 
   /* ---------- banner demo e salta intro ---------- */
   function demoBadge(label) {
-    const b = html(`<a class="demo-badge" href="../index.html" title="Torna alle tre direzioni"><span>Demo</span> ${esc(label)} <b>↩</b></a>`);
+    if (window.self !== window.top) return;   // dentro l'anteprima a schermo intero c'è la barra della pagina «animazioni»
+    // barra fluttuante: indietro, avanti, home + etichetta della versione
+    if (!document.getElementById("dn-stile")) document.head.insertAdjacentHTML("beforeend", `<style id="dn-stile">
+      .demo-badge .dn-b{display:inline-grid;place-items:center;min-width:28px;height:26px;padding:0 .55rem;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;font-size:13px;letter-spacing:0;line-height:1;text-decoration:none;cursor:pointer;opacity:.8;transition:opacity .25s,background .25s,color .25s}
+      .demo-badge .dn-b:hover,.demo-badge .dn-b:focus-visible{opacity:1;background:rgba(128,128,128,.28)}
+      .demo-badge .dn-b.home{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+      .demo-badge .dn-l{opacity:.9}
+    </style>`);
+    const b = html(`<nav class="demo-badge" aria-label="Navigazione della demo">
+      <button type="button" class="dn-b" data-dn="back" aria-label="Indietro" title="Indietro"><i>←</i></button>
+      <button type="button" class="dn-b" data-dn="fwd" aria-label="Avanti" title="Avanti"><i>→</i></button>
+      <a class="dn-b home" href="../index.html" target="_top" title="Torna alle quattro direzioni"><i>Home</i></a>
+      <span>Demo</span><em class="dn-l">${esc(label)}</em></nav>`);
+    b.addEventListener("click", (e) => { const t = e.target.closest("[data-dn]"); if (!t) return; t.dataset.dn === "back" ? history.back() : history.forward(); });
     document.body.appendChild(b);
   }
 

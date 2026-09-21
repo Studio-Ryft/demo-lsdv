@@ -1,4 +1,4 @@
-/* Versione C · Il Filo — luce di settembre, persone, rete */
+/* Versione C · La Strada — luce di settembre, persone, rete */
 :root{
   --ivory:#F2E8D5; --cream:#FCF6E1; --walnut:#442413; --walnut2:#5A3522; --mute:#7A5F50; --line:rgba(68,36,19,.14);
   --olive:#4B5D23; --olive2:#3C4B1B; --chart:#ADC136; --blush:#E9D9C0;
@@ -31,22 +31,38 @@ section,footer{position:relative;z-index:2}
 .btn.light{background:var(--cream);color:var(--walnut)}
 .btn.line{border-color:currentColor;background:transparent}
 
-/* ---------- FILO ---------- */
+/* ---------- STRADA lungo la pagina ---------- */
 .thread{position:absolute;left:0;top:0;width:100%;z-index:3;pointer-events:none;overflow:visible}
-.thread-bg{fill:none;stroke:rgba(173,193,54,.22);stroke-width:2;stroke-dasharray:2 8;stroke-linecap:round}
-.thread-fg{fill:none;stroke:var(--chart);stroke-width:3.5;stroke-linecap:round}
-.thread-dot{fill:var(--chart);stroke:var(--walnut);stroke-width:2}
-
-/* ---------- INTRO ---------- */
+.thread-edge{fill:none;stroke:var(--cream);stroke-width:16;stroke-linecap:round;stroke-linejoin:round;opacity:.95}
+.thread-bg{fill:none;stroke:var(--walnut);stroke-width:11;stroke-linecap:round;stroke-linejoin:round}
+.thread-mid,.thread-fg{fill:none;stroke-width:2;stroke-dasharray:9 11;stroke-linecap:butt}
+.thread-mid{stroke:rgba(252,246,225,.55)}
+.thread-fg{stroke:var(--chart);stroke-width:2.6}
+.thread-car .thread-dot{fill:var(--chart);stroke:var(--walnut);stroke-width:2.5}
+.thread-halo{fill:rgba(173,193,54,.28)}
+.km rect{fill:var(--cream);stroke:var(--walnut);stroke-width:1.5;opacity:.55;transition:opacity .4s,fill .4s}
+.km text{font:700 9.5px/1 var(--fj);letter-spacing:.06em;text-anchor:middle;fill:var(--walnut);opacity:.6;transition:opacity .4s}
+.km.on rect{opacity:1;fill:var(--chart)}.km.on text{opacity:1}
+@media (max-width:640px){.thread-km{display:none}}
 .intro{display:none}
 html.intro-run .intro{display:block;position:fixed;inset:0;z-index:9000;background:var(--cream)}
 html.intro-run body{overflow:hidden}
 .in-svg{position:absolute;inset:0;width:100%;height:100%}
-.in-svg .ln{fill:none;stroke:var(--chart);stroke-width:4;stroke-linecap:round}
-.in-svg .node{fill:var(--walnut)}
-.in-svg .node.c{fill:var(--olive)}
-.in-svg .link{stroke:var(--walnut);stroke-opacity:.18;stroke-width:1}
-.in-t{position:absolute;left:0;right:0;bottom:14vh;text-align:center;font:400 clamp(2.4rem,6vw,5.4rem)/1 var(--fs);letter-spacing:-.02em}
+.in-svg svg{display:block;width:100%;height:100%}
+.in-terra .ct-g{opacity:.3}.in-terra .fiume-g{opacity:.4}
+.in-terra .ct{fill:none;stroke:#442413;stroke-width:.9;vector-effect:non-scaling-stroke}
+.in-terra .ct.mi{stroke-opacity:.4}.in-terra .ct.ma{stroke-opacity:.8;stroke-width:1.3}
+.in-terra .fiume{fill:none;stroke:#4B5D23;stroke-opacity:.7;stroke-width:2;vector-effect:non-scaling-stroke}
+.in-terra .pin-halo{display:none}
+.in-terra .pin-dot{fill:#4B5D23;stroke:#FCF6E1;stroke-width:3;vector-effect:non-scaling-stroke}
+.in-terra .pin-lbl{fill:#442413;font:500 22px/1 var(--fs);paint-order:stroke;stroke:#FCF6E1;stroke-width:6px;stroke-linejoin:round}
+.in-terra .pin{pointer-events:none}
+.in-edge,.in-asf,.in-mezz{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.in-edge{stroke:var(--cream);stroke-width:26}
+.in-asf{stroke:var(--walnut);stroke-width:18}
+.in-mezz{stroke:var(--chart);stroke-linecap:butt}
+.in-car{fill:var(--chart);stroke:var(--walnut)}
+.in-t{position:absolute;left:0;right:0;bottom:11vh;text-shadow:0 0 22px var(--cream),0 0 8px var(--cream);text-align:center;font:400 clamp(2.4rem,6vw,5.4rem)/1 var(--fs);letter-spacing:-.02em}
 .in-t em{color:var(--olive)}
 .in-skip{position:absolute;right:var(--gut);top:24px;font:700 12px/1 var(--fj);background:transparent;border:1.5px solid var(--walnut);border-radius:100px;padding:.7rem 1rem;cursor:pointer;color:var(--walnut)}
 
@@ -363,3 +379,13 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
 .cs-b h3{font:500 clamp(1.5rem,2vw,1.9rem)/1.1 var(--fs);margin:1.1rem 0 .8rem;color:var(--walnut)}
 .cs-b p{color:var(--mute);font-size:15.5px;line-height:1.7}
 @media (max-width:900px){.cs-grid{grid-template-columns:1fr}}
+
+/* ---------- il territorio in filigrana ---------- */
+.intro-sec{position:relative;overflow:hidden}
+.terr-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent)}
+.terr-bg svg{width:100%;height:100%;display:block}
+.terr-bg .ct{fill:none;stroke:#442413;stroke-width:.8;vector-effect:non-scaling-stroke}
+.terr-bg .ct.mi{stroke-opacity:.16}.terr-bg .ct.ma{stroke-opacity:.34;stroke-width:1.1}
+.terr-bg .fiume{fill:none;stroke:#4B5D23;stroke-opacity:.35;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.terr-bg .pins-g,.terr-bg .luoghi-g{display:none}

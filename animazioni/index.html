@@ -18,9 +18,9 @@
 </head>
 <body>
 <header class="top">
-  <a class="back" href="../index.html">← Le quattro direzioni</a>
+  <div class="nb" role="group" aria-label="Navigazione"><button type="button" class="nb-b" data-nb="back" aria-label="Indietro" title="Indietro">←</button><button type="button" class="nb-b" data-nb="fwd" aria-label="Avanti" title="Avanti">→</button><a class="nb-b nb-home" href="../index.html" title="Torna alle quattro direzioni">Home</a></div>
   <nav aria-label="Indice">
-    <a href="#grappoli">Il grappolo</a><a href="#a">A · Archivio</a><a href="#b">B · Suolo</a><a href="#c">C · Filo</a><a href="#d">D · Sintesi</a>
+    <a href="#grappoli">Il grappolo</a><a href="#a">A · Archivio</a><a href="#b">B · Suolo</a><a href="#c">C · Strada</a><a href="#d">D · Sintesi</a>
   </nav>
 </header>
 
@@ -34,23 +34,23 @@
   <section id="grappoli" class="blk">
     <header class="sh"><p class="eb">Il grappolo della rete</p><h2>Diciassette chicchi,<br><em>quattro modi di raccontarli.</em></h2></header>
 
-    <article class="gv" id="v-2d">
-      <div class="gv-t"><span class="n">01</span><h3>Grappolo 2D</h3><p>Nuovo. Stessa grafica del tralcio (incisione, crema, vino, oliva) ma in verticale: il gambo scende, i chicchi maturano dall'alto verso la punta. Passa sui chicchi per la scheda.</p><small>Alternativa al 3D per la versione C</small></div>
+    <article class="gv" id="v-2d" data-solo="2d">
+      <div class="gv-t"><span class="n">01</span><h3>Grappolo 2D</h3><p>Nuovo. Stessa grafica del tralcio (incisione, crema, vino, oliva) ma in verticale: il gambo scende, i chicchi maturano dall'alto verso la punta. Passa sui chicchi per la scheda.</p><small>Alternativa al 3D per la versione C</small><button type="button" class="gv-fs" data-fs>Apri a schermo intero ⤢</button></div>
       <div class="gv-s"><div data-grappolo2d></div></div>
     </article>
 
-    <article class="gv rev" id="v-3d">
-      <div class="gv-t"><span class="n">02</span><h3>Grappolo 3D</h3><p>Il grappolo verticale in tre dimensioni: legno, foglie, vento appena accennato, carta del territorio in filigrana. Trascina per ruotarlo, clic su un chicco per la scheda.</p><small>Versione C attuale</small></div>
+    <article class="gv rev" id="v-3d" data-solo="3d">
+      <div class="gv-t"><span class="n">02</span><h3>Grappolo 3D</h3><p>Il grappolo verticale in tre dimensioni: legno, foglie, vento appena accennato, carta del territorio in filigrana. Trascina per ruotarlo, clic su un chicco per la scheda.</p><small>Versione C attuale</small><button type="button" class="gv-fs" data-fs>Apri a schermo intero ⤢</button></div>
       <div class="gv-s"><div data-grappolo3d></div></div>
     </article>
 
-    <article class="gv" id="v-tr">
-      <div class="gv-t"><span class="n">03</span><h3>Tralcio 2D</h3><p>Il nome della Strada come ramo; da ogni punto nasce un picciolo e matura un chicco con il logo. Serve anche da riserva su telefono e nell'Archivio (A).</p><small>Versioni A e C</small></div>
+    <article class="gv" id="v-tr" data-solo="tralcio">
+      <div class="gv-t"><span class="n">03</span><h3>Tralcio 2D</h3><p>Il nome della Strada come ramo; da ogni punto nasce un picciolo e matura un chicco con il logo. Serve anche da riserva su telefono e nell'Archivio (A).</p><small>Versioni A e C</small><button type="button" class="gv-fs" data-fs>Apri a schermo intero ⤢</button></div>
       <div class="gv-s"><div data-tralcio></div></div>
     </article>
 
-    <article class="gv rev" id="v-ft">
-      <div class="gv-t"><span class="n">04</span><h3>Grappolo sulla foto</h3><p>Il grappolo vero, fotografato in vigna: i punti sono mappati sui chicchi a fuoco, con bolle sferiche al neon nei colori della vigna.</p><small>Versioni B e D</small></div>
+    <article class="gv rev" id="v-ft" data-solo="foto">
+      <div class="gv-t"><span class="n">04</span><h3>Grappolo sulla foto</h3><p>Il grappolo vero, fotografato in vigna: i punti sono mappati sui chicchi a fuoco, con bolle sferiche al neon nei colori della vigna.</p><small>Versioni B e D</small><button type="button" class="gv-fs" data-fs>Apri a schermo intero ⤢</button></div>
       <div class="gv-s"><div class="gp" data-grappolo></div></div>
     </article>
   </section>
@@ -58,40 +58,40 @@
   <section id="a" class="blk">
     <header class="sh"><p class="eb">Versione A · L'Archivio Vivo</p><h2>La carta che <em>si sorvola.</em></h2></header>
     <div class="fr-grid">
-      <figure class="fr"><div class="fr-v"><iframe title="A, intro" data-src="../a-archivio/index.html?intro"></iframe></div><figcaption><b>Intro e hero</b>Il pittogramma si incide e diventa la carta; la mappa vive dietro il titolo.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="A, territorio" data-goto="territorio" data-src="../a-archivio/index.html"></iframe></div><figcaption><b>Il territorio</b>Mappa fissa a sinistra con effetto 3D, percorso che si disegna, comuni con quota e contatore.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="A, storia" data-goto="storia" data-src="../a-archivio/index.html"></iframe></div><figcaption><b>La storia</b>Percorso orizzontale da Plinio a oggi, l'anno cambia mentre scorri.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="A, aromi" data-goto="scienza" data-src="../a-archivio/index.html"></iframe></div><figcaption><b>Suoli e aromi</b>Grafico circolare degli aromi che cambia per vitigno e suolo.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="A, intro" data-src="../a-archivio/index.html?intro"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Intro e hero</b>Il pittogramma si incide e diventa la carta; la mappa vive dietro il titolo.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="A, territorio" data-goto="territorio" data-src="../a-archivio/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Il territorio</b>Mappa fissa a sinistra con effetto 3D, percorso che si disegna, comuni con quota e contatore.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="A, storia" data-goto="storia" data-src="../a-archivio/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>La storia</b>Percorso orizzontale da Plinio a oggi, l'anno cambia mentre scorri.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="A, aromi" data-goto="scienza" data-src="../a-archivio/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Suoli e aromi</b>Grafico circolare degli aromi che cambia per vitigno e suolo.</figcaption></figure>
     </div>
   </section>
 
   <section id="b" class="blk dark">
     <header class="sh"><p class="eb">Versione B · Il Suolo</p><h2>La terra che <em>si apre.</em></h2></header>
     <div class="fr-grid">
-      <figure class="fr"><div class="fr-v"><iframe title="B, intro" data-src="../b-suolo/index.html?intro"></iframe></div><figcaption><b>Intro</b>Curve di livello e livello del vino che sale nel pittogramma.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="B, citazione" data-goto="manifesto" data-src="../b-suolo/index.html"></iframe></div><figcaption><b>Citazione</b>Parola per parola, con luce che la attraversa.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="B, rete" data-goto="rete" data-src="../b-suolo/index.html"></iframe></div><figcaption><b>La rete</b>Il grappolo sulla foto, con bolle sferiche sui chicchi.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="B, eventi" data-goto="eventi" data-src="../b-suolo/index.html"></iframe></div><figcaption><b>Eventi</b>Pannello Anteprima senza barre di scorrimento.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="B, intro" data-src="../b-suolo/index.html?intro"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Intro</b>Curve di livello e livello del vino che sale nel pittogramma.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="B, citazione" data-goto="manifesto" data-src="../b-suolo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Citazione</b>Parola per parola, con luce che la attraversa.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="B, rete" data-goto="rete" data-src="../b-suolo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>La rete</b>Il grappolo sulla foto, con bolle sferiche sui chicchi.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="B, eventi" data-goto="eventi" data-src="../b-suolo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Eventi</b>Pannello Anteprima senza barre di scorrimento.</figcaption></figure>
     </div>
   </section>
 
   <section id="c" class="blk">
-    <header class="sh"><p class="eb">Versione C · Il Filo</p><h2>Il filo che <em>lega la rete.</em></h2></header>
+    <header class="sh"><p class="eb">Versione C · La Strada</p><h2>La strada che <em>attraversa la terra.</em></h2></header>
     <div class="fr-grid">
-      <figure class="fr"><div class="fr-v"><iframe title="C, apertura" data-src="../c-filo/index.html?intro"></iframe></div><figcaption><b>Apertura</b>Il filo che si annoda tra le sezioni.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="C, storia" data-goto="storia" data-src="../c-filo/index.html"></iframe></div><figcaption><b>Storia a schede</b>Le schede si impilano mentre scorri.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="C, cineteca" data-goto="voci" data-src="../c-filo/index.html"></iframe></div><figcaption><b>Cineteca</b>Anteprime video che si animano al passaggio.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="C, rete" data-goto="rete" data-src="../c-filo/index.html"></iframe></div><figcaption><b>La rete</b>Grappolo 3D esplorabile.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="C, apertura" data-src="../c-filo/index.html?intro"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Apertura</b>Una strada attraversa la carta del territorio e tocca gli otto comuni.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="C, storia" data-goto="storia" data-src="../c-filo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Storia a schede</b>La strada scende sul margine con le pietre chilometriche; le schede si impilano.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="C, cineteca" data-goto="voci" data-src="../c-filo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Cineteca</b>Anteprime video che si animano al passaggio.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="C, rete" data-goto="rete" data-src="../c-filo/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>La rete</b>Grappolo 3D esplorabile.</figcaption></figure>
     </div>
   </section>
 
   <section id="d" class="blk dark">
     <header class="sh"><p class="eb">Versione D · La Sintesi</p><h2>Poche cose, <em>molto nette.</em></h2></header>
     <div class="fr-grid">
-      <figure class="fr"><div class="fr-v"><iframe title="D, intro" data-src="../d-sintesi/index.html?intro"></iframe></div><figcaption><b>Intro</b>Il pittogramma si riempie di colore, poi il titolo sale parola per parola.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="D, chi siamo" data-goto="chi-siamo" data-src="../d-sintesi/index.html"></iframe></div><figcaption><b>Chi siamo</b>Titolo fisso a sinistra, testo che scorre.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="D, aromi" data-goto="suolo" data-src="../d-sintesi/index.html"></iframe></div><figcaption><b>Radar degli aromi</b>Il radar si ridisegna a ogni scelta.</figcaption></figure>
-      <figure class="fr"><div class="fr-v"><iframe title="D, rete" data-goto="rete" data-src="../d-sintesi/index.html"></iframe></div><figcaption><b>La rete</b>Grappolo sulla foto.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="D, intro" data-src="../d-sintesi/index.html?intro"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Intro</b>Il pittogramma si riempie di colore, poi il titolo sale parola per parola.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="D, chi siamo" data-goto="chi-siamo" data-src="../d-sintesi/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Chi siamo</b>Titolo fisso a sinistra, testo che scorre.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="D, aromi" data-goto="suolo" data-src="../d-sintesi/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>Radar degli aromi</b>Il radar si ridisegna a ogni scelta.</figcaption></figure>
+      <figure class="fr"><div class="fr-v"><iframe title="D, rete" data-goto="rete" data-src="../d-sintesi/index.html"></iframe><button type="button" class="fr-open" aria-label="Apri a schermo intero"><span>Apri a schermo intero <b>⤢</b></span></button></div><figcaption><b>La rete</b>Grappolo sulla foto.</figcaption></figure>
     </div>
   </section>
 
@@ -111,6 +111,6 @@
 <script src="../shared/grappolo.js"></script>
 <script src="../shared/grappolo2d.js"></script>
 <script src="app.js"></script>
-<script type="module" data-src="../shared/grappolo3d.js"></script>
+<script type="module" src="../shared/grappolo3d.js"></script>
 </body>
 </html>
