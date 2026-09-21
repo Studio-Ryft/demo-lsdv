@@ -45,7 +45,7 @@ section,footer{position:relative;z-index:2}
 .km.on rect{opacity:1;fill:var(--chart)}.km.on text{opacity:1}
 @media (max-width:640px){.thread-km{display:none}}
 .intro{display:none}
-html.intro-run .intro{display:block;position:fixed;inset:0;z-index:9000;background:var(--cream)}
+html.intro-run .intro{display:block;position:fixed;inset:0;z-index:9000;background:radial-gradient(75% 65% at 50% 46%,#FFFBEE 0%,#F7ECD3 62%,#EBDDBB 100%)}
 html.intro-run body{overflow:hidden}
 .in-svg{position:absolute;inset:0;width:100%;height:100%}
 .in-svg svg{display:block;width:100%;height:100%}
@@ -62,7 +62,7 @@ html.intro-run body{overflow:hidden}
 .in-asf{stroke:var(--walnut);stroke-width:18}
 .in-mezz{stroke:var(--chart);stroke-linecap:butt}
 .in-car{fill:var(--chart);stroke:var(--walnut)}
-.in-t{position:absolute;left:0;right:0;bottom:11vh;text-shadow:0 0 22px var(--cream),0 0 8px var(--cream);text-align:center;font:400 clamp(2.4rem,6vw,5.4rem)/1 var(--fs);letter-spacing:-.02em}
+.in-t{position:absolute;left:0;right:0;bottom:11vh;z-index:2;text-shadow:0 0 22px var(--cream),0 0 8px var(--cream);text-align:center;font:400 clamp(2.4rem,6vw,5.4rem)/1 var(--fs);letter-spacing:-.02em}
 .in-t em{color:var(--olive)}
 .in-skip{position:absolute;right:var(--gut);top:24px;font:700 12px/1 var(--fj);background:transparent;border:1.5px solid var(--walnut);border-radius:100px;padding:.7rem 1rem;cursor:pointer;color:var(--walnut)}
 
@@ -389,3 +389,35 @@ legend{font:400 2.2rem/1 var(--fs);margin-bottom:1.2rem}
 .terr-bg .ct.mi{stroke-opacity:.16}.terr-bg .ct.ma{stroke-opacity:.34;stroke-width:1.1}
 .terr-bg .fiume{fill:none;stroke:#4B5D23;stroke-opacity:.35;stroke-width:1.6;vector-effect:non-scaling-stroke}
 .terr-bg .pins-g,.terr-bg .luoghi-g{display:none}
+
+/* ---------- intro isometrica ---------- */
+@media (orientation:landscape){
+  .in-t{left:clamp(24px,5vw,84px);right:auto;bottom:auto;top:clamp(70px,14vh,150px);text-align:left;font-size:clamp(2.4rem,4.2vw,4.4rem);line-height:.98;max-width:30vw}
+  .in-t span,.in-t em{display:block}
+}
+.in-svg.iso-root{overflow:hidden}
+
+/* ---------- il viaggio (scorrimento) ---------- */
+.viaggio{padding:0;background:radial-gradient(75% 65% at 55% 46%,#FFFBEE 0%,#F7ECD3 62%,#EBDDBB 100%)}
+.vg-pin{position:relative;height:100vh;height:100svh;overflow:hidden}
+.vg-map{position:absolute;inset:0}
+.vg-h{position:absolute;left:var(--gut);top:clamp(84px,12vh,120px);z-index:2;max-width:min(420px,42vw);pointer-events:none}
+.vg-h::before{content:"";position:absolute;inset:-40px -60px -40px -40px;z-index:-1;background:radial-gradient(closest-side,rgba(252,246,225,.95),rgba(252,246,225,.7) 60%,rgba(252,246,225,0));}
+.vg-h h2{font-size:clamp(2.2rem,4.4vw,4.2rem)}
+.vg-guida{margin-top:.9rem;font-size:14.5px;color:var(--mute);max-width:300px}
+.vg-card{position:absolute;z-index:3;right:var(--gut);bottom:clamp(24px,6vh,64px);width:min(400px,calc(100% - 2*var(--gut)));padding:1.3rem 1.5rem 1.4rem;border-radius:24px;background:rgba(252,246,225,.94);
+  border:1px solid rgba(68,36,19,.16);box-shadow:0 30px 60px -30px rgba(40,20,10,.55);backdrop-filter:blur(8px)}
+.vg-n{font:700 12px/1 var(--fj);letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
+.vg-n b{font:400 1.9rem/1 var(--fs);letter-spacing:0;color:var(--walnut);margin-right:.2rem}
+.vg-card h3{margin-top:.5rem;font:400 clamp(1.7rem,2.4vw,2.3rem)/1.05 var(--fs)}
+.vg-q{margin-top:.35rem;font:700 11px/1 var(--fj);letter-spacing:.12em;text-transform:uppercase;color:var(--olive)}
+.vg-t{margin-top:.8rem;font-size:14.5px;line-height:1.55;color:#5A4636}
+.vg-prog{position:absolute;right:calc(var(--gut) / 2);top:18%;bottom:18%;width:3px;border-radius:3px;background:rgba(68,36,19,.16);z-index:3;overflow:hidden}
+.vg-prog i{display:block;width:100%;height:100%;background:var(--chart);transform-origin:top;transform:scaleY(0)}
+@media (max-width:760px){
+  .vg-h{max-width:calc(100% - 2*var(--gut));top:78px}.vg-h h2{font-size:2.1rem}.vg-guida{display:none}
+  .vg-card{left:var(--gut);right:var(--gut);width:auto;bottom:66px;padding:1rem 1.1rem 1.1rem}
+  .vg-t{font-size:13.5px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .vg-prog{display:none}
+}
+@media (prefers-reduced-motion:reduce){.vg-pin{height:auto}}

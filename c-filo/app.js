@@ -191,6 +191,56 @@
   const isec = $(".intro-sec");
   if (isec) isec.insertAdjacentHTML("afterbegin", `<div class="terr-bg" aria-hidden="true">${mapSVG({ cls: "terr-bg-svg", luoghi: false, viewBox: "0 180 1600 760" })}</div>`);
 
+
+  // ---------- IL VIAGGIO: lo scorrimento guida l'auto lungo la strada, paese per paese ----------
+  const vgm = $("[data-vgmap]");
+  if (vgm && window.LSDVIso && hasG) {
+    const iso = window.LSDVIso.crea(vgm), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
+    const LEGS = [[0, false, 1], [1, false, 2], [2, false, 3], [2, true, 2], [3, false, 4], [4, false, 5], [5, false, 6], [6, false, 7]];
+    const vport = () => innerHeight > innerWidth, zoom = () => iso.B.w / (vport() ? 2.7 : 2.15);
+    const cam = { x: 0, y: 0, w: iso.intera().w };
+    const c0 = iso.paesi[IDS[0]];
+    const testi = Object.fromEntries(D.comuni.map((c) => [c.id, c]));
+    const card = { n: $("[data-vn]"), nome: $("[data-vnome]"), q: $("[data-vq]"), t: $("[data-vt]") }, barra = $(".vg-prog i"), cardEl = $(".vg-card"), vgH = $(".vg-h");
+    let corrente = -1;
+    const setStop = (k) => {
+      if (k === corrente) return; corrente = k; const p = iso.paesi[IDS[k]], c = testi[IDS[k]] || {};
+      card.n.textContent = String(k + 1).padStart(2, "0"); card.nome.textContent = p.nome; card.q.textContent = Math.round(p.q) + " m s.l.m."; card.t.textContent = c.testo || "";
+      gsap.fromTo(cardEl, { y: 16, autoAlpha: 0.2 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", overwrite: true });
+      IDS.forEach((id, j) => iso.mostraEtichetta(id, j === k));
+    };
+    iso.gCielo.style.display = "";
+    iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
+    iso.posiziona(0, 0, false); iso.auto.setAttribute("opacity", 1);
+    const focus = (p) => ({ x: p.sx, y: p.sy - 28 });
+    const quando = [];   // istante di arrivo a ciascun paese
+    const tl = gsap.timeline({ defaults: { ease: "none" } });
+    const f0 = focus(c0); cam.x = iso.intera().cx; cam.y = iso.intera().cy;
+    tl.to(cam, { x: f0.x, y: f0.y, w: zoom(), duration: 1.2, ease: "power2.inOut", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    quando[0] = 1.2; let t0 = 1.2 + 0.7;
+    LEGS.forEach(([i, rev, dest], n) => {
+      const pr = { t: 0 }, a = iso.paesi[IDS[dest]];
+      tl.fromTo(pr, { t: 0 }, { t: 1, duration: 1.7, ease: "sine.inOut", onUpdate: () => {
+          const q = iso.posiziona(i, pr.t, rev); if (!rev) iso.disegnaTratto(i, pr.t);
+          cam.x += (q.x - cam.x) * 0.22; cam.y += (q.y - 28 - cam.y) * 0.22; cam.w = zoom(); iso.vai(cam.x, cam.y, cam.w);
+        } }, t0);
+      t0 += 1.7;
+      if (!rev) { quando[dest] = t0; }
+      t0 += 0.7;
+    });
+    // per il ritorno da Liberi a Castel di Sasso non c'è sosta: la strada continua verso Piana di Monte Verna
+    const durata = t0;
+    const st = ScrollTrigger.create({
+      trigger: ".viaggio", start: "top top", end: () => "+=" + Math.round(innerHeight * 6.4), pin: ".vg-pin", scrub: 0.9, animation: tl, anticipatePin: 1, invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const tt = self.progress * durata; let k = 0; quando.forEach((q, j) => { if (q !== undefined && tt >= q - 0.05) k = j; });
+        setStop(k); barra.style.transform = `scaleY(${self.progress})`; vgH.style.opacity = Math.max(0, 1 - self.progress * 14);
+      }
+    });
+    setStop(0);
+    addEventListener("resize", () => iso.vai(cam.x, cam.y, cam.w));
+  }
+
   // ---------- INTRO ----------
   const hsplit = SplitText.create(".hero-t", { type: "words", mask: "words" });
   gsap.set(hsplit.words, { yPercent: 110 }); gsap.set([".hero-act", ".hero-count"], { autoAlpha: 0, y: 20 }); gsap.set(".hero-logo path", { autoAlpha: 0 });
@@ -205,42 +255,49 @@
   const intro = $("#intro");
   if (introOnce("lsdvC")) {
     H.classList.add("intro-run"); lenis && lenis.stop();
-    // la strada attraversa la carta del territorio: parte da Formicola, tocca gli otto comuni, arriva a Castel Campagnano
+    // la mappa isometrica si costruisce a strati, poi l'auto percorre la Strada del Vino e si ferma in ogni paese
     const host = $("[data-instrada]"), portrait = innerHeight > innerWidth;
-    host.innerHTML = mapSVG({ cls: "in-terra", luoghi: false, viewBox: "60 150 1500 760", par: portrait ? "xMidYMid meet" : "xMidYMid slice" });
-    const s = host.querySelector("svg");
-    const ids = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
-    const co = ids.map((id) => M.comuni.find((c) => c.id === id));
-    const via = [{ x: -60, y: 300 }, ...co.map((c) => ({ x: c.x, y: c.y })), { x: 1660, y: 660 }];
-    const dd = catmull(via);
-    const pinsG = s.querySelector(".pins-g");
-    (pinsG || s).insertAdjacentHTML(pinsG ? "beforebegin" : "beforeend", `<defs><mask id="inMask" maskUnits="userSpaceOnUse" x="-100" y="0" width="1800" height="1300"><path class="in-mk" d="${dd}" fill="none" stroke="#fff" stroke-width="60"/></mask></defs>
-      <g class="in-strada"><path class="in-edge" d="${dd}"/><path class="in-asf" d="${dd}"/><path class="in-mezz" d="${dd}" mask="url(#inMask)"/>
-      <circle class="in-car" r="9"/></g>`);
-    const asf = $(".in-asf", s), edge = $(".in-edge", s), mk = $(".in-mk", s), car = $(".in-car", s), mezz = $(".in-mezz", s), L = asf.getTotalLength();
-    // larghezze in pixel di schermo, convertite nelle unità della carta (le tratteggiature di DrawSVG non reggono vector-effect)
-    const kk = (s.getScreenCTM() || { a: 1 }).a || 1;
-    const f = portrait ? 0.45 : 1;
-    edge.style.strokeWidth = (26 * f) / kk; asf.style.strokeWidth = (18 * f) / kk; mezz.style.strokeWidth = (3 * f) / kk; mezz.style.strokeDasharray = `${(14 * f) / kk} ${(14 * f) / kk}`;
-    car.setAttribute("r", (9 * f) / kk); car.style.strokeWidth = (3 * f) / kk;
-    // a che punto della strada cade ogni comune
-    const pos = {}; { const N = 500; co.forEach((c) => { let best = 0, bd = 1e9; for (let i = 0; i <= N; i++) { const p = asf.getPointAtLength((L * i) / N), dx = p.x - c.x, dy = p.y - c.y, q = dx * dx + dy * dy; if (q < bd) { bd = q; best = i / N; } } pos[c.id] = best; }); }
-    const pins = $$(".pin", s);
-    gsap.set(pins, { opacity: 0 }); gsap.set([asf, edge, mk], { drawSVG: "0%" }); gsap.set(car, { opacity: 0 });
+    const iso = window.LSDVIso.crea(host), IDS = ["formicola", "pontelatone", "castel-di-sasso", "liberi", "piana-di-monte-verna", "caiazzo", "ruviano", "castel-campagnano"];
+    const LEGS = [[0, false, "pontelatone"], [1, false, "castel-di-sasso"], [2, false, "liberi"], [2, true, "castel-di-sasso"], [3, false, "piana-di-monte-verna"], [4, false, "caiazzo"], [5, false, "ruviano"], [6, false, "castel-campagnano"]];
+    const v0 = iso.intera(), W = portrait ? iso.B.w * 0.36 : v0.w;
+    let cam = { x: v0.cx, y: v0.cy, w: v0.w * (portrait ? 0.5 : 1.12) };
+    iso.vai(cam.x, cam.y, cam.w);
+    gsap.set(iso.gruppi, { opacity: 0, y: 70 });
+    gsap.set(iso.fiumi, { opacity: 0 });
+    IDS.forEach((id) => gsap.set(iso.paesi[id].g, { scale: 0, svgOrigin: `${iso.paesi[id].sx} ${iso.paesi[id].sy}` }));
+    iso.strade.forEach((t, i) => iso.disegnaTratto(i, 0));
+    gsap.set(iso.gCielo, { opacity: 0 });
     const tw = SplitText.create(".in-t", { type: "words", mask: "words" });
     gsap.set(tw.words, { yPercent: 110 });
-    const DUR = 4.2, prog = { p: 0 };
     const tl = gsap.timeline();
-    tl.to(prog, { p: 1, duration: DUR, ease: "none", onUpdate: () => {
-        const p = prog.p, pt = asf.getPointAtLength(L * p); car.setAttribute("cx", pt.x); car.setAttribute("cy", pt.y);
-        [asf, edge, mk].forEach((e) => gsap.set(e, { drawSVG: `0% ${p * 100}%` }));
-      } }, 0.2)
-      .to(car, { opacity: 1, duration: 0.3 }, 0.2);
-    pins.forEach((el) => { const t = pos[el.dataset.id]; if (t !== undefined) tl.to(el, { opacity: 1, duration: 0.5 }, 0.2 + DUR * t); });
-    tl.to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.08 }, 1.2)
-      .addLabel("out", 4.9)
+    tl.to(iso.gruppi, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.16 }, 0.1)
+      .to(iso.fiumi, { opacity: 1, duration: 0.8 }, 1.2)
+      .to(iso.gCielo, { opacity: 1, duration: 1.2 }, 1.4)
+      .to(IDS.map((id) => iso.paesi[id].g), { scale: 1, duration: 0.55, ease: "back.out(2.6)", stagger: 0.09 }, 1.6)
+      .to(tw.words, { yPercent: 0, duration: 1, ease: "expo.out", stagger: 0.09 }, 0.9);
+    if (!portrait) tl.to(cam, { w: v0.w, duration: 3.4, ease: "power2.out", onUpdate: () => iso.vai(cam.x, cam.y, cam.w) }, 0);
+    // il viaggio
+    const totale = LEGS.reduce((n, l) => n + iso.strade[l[0]].len, 0), DRIVE = 4.1, PAUSA = 0.24;
+    let t0 = 2.5; iso.posiziona(0, 0, false);
+    tl.to(iso.auto, { opacity: 1, duration: 0.3 }, t0 - 0.2).add(() => iso.mostraEtichetta("formicola", true), t0 - 0.1);
+    let prec = "formicola";
+    LEGS.forEach(([i, rev, fine]) => {
+      const dur = (iso.strade[i].len / totale) * DRIVE, pr = { t: 0 };
+      const daNascondere = prec;
+      tl.add(() => { iso.mostraEtichetta(daNascondere, false); }, t0 + 0.05);
+      tl.fromTo(pr, { t: 0 }, { t: 1, duration: dur, ease: "sine.inOut", onUpdate: () => {
+          const q = iso.posiziona(i, pr.t, rev); iso.polvere(q.x, q.y);
+          if (!rev) iso.disegnaTratto(i, pr.t);
+          if (portrait) { cam.x += (q.x - cam.x) * 0.09; cam.y += (q.y - cam.y) * 0.09; iso.vai(cam.x, cam.y, cam.w); }
+        } }, t0 + 0.05);
+      t0 += 0.05 + dur;
+      if (!(rev)) { tl.add(() => iso.mostraEtichetta(fine, true), t0); }
+      else tl.add(() => iso.mostraEtichetta(fine, true), t0);
+      prec = fine; t0 += PAUSA;
+    });
+    tl.addLabel("out", t0 + 0.5)
       .to(tw.words, { yPercent: -110, duration: 0.5, ease: "power3.in", stagger: 0.03 }, "out")
-      .to(car, { opacity: 0, duration: 0.3 }, "out")
+      .to(iso.auto, { opacity: 0, duration: 0.3 }, "out")
       .to(intro, { clipPath: "inset(50% 0% 50% 0%)", duration: 1.1, ease: "expo.inOut" }, "out+=0.5")
       .add(() => heroIn(0), "out+=0.7")
       .add(() => { H.classList.remove("intro-run"); intro.remove(); lenis && lenis.start(); ScrollTrigger.refresh(); }, "out+=1.6");

@@ -1,0 +1,27 @@
+/* mappa isometrica: la strada del vino */
+.iso-root{position:relative;overflow:hidden}
+.iso{display:block;width:100%;height:100%}
+.iso-top,.iso-lato{stroke:none}
+.iso-acqua{fill:none;stroke:#7FB0AE;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.iso-luce{fill:none;stroke:rgba(255,255,255,.7);stroke-width:1.4;stroke-linecap:round;stroke-dasharray:6 16;animation:isoFiume 3.4s linear infinite}
+@keyframes isoFiume{to{stroke-dashoffset:-44}}
+.iso-vigna-f{fill:rgba(216,214,130,.75);stroke:rgba(70,90,30,.35);stroke-width:.8}
+.iso-vigna-r{fill:none;stroke:#5C7D2F;stroke-width:1.7;stroke-linecap:round}
+.iso-sw{transform-box:fill-box;transform-origin:50% 100%;animation:isoVento 4s ease-in-out infinite alternate}
+@keyframes isoVento{from{transform:rotate(-2.2deg)}to{transform:rotate(2.6deg)}}
+.iso-fumo{fill:rgba(255,250,238,.8);opacity:0;animation:isoFumo 4s ease-out infinite}
+@keyframes isoFumo{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:.85}100%{opacity:0;transform:translate(6px,-26px) scale(2.4)}}
+.iso-r-bordo{fill:none;stroke:#FCF6E1;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+.iso-r-asf{fill:none;stroke:#442413;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+.iso-r-mez{fill:none;stroke:#ADC136;stroke-width:1.7;stroke-dasharray:6 6;stroke-linecap:butt}
+.iso-lab text{text-anchor:middle;pointer-events:none}
+.iso-lab-n{font:600 17px/1 "Fraunces",Georgia,serif;fill:#442413}
+.iso-lab-q{font:700 9.5px/1 "Manrope",system-ui,sans-serif;letter-spacing:.1em;fill:#4B5D23;text-transform:uppercase}
+.iso-auto-c{transform-box:fill-box}
+.iso-nuvola{animation:isoNuvola linear infinite;pointer-events:none}
+@keyframes isoNuvola{from{translate:-260px 0}to{translate:260px 0}}
+.iso-uccello{animation:isoUccello linear infinite}
+.iso-uccello .iso-ala{transform-box:fill-box;transform-origin:50% 100%;animation:isoAla .5s ease-in-out infinite alternate}
+@keyframes isoUccello{from{translate:-200px 10px}to{translate:1100px -50px}}
+@keyframes isoAla{from{transform:scaleY(1)}to{transform:scaleY(-.5)}}
+@media (prefers-reduced-motion:reduce){.iso-sw,.iso-fumo,.iso-luce,.iso-nuvola,.iso-uccello,.iso-ala{animation:none}}
