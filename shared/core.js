@@ -132,7 +132,7 @@
   /* ---------- intro una volta per sessione ---------- */
   function introOnce(key) {
     if (RM) return false;
-    try { if (new URLSearchParams(location.search).has("intro")) return true; if (sessionStorage.getItem(key)) return false; sessionStorage.setItem(key, "1"); } catch (e) {}
+    try { const q = new URLSearchParams(location.search); if (q.has("noi")) return false; if (q.has("intro")) return true; if (sessionStorage.getItem(key)) return false; sessionStorage.setItem(key, "1"); } catch (e) {}
     return true;
   }
 
@@ -159,6 +159,17 @@
       gsap.from($$(".cs-b", s), { y: 50, autoAlpha: 0, duration: 1.1, stagger: 0.14, ease: "expo.out", scrollTrigger: { trigger: $(".cs-grid", s), start: "top 85%" } });
     });
   });
+
+  /* ---------- quando la pagina sta dentro un'anteprima (senza scambio diretto tra finestre, come aprendo i file dal disco) ---------- */
+  // ?goto=id porta la pagina alla sezione; un messaggio {lsdv:"nav"} fa avanti/indietro nella cronologia
+  (function () {
+    const g = new URLSearchParams(location.search).get("goto");
+    if (g) {
+      const vai = () => { const el = document.getElementById(g); if (!el) return; const y = el.getBoundingClientRect().top + scrollY - 20; if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
+      addEventListener("load", () => { setTimeout(vai, 700); setTimeout(vai, 1800); setTimeout(vai, 3200); });
+    }
+    addEventListener("message", (e) => { const d = e.data; if (d && d.lsdv === "nav") { d.dir === "back" ? history.back() : history.forward(); } });
+  })();
 
   window.LSDVCore = { D, M, RM, $, $$, esc, slug, html, smooth, mapSVG, counter, membership, categoriaNome, icon, demoBadge, introOnce, chiSiamo, schedaAzienda };
 })();

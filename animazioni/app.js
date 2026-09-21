@@ -13,30 +13,12 @@
   const oss = new IntersectionObserver((v) => v.forEach((e) => {
     if (!e.isIntersecting) return;
     const f = e.target.firstElementChild; oss.unobserve(e.target);
-    f.src = f.dataset.src; window.vaiA(f);
+    f.src = conParam(f.dataset.src, f.dataset.goto);
   }), { rootMargin: "300px 0px" });
   $$(".fr-v").forEach((b) => oss.observe(b));
 
-  // ogni finestra salta alla sezione indicata quando la pagina è pronta (e di nuovo dopo, se il layout si è mosso)
-  window.vaiA = (fr) => {
-    const id = fr.dataset.goto; if (!id) return;
-    const salta = () => {
-      const w = fr.contentWindow, el = w.document.getElementById(id);
-      const y = el.getBoundingClientRect().top + w.scrollY - 20;
-      if (w.__lenis) w.__lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
-    };
-    let n = 0;
-    const t = setInterval(() => {
-      n++;
-      try {
-        const w = fr.contentWindow, d = w.document;
-        if (d.getElementById(id) && (d.readyState === "complete" || n > 14)) {
-          clearInterval(t); salta(); setTimeout(salta, 1800);
-        }
-      } catch (e) { clearInterval(t); }
-      if (n > 120) clearInterval(t);
-    }, 500);
-  };
+  // la sezione da mostrare e l'assenza dell'intro viaggiano nell'indirizzo, così funziona anche aprendo i file dal disco
+  const conParam = (src, goto) => (goto ? src + (src.includes("?") ? "&" : "?") + "noi&goto=" + goto : src);
 
   // ---------- barra avanti / indietro / home della pagina ----------
   $$("[data-nb]").forEach((b) => b.addEventListener("click", () => (b.dataset.nb === "back" ? history.back() : history.forward())));
@@ -65,7 +47,7 @@
   const apri = (src, goto, titolo, da) => {
     ultimo = da || null; ftit.textContent = titolo || "";
     fs.hidden = false; document.documentElement.classList.add("fs-aperto");
-    fif.src = src; if (goto) { fif.dataset.goto = goto; window.vaiA(fif); } else delete fif.dataset.goto;
+    fif.src = conParam(src, goto);
     $(".nb-x", fs).focus();
   };
   const chiudi = () => {
@@ -74,8 +56,7 @@
   };
   fs.addEventListener("click", (e) => {
     const t = e.target.closest("[data-fs]"); if (!t) return;
-    const w = fif.contentWindow;
-    if (t.dataset.fs === "chiudi") chiudi(); else try { t.dataset.fs === "back" ? w.history.back() : w.history.forward(); } catch (x) {}
+    if (t.dataset.fs === "chiudi") chiudi(); else try { fif.contentWindow.postMessage({ lsdv: "nav", dir: t.dataset.fs }, "*"); } catch (x) {}
   });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !fs.hidden) chiudi(); });
 
